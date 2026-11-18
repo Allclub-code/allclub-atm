@@ -6,50 +6,60 @@
 
 <style>
 body{
-    font-family: Arial, sans-serif;
-    background:#0f172a;
-    color:white;
-    text-align:center;
-    margin:0;
+font-family:Arial,sans-serif;
+background:#0f172a;
+color:white;
+text-align:center;
+margin:0;
+padding:20px;
 }
 
 .box{
-    max-width:400px;
-    margin:40px auto;
-    background:#1e293b;
-    padding:20px;
-    border-radius:15px;
+max-width:500px;
+margin:auto;
+background:#1e293b;
+padding:20px;
+border-radius:15px;
 }
 
 input{
-    width:90%;
-    padding:12px;
-    margin:8px 0;
-    border:none;
-    border-radius:8px;
+width:90%;
+padding:10px;
+margin:5px;
+border:none;
+border-radius:8px;
 }
 
 button{
-    padding:12px;
-    margin:5px;
-    border:none;
-    border-radius:8px;
-    cursor:pointer;
+padding:10px;
+margin:5px;
+border:none;
+border-radius:8px;
+cursor:pointer;
 }
 
 .green{
-    background:#22c55e;
-    color:white;
+background:#22c55e;
+color:white;
 }
 
 .red{
-    background:#ef4444;
-    color:white;
+background:#ef4444;
+color:white;
 }
 
 .blue{
-    background:#3b82f6;
-    color:white;
+background:#3b82f6;
+color:white;
+}
+
+.admin{
+background:#f59e0b;
+color:black;
+}
+
+h1,h2{
+margin-top:10px;
 }
 </style>
 </head>
@@ -72,6 +82,10 @@ button{
 Login
 </button>
 
+<button class="admin" onclick="adminLogin()">
+Admin Login
+</button>
+
 <p id="loginMessage"></p>
 
 </div>
@@ -88,6 +102,10 @@ Deposit $5
 Deposit $10
 </button>
 
+<button class="green" onclick="deposit(20)">
+Deposit $20
+</button>
+
 <br>
 
 <button class="red" onclick="withdraw(5)">
@@ -98,12 +116,42 @@ Withdraw $5
 Withdraw $10
 </button>
 
-<p id="message"></p>
+<button class="red" onclick="withdraw(20)">
+Withdraw $20
+</button>
 
-<br>
+<p id="message"></p>
 
 <button onclick="logout()">
 Logout
+</button>
+
+</div>
+
+<div id="adminScreen" style="display:none;">
+
+<h2>Admin Panel</h2>
+
+<input id="newAccount"
+placeholder="Account Number">
+
+<input id="newPin"
+placeholder="PIN">
+
+<input id="newBalance"
+placeholder="Starting Balance">
+
+<br>
+
+<button class="admin"
+onclick="createAccount()">
+Create Account
+</button>
+
+<p id="adminMessage"></p>
+
+<button onclick="adminLogout()">
+Back
 </button>
 
 </div>
@@ -112,85 +160,165 @@ Logout
 
 <script>
 
+const adminPin = "9999";
+
 const accounts = {
-  "1001": { pin: "1234", balance: 50 },
-  "1002": { pin: "5678", balance: 100 }
+"1001":{
+pin:"1234",
+balance:50
+},
+"1002":{
+pin:"5678",
+balance:100
+}
 };
 
 let currentUser = null;
 
 function login(){
 
- let account =
- document.getElementById("account").value;
+let account =
+document.getElementById("account").value;
 
- let pin =
- document.getElementById("pin").value;
+let pin =
+document.getElementById("pin").value;
 
- if(
-   accounts[account] &&
-   accounts[account].pin === pin
- ){
-   currentUser = account;
+if(
+accounts[account] &&
+accounts[account].pin === pin
+){
 
-   document.getElementById("loginScreen").style.display =
-   "none";
+currentUser = account;
 
-   document.getElementById("atmScreen").style.display =
-   "block";
+document.getElementById("loginScreen")
+.style.display = "none";
 
-   updateBalance();
+document.getElementById("atmScreen")
+.style.display = "block";
 
- }else{
-   document.getElementById("loginMessage").innerText =
-   "Invalid account or PIN";
- }
+updateBalance();
+
+}else{
+
+document.getElementById("loginMessage")
+.innerText =
+"Invalid account or PIN";
+
+}
+
 }
 
 function updateBalance(){
- document.getElementById("balance").innerText =
- accounts[currentUser].balance;
+
+document.getElementById("balance")
+.innerText =
+accounts[currentUser].balance;
+
 }
 
 function deposit(amount){
- accounts[currentUser].balance += amount;
 
- updateBalance();
+accounts[currentUser].balance += amount;
 
- document.getElementById("message").innerText =
- "Deposited $" + amount;
+updateBalance();
+
+document.getElementById("message")
+.innerText =
+"Deposited $" + amount;
+
 }
 
 function withdraw(amount){
 
- if(accounts[currentUser].balance >= amount){
+if(accounts[currentUser].balance >= amount){
 
-   accounts[currentUser].balance -= amount;
+accounts[currentUser].balance -= amount;
 
-   updateBalance();
+updateBalance();
 
-   document.getElementById("message").innerText =
-   "Withdrew $" + amount;
+document.getElementById("message")
+.innerText =
+"Withdrew $" + amount;
 
- }else{
+}else{
 
-   document.getElementById("message").innerText =
-   "Not enough money";
- }
+document.getElementById("message")
+.innerText =
+"Not enough money";
+
+}
+
 }
 
 function logout(){
 
- document.getElementById("atmScreen").style.display =
- "none";
+document.getElementById("atmScreen")
+.style.display = "none";
 
- document.getElementById("loginScreen").style.display =
- "block";
+document.getElementById("loginScreen")
+.style.display = "block";
 
- document.getElementById("account").value = "";
- document.getElementById("pin").value = "";
+document.getElementById("account")
+.value = "";
 
- currentUser = null;
+document.getElementById("pin")
+.value = "";
+
+currentUser = null;
+
+}
+
+function adminLogin(){
+
+let pin =
+prompt("Enter Admin PIN");
+
+if(pin === adminPin){
+
+document.getElementById("loginScreen")
+.style.display = "none";
+
+document.getElementById("adminScreen")
+.style.display = "block";
+
+}else{
+
+alert("Wrong PIN");
+
+}
+
+}
+
+function adminLogout(){
+
+document.getElementById("adminScreen")
+.style.display = "none";
+
+document.getElementById("loginScreen")
+.style.display = "block";
+
+}
+
+function createAccount(){
+
+let account =
+document.getElementById("newAccount").value;
+
+let pin =
+document.getElementById("newPin").value;
+
+let balance =
+Number(document.getElementById("newBalance").value);
+
+accounts[account] = {
+pin:pin,
+balance:balance
+};
+
+document.getElementById("adminMessage")
+.innerText =
+"Account Created: " + account;
+
 }
 
 </script>
