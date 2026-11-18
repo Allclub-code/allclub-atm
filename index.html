@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>All Club ATM</title>
+<style>
+body{
+font-family:Arial;
+background:#0f172a;
+color:white;
+text-align:center;
+}
+
+.container{
+max-width:400px;
+margin:auto;
+margin-top:50px;
+background:#1e293b;
+padding:20px;
+border-radius:10px;
+}
+
+button{
+padding:10px;
+margin:5px;
+font-size:16px;
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+<h1>ALL CLUB ATM</h1>
+
+<h2>Balance: $<span id="balance">100</span></h2>
+
+<button onclick="deposit()">Deposit $10</button>
+<button onclick="withdraw()">Withdraw $10</button>
+
+<p id="message"></p>
+</div>
+
+<script>
+let balance = 100;
+
+function deposit(){
+balance += 10;
+document.getElementById("balance").innerText = balance;
+document.getElementById("message").innerText =
+"Deposited $10";
+}
+
+function withdraw(){
+if(balance >= 10){
+balance -= 10;
+document.getElementById("balance").innerText = balance;
+document.getElementById("message").innerText =
+"Withdrew $10";
+}else{
+document.getElementById("message").innerText =
+"Not enough money";
+}
+}
+</script>
+
+</body>
+</html>
