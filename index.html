@@ -305,7 +305,6 @@ id="history"
 class="history">
 </div>
 
-<br>
 <button
 class="primary"
 onclick="printReceipt()">
@@ -366,13 +365,13 @@ Create Account
 
 </button>
 
-<hr><br>
+<hr>
 
 <h3>Bank Statistics</h3>
 
 <div id="stats"></div>
 
-<br>
+
 <button
 class="primary"
 onclick="searchMember()">
@@ -411,12 +410,12 @@ Charge Account
 
 </button>
 
-<br><br>
+
 
 <h3>All Members</h3>
 <div id="memberList"></div>
 
-<br>
+
 
 <button
 class="secondary"
@@ -939,15 +938,15 @@ div.innerHTML =
 
 "<b>" +
 member.name +
-"</b><br>" +
+"</b>" +
 
 "Acct: " +
 account +
-"<br>" +
+"" +
 
 "Balance: $" +
 member.balance +
-"<br><br>" +
+"" +
 
 "<button onclick='deleteAccount(\"" +
 account +
@@ -966,7 +965,7 @@ document
 "Members: " +
 totalAccounts +
 
-"<br><br>" +
+"" +
 
 "Total Bank Balance: $" +
 totalMoney.toFixed(2);
