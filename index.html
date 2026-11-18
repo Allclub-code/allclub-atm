@@ -1,71 +1,110 @@
 <!DOCTYPE html>
 <html>
 <head>
+<meta charset="UTF-8">
 <title>All Club ATM</title>
+
 <style>
 body{
-font-family:Arial;
-background:#0f172a;
-color:white;
-text-align:center;
+    font-family: Arial, sans-serif;
+    background:#0f172a;
+    color:white;
+    text-align:center;
+    margin:0;
 }
 
 .box{
-max-width:400px;
-margin:auto;
-margin-top:50px;
-background:#1e293b;
-padding:20px;
-border-radius:10px;
+    max-width:400px;
+    margin:40px auto;
+    background:#1e293b;
+    padding:20px;
+    border-radius:15px;
 }
 
 input{
-padding:10px;
-margin:5px;
-width:80%;
+    width:90%;
+    padding:12px;
+    margin:8px 0;
+    border:none;
+    border-radius:8px;
 }
 
 button{
-padding:10px;
-margin:5px;
+    padding:12px;
+    margin:5px;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+}
+
+.green{
+    background:#22c55e;
+    color:white;
+}
+
+.red{
+    background:#ef4444;
+    color:white;
+}
+
+.blue{
+    background:#3b82f6;
+    color:white;
 }
 </style>
 </head>
+
 <body>
 
 <div class="box">
 
 <h1>ALL CLUB ATM</h1>
 
-<div id="login">
+<div id="loginScreen">
 
-<input id="account" placeholder="Account Number"><br>
+<input id="account" placeholder="Account Number">
 
-<input id="pin" type="password"
-placeholder="PIN"><br>
+<input id="pin" type="password" placeholder="PIN">
 
-<button onclick="login()">
+<br>
+
+<button class="blue" onclick="login()">
 Login
 </button>
 
-<p id="loginMsg"></p>
+<p id="loginMessage"></p>
 
 </div>
 
-<div id="atm" style="display:none;">
+<div id="atmScreen" style="display:none;">
 
-<h2>Balance: $<span id="balance"></span>
-</h2>
+<h2>Balance: $<span id="balance">0</span></h2>
 
-<button onclick="deposit()">
+<button class="green" onclick="deposit(5)">
+Deposit $5
+</button>
+
+<button class="green" onclick="deposit(10)">
 Deposit $10
 </button>
 
-<button onclick="withdraw()">
+<br>
+
+<button class="red" onclick="withdraw(5)">
+Withdraw $5
+</button>
+
+<button class="red" onclick="withdraw(10)">
 Withdraw $10
 </button>
 
-<p id="msg"></p>
+<p id="message"></p>
+
+<br>
+
+<button onclick="logout()">
+Logout
+</button>
 
 </div>
 
@@ -74,49 +113,87 @@ Withdraw $10
 <script>
 
 const accounts = {
-"1001": {
-pin:"1234",
-balance:50
-},
-"1002": {
-pin:"5678",
-balance:100
-}
+  "1001": { pin: "1234", balance: 50 },
+  "1002": { pin: "5678", balance: 100 }
 };
 
-let currentAccount = null;
+let currentUser = null;
 
 function login(){
 
-let acc =
-document.getElementById("account").value;
+ let account =
+ document.getElementById("account").value;
 
-let pin =
-document.getElementById("pin").value;
+ let pin =
+ document.getElementById("pin").value;
 
-if(accounts[acc] &&
-accounts[acc].pin === pin){
+ if(
+   accounts[account] &&
+   accounts[account].pin === pin
+ ){
+   currentUser = account;
 
-currentAccount = acc;
+   document.getElementById("loginScreen").style.display =
+   "none";
 
-document.getElementById("login").style.display =
-"none";
+   document.getElementById("atmScreen").style.display =
+   "block";
 
-document.getElementById("atm").style.display =
-"block";
+   updateBalance();
 
-updateBalance();
-
-}else{
-
-document.getElementById("loginMsg").innerText =
-"Invalid Account or PIN";
-
-}
-
+ }else{
+   document.getElementById("loginMessage").innerText =
+   "Invalid account or PIN";
+ }
 }
 
 function updateBalance(){
+ document.getElementById("balance").innerText =
+ accounts[currentUser].balance;
+}
 
-document.getElementById("balance").innerText =
-accounts[currentAccount].balance
+function deposit(amount){
+ accounts[currentUser].balance += amount;
+
+ updateBalance();
+
+ document.getElementById("message").innerText =
+ "Deposited $" + amount;
+}
+
+function withdraw(amount){
+
+ if(accounts[currentUser].balance >= amount){
+
+   accounts[currentUser].balance -= amount;
+
+   updateBalance();
+
+   document.getElementById("message").innerText =
+   "Withdrew $" + amount;
+
+ }else{
+
+   document.getElementById("message").innerText =
+   "Not enough money";
+ }
+}
+
+function logout(){
+
+ document.getElementById("atmScreen").style.display =
+ "none";
+
+ document.getElementById("loginScreen").style.display =
+ "block";
+
+ document.getElementById("account").value = "";
+ document.getElementById("pin").value = "";
+
+ currentUser = null;
+}
+
+</script>
+
+</body>
+</html>
