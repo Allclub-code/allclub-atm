@@ -139,7 +139,27 @@ border-radius:10px;
 
 <input
 id="accountNumber"
+readonly
 placeholder="Account Number">
+
+<div class="grid">
+
+<button onclick="addNumber(1)">1</button>
+<button onclick="addNumber(2)">2</button>
+<button onclick="addNumber(3)">3</button>
+
+<button onclick="addNumber(4)">4</button>
+<button onclick="addNumber(5)">5</button>
+<button onclick="addNumber(6)">6</button>
+
+<button onclick="addNumber(7)">7</button>
+<button onclick="addNumber(8)">8</button>
+<button onclick="addNumber(9)">9</button>
+
+<button onclick="clearNumber()">C</button>
+<button onclick="addNumber(0)">0</button>
+
+</div>
 
 <input
 id="pin"
@@ -369,8 +389,32 @@ onclick="bankReport()">
 Bank Report
 
 </button>
-<h3>All Members</h3>
+<h3>Store Purchase</h3>
 
+<input
+id="storeAccount"
+placeholder="Account Number">
+
+<input
+id="storeAmount"
+type="number"
+placeholder="Purchase Amount">
+
+<input
+id="storeName"
+placeholder="Store Name">
+
+<button
+class="danger"
+onclick="chargeAccount()">
+
+Charge Account
+
+</button>
+
+<br><br>
+
+<h3>All Members</h3>
 <div id="memberList"></div>
 
 <br>
@@ -391,6 +435,7 @@ const ADMIN_PIN = "9999";
 
 let currentUser = null;
 
+let failedAttempts = {};
 let bankData =
 JSON.parse(
 localStorage.getItem("allClubBank")
@@ -495,6 +540,57 @@ document
 
 function memberLogin(){
 
+let account =
+document.getElementById("accountNumber").value;
+
+let pin =
+document.getElementById("pin").value;
+
+if(!failedAttempts[account]){
+failedAttempts[account]=0;
+}
+
+let member =
+bankData.accounts[account];
+
+if(!member){
+alert("Account Not Found");
+return;
+}
+
+if(failedAttempts[account] >= 3){
+alert("Account Locked");
+return;
+}
+
+if(member.pin !== pin){
+
+failedAttempts[account]++;
+
+alert(
+"Wrong PIN (" +
+failedAttempts[account] +
+"/3)"
+);
+
+return;
+}
+
+failedAttempts[account]=0;
+
+currentUser = account;
+
+document
+.getElementById("loginScreen")
+.classList.add("hidden");
+
+document
+.getElementById("atmScreen")
+.classList.remove("hidden");
+
+updateScreen();
+
+}
 let account =
 document
 .getElementById("accountNumber")
@@ -898,6 +994,108 @@ saveData();
 loadMembers();
 
 }
+
+}
+
+function generateCard(){
+
+let account =
+prompt("Account Number");
+
+if(!bankData.accounts[account]){
+alert("Member Not Found");
+return;
+}
+
+let member =
+bankData.accounts[account];
+
+alert(
+
+"ALL CLUB BANK CARD\n\n" +
+
+member.name +
+
+"\nAccount: " +
+
+account +
+
+"\nPIN: " +
+
+member.pin
+
+);
+
+}
+function addNumber(num){
+
+document
+.getElementById("accountNumber")
+.value += num;
+
+}
+
+function clearNumber(){
+
+document
+.getElementById("accountNumber")
+.value = "";
+
+}
+function chargeAccount(){
+
+let account =
+document.getElementById(
+"storeAccount"
+).value;
+
+let amount =
+Number(
+document.getElementById(
+"storeAmount"
+).value
+);
+
+let store =
+document.getElementById(
+"storeName"
+).value;
+
+if(
+!bankData.accounts[account]
+){
+
+alert("Account Not Found");
+return;
+
+}
+
+if(
+bankData.accounts[account]
+.balance < amount
+){
+
+alert("Insufficient Funds");
+return;
+
+}
+
+bankData.accounts[account]
+.balance -= amount;
+
+addHistory(
+account,
+"Purchase $" +
+amount +
+" at " +
+store
+);
+
+saveData();
+
+alert(
+"Charge Complete"
+);
 
 }
 </script>
