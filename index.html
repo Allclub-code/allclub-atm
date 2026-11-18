@@ -10,7 +10,7 @@ color:white;
 text-align:center;
 }
 
-.container{
+.box{
 max-width:400px;
 margin:auto;
 margin-top:50px;
@@ -19,48 +19,104 @@ padding:20px;
 border-radius:10px;
 }
 
+input{
+padding:10px;
+margin:5px;
+width:80%;
+}
+
 button{
 padding:10px;
 margin:5px;
-font-size:16px;
 }
 </style>
 </head>
 <body>
 
-<div class="container">
+<div class="box">
+
 <h1>ALL CLUB ATM</h1>
 
-<h2>Balance: $<span id="balance">100</span></h2>
+<div id="login">
 
-<button onclick="deposit()">Deposit $10</button>
-<button onclick="withdraw()">Withdraw $10</button>
+<input id="account" placeholder="Account Number"><br>
 
-<p id="message"></p>
+<input id="pin" type="password"
+placeholder="PIN"><br>
+
+<button onclick="login()">
+Login
+</button>
+
+<p id="loginMsg"></p>
+
+</div>
+
+<div id="atm" style="display:none;">
+
+<h2>Balance: $<span id="balance"></span>
+</h2>
+
+<button onclick="deposit()">
+Deposit $10
+</button>
+
+<button onclick="withdraw()">
+Withdraw $10
+</button>
+
+<p id="msg"></p>
+
+</div>
+
 </div>
 
 <script>
-let balance = 100;
 
-function deposit(){
-balance += 10;
-document.getElementById("balance").innerText = balance;
-document.getElementById("message").innerText =
-"Deposited $10";
+const accounts = {
+"1001": {
+pin:"1234",
+balance:50
+},
+"1002": {
+pin:"5678",
+balance:100
 }
+};
 
-function withdraw(){
-if(balance >= 10){
-balance -= 10;
-document.getElementById("balance").innerText = balance;
-document.getElementById("message").innerText =
-"Withdrew $10";
+let currentAccount = null;
+
+function login(){
+
+let acc =
+document.getElementById("account").value;
+
+let pin =
+document.getElementById("pin").value;
+
+if(accounts[acc] &&
+accounts[acc].pin === pin){
+
+currentAccount = acc;
+
+document.getElementById("login").style.display =
+"none";
+
+document.getElementById("atm").style.display =
+"block";
+
+updateBalance();
+
 }else{
-document.getElementById("message").innerText =
-"Not enough money";
-}
-}
-</script>
 
-</body>
-</html>
+document.getElementById("loginMsg").innerText =
+"Invalid Account or PIN";
+
+}
+
+}
+
+function updateBalance(){
+
+document.getElementById("balance").innerText =
+accounts[currentAccount].balance
