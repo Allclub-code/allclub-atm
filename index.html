@@ -1,88 +1,160 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>All Club ATM</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>All Club Community Bank</title>
 
 <style>
-body{
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
 font-family:Arial,sans-serif;
+}
+
+body{
 background:#0f172a;
 color:white;
-text-align:center;
-margin:0;
+min-height:100vh;
 padding:20px;
 }
 
-.box{
-max-width:500px;
+.container{
+max-width:1000px;
 margin:auto;
+}
+
+.card{
 background:#1e293b;
 padding:20px;
 border-radius:15px;
+margin-bottom:20px;
 }
 
-input{
-width:90%;
-padding:10px;
-margin:5px;
+h1,h2,h3{
+margin-bottom:15px;
+}
+
+input,select{
+width:100%;
+padding:12px;
+margin-top:8px;
+margin-bottom:12px;
 border:none;
 border-radius:8px;
 }
 
 button{
-padding:10px;
-margin:5px;
+padding:12px;
 border:none;
 border-radius:8px;
 cursor:pointer;
+margin:4px;
+font-weight:bold;
 }
 
-.green{
-background:#22c55e;
-color:white;
-}
-
-.red{
-background:#ef4444;
-color:white;
-}
-
-.blue{
+.primary{
 background:#3b82f6;
 color:white;
 }
 
-.admin{
+.success{
+background:#22c55e;
+color:white;
+}
+
+.danger{
+background:#ef4444;
+color:white;
+}
+
+.warning{
 background:#f59e0b;
 color:black;
 }
 
-h1,h2{
-margin-top:10px;
+.secondary{
+background:#6b7280;
+color:white;
 }
+
+.hidden{
+display:none;
+}
+
+.balanceBox{
+font-size:28px;
+font-weight:bold;
+color:#22c55e;
+margin:15px 0;
+}
+
+.grid{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:10px;
+}
+
+.history{
+background:#111827;
+padding:10px;
+border-radius:10px;
+max-height:250px;
+overflow-y:auto;
+}
+
+.history div{
+padding:6px;
+border-bottom:1px solid #374151;
+}
+
+.memberBox{
+background:#111827;
+padding:10px;
+margin-top:10px;
+border-radius:10px;
+}
+
 </style>
 </head>
 
 <body>
 
-<div class="box">
+<div class="container">
 
-<h1>ALL CLUB ATM</h1>
+<div class="card">
 
-<div id="loginScreen">
+<h1>🏦 All Club Community Bank</h1>
 
-<input id="account" placeholder="Account Number">
+</div>
 
-<input id="pin" type="password" placeholder="PIN">
+<!-- LOGIN SCREEN -->
 
-<br>
+<div id="loginScreen" class="card">
 
-<button class="blue" onclick="login()">
+<h2>Member Login</h2>
+
+<input
+id="accountNumber"
+placeholder="Account Number">
+
+<input
+id="pin"
+type="password"
+placeholder="PIN">
+
+<button
+class="primary"
+onclick="memberLogin()">
 Login
 </button>
 
-<button class="admin" onclick="adminLogin()">
+<button
+class="warning"
+onclick="showAdminLogin()">
 Admin Login
 </button>
 
@@ -90,200 +162,292 @@ Admin Login
 
 </div>
 
-<div id="atmScreen" style="display:none;">
+<!-- ADMIN LOGIN -->
 
-<h2>Balance: $<span id="balance">0</span></h2>
+<div
+id="adminLoginScreen"
+class="card hidden">
 
-<button class="green" onclick="deposit(5)">
-Deposit $5
+<h2>Admin Login</h2>
+
+<input
+id="adminPin"
+type="password"
+placeholder="Admin PIN">
+
+<button
+class="warning"
+onclick="adminLogin()">
+Enter
 </button>
 
-<button class="green" onclick="deposit(10)">
-Deposit $10
-</button>
-
-<button class="green" onclick="deposit(20)">
-Deposit $20
-</button>
-
-<br>
-
-<button class="red" onclick="withdraw(5)">
-Withdraw $5
-</button>
-
-<button class="red" onclick="withdraw(10)">
-Withdraw $10
-</button>
-
-<button class="red" onclick="withdraw(20)">
-Withdraw $20
-</button>
-
-<p id="message"></p>
-
-<button onclick="logout()">
-Logout
-</button>
-
-</div>
-
-<div id="adminScreen" style="display:none;">
-
-<h2>Admin Panel</h2>
-
-<input id="newAccount"
-placeholder="Account Number">
-
-<input id="newPin"
-placeholder="PIN">
-
-<input id="newBalance"
-placeholder="Starting Balance">
-
-<br>
-
-<button class="admin"
-onclick="createAccount()">
-Create Account
+<button
+class="secondary"
+onclick="backToHome()">
+Back
 </button>
 
 <p id="adminMessage"></p>
 
-<button onclick="adminLogout()">
-Back
+</div>
+
+<!-- ATM SCREEN -->
+
+<div
+id="atmScreen"
+class="card hidden">
+
+<h2 id="memberName">
+Member
+</h2>
+
+<div class="balanceBox">
+
+Balance:
+$<span id="balance">0</span>
+
+</div>
+
+<div class="grid">
+
+<button
+class="success"
+onclick="deposit(5)">
+Deposit $5
+</button>
+
+<button
+class="success"
+onclick="deposit(10)">
+Deposit $10
+</button>
+
+<button
+class="success"
+onclick="deposit(20)">
+Deposit $20
+</button>
+
+<button
+class="success"
+onclick="deposit(50)">
+Deposit $50
+</button>
+
+<button
+class="danger"
+onclick="withdraw(5)">
+Withdraw $5
+</button>
+
+<button
+class="danger"
+onclick="withdraw(10)">
+Withdraw $10
+</button>
+
+<button
+class="danger"
+onclick="withdraw(20)">
+Withdraw $20
+</button>
+
+<button
+class="danger"
+onclick="withdraw(50)">
+Withdraw $50
 </button>
 
 </div>
+
+<h3>Transfer Money</h3>
+
+<input
+id="transferAccount"
+placeholder="Send To Account">
+
+<input
+id="transferAmount"
+type="number"
+placeholder="Amount">
+
+<button
+class="primary"
+onclick="transferMoney()">
+
+Transfer
+
+</button>
+
+<h3>Transaction History</h3>
+
+<div
+id="history"
+class="history">
+</div>
+
+<br>
+
+<button
+class="secondary"
+onclick="logout()">
+
+Logout
+
+</button>
+
+</div>
+
+<!-- ADMIN SCREEN -->
+
+<div
+id="adminScreen"
+class="card hidden">
+
+<h2>Admin Dashboard</h2>
+
+<h3>Create Member</h3>
+
+<input
+id="newName"
+placeholder="Member Name">
+
+<input
+id="newAccount"
+placeholder="Account Number">
+
+<input
+id="newPin"
+placeholder="PIN">
+
+<input
+id="newBalance"
+type="number"
+placeholder="Starting Balance">
+
+<button
+class="success"
+onclick="createAccount()">
+
+Create Account
+
+</button>
+
+<hr><br>
+
+<h3>Bank Statistics</h3>
+
+<div id="stats"></div>
+
+<br>
+
+<h3>All Members</h3>
+
+<div id="memberList"></div>
+
+<br>
+
+<button
+class="secondary"
+onclick="adminLogout()">
+
+Logout
+
+</button>
 
 </div>
 
 <script>
 
-const adminPin = "9999";
-
-const accounts = {
-"1001":{
-pin:"1234",
-balance:50
-},
-"1002":{
-pin:"5678",
-balance:100
-}
-};
+const ADMIN_PIN = "9999";
 
 let currentUser = null;
 
-function login(){
+let bankData =
+JSON.parse(
+localStorage.getItem("allClubBank")
+) || {
 
-let account =
-document.getElementById("account").value;
+accounts:{
 
-let pin =
-document.getElementById("pin").value;
+"1001":{
+name:"Demo Member",
+pin:"1234",
+balance:100,
+history:[]
+},
 
-if(
-accounts[account] &&
-accounts[account].pin === pin
-){
-
-currentUser = account;
-
-document.getElementById("loginScreen")
-.style.display = "none";
-
-document.getElementById("atmScreen")
-.style.display = "block";
-
-updateBalance();
-
-}else{
-
-document.getElementById("loginMessage")
-.innerText =
-"Invalid account or PIN";
-
+"1002":{
+name:"Club President",
+pin:"5678",
+balance:250,
+history:[]
 }
 
 }
 
-function updateBalance(){
+};
 
-document.getElementById("balance")
-.innerText =
-accounts[currentUser].balance;
+saveData();
 
-}
+function saveData(){
 
-function deposit(amount){
-
-accounts[currentUser].balance += amount;
-
-updateBalance();
-
-document.getElementById("message")
-.innerText =
-"Deposited $" + amount;
+localStorage.setItem(
+"allClubBank",
+JSON.stringify(bankData)
+);
 
 }
 
-function withdraw(amount){
+function backToHome(){
 
-if(accounts[currentUser].balance >= amount){
+document
+.getElementById("adminLoginScreen")
+.classList.add("hidden");
 
-accounts[currentUser].balance -= amount;
-
-updateBalance();
-
-document.getElementById("message")
-.innerText =
-"Withdrew $" + amount;
-
-}else{
-
-document.getElementById("message")
-.innerText =
-"Not enough money";
+document
+.getElementById("loginScreen")
+.classList.remove("hidden");
 
 }
 
-}
+function showAdminLogin(){
 
-function logout(){
+document
+.getElementById("loginScreen")
+.classList.add("hidden");
 
-document.getElementById("atmScreen")
-.style.display = "none";
-
-document.getElementById("loginScreen")
-.style.display = "block";
-
-document.getElementById("account")
-.value = "";
-
-document.getElementById("pin")
-.value = "";
-
-currentUser = null;
+document
+.getElementById("adminLoginScreen")
+.classList.remove("hidden");
 
 }
 
 function adminLogin(){
 
 let pin =
-prompt("Enter Admin PIN");
+document
+.getElementById("adminPin")
+.value;
 
-if(pin === adminPin){
+if(pin === ADMIN_PIN){
 
-document.getElementById("loginScreen")
-.style.display = "none";
+document
+.getElementById("adminLoginScreen")
+.classList.add("hidden");
 
-document.getElementById("adminScreen")
-.style.display = "block";
+document
+.getElementById("adminScreen")
+.classList.remove("hidden");
+
+loadMembers();
 
 }else{
 
-alert("Wrong PIN");
+document
+.getElementById("adminMessage")
+.innerText =
+"Wrong Admin PIN";
 
 }
 
@@ -291,36 +455,423 @@ alert("Wrong PIN");
 
 function adminLogout(){
 
-document.getElementById("adminScreen")
-.style.display = "none";
+document
+.getElementById("adminScreen")
+.classList.add("hidden");
 
-document.getElementById("loginScreen")
-.style.display = "block";
+document
+.getElementById("loginScreen")
+.classList.remove("hidden");
+
+}
+
+function memberLogin(){
+
+let account =
+document
+.getElementById("accountNumber")
+.value;
+
+let pin =
+document
+.getElementById("pin")
+.value;
+
+let member =
+bankData.accounts[account];
+
+if(!member){
+
+document
+.getElementById("loginMessage")
+.innerText =
+"Account Not Found";
+
+return;
+
+}
+
+if(member.pin !== pin){
+
+document
+.getElementById("loginMessage")
+.innerText =
+"Wrong PIN";
+
+return;
+
+}
+
+currentUser = account;
+
+document
+.getElementById("loginScreen")
+.classList.add("hidden");
+
+document
+.getElementById("atmScreen")
+.classList.remove("hidden");
+
+updateScreen();
+
+}
+
+function logout(){
+
+currentUser = null;
+
+document
+.getElementById("atmScreen")
+.classList.add("hidden");
+
+document
+.getElementById("loginScreen")
+.classList.remove("hidden");
+
+}
+
+function updateScreen(){
+
+let member =
+bankData.accounts[currentUser];
+
+document
+.getElementById("memberName")
+.innerText =
+member.name;
+
+document
+.getElementById("balance")
+.innerText =
+member.balance.toFixed(2);
+
+loadHistory();
+
+saveData();
+
+}
+
+function addHistory(
+account,
+text
+){
+
+let date =
+new Date()
+.toLocaleString();
+
+bankData
+.accounts[account]
+.history
+.unshift(
+date + " - " + text
+);
+
+saveData();
+
+}
+
+function deposit(amount){
+
+let member =
+bankData.accounts[currentUser];
+
+member.balance += amount;
+
+addHistory(
+currentUser,
+"Deposit $" + amount
+);
+
+updateScreen();
+
+}
+
+function withdraw(amount){
+
+let member =
+bankData.accounts[currentUser];
+
+if(
+member.balance < amount
+){
+
+alert(
+"Insufficient Funds"
+);
+
+return;
+
+}
+
+member.balance -= amount;
+
+addHistory(
+currentUser,
+"Withdrawal $" + amount
+);
+
+updateScreen();
+
+}
+
+function transferMoney(){
+
+let target =
+document
+.getElementById(
+"transferAccount"
+).value;
+
+let amount =
+Number(
+document
+.getElementById(
+"transferAmount"
+).value
+);
+
+if(
+!bankData.accounts[target]
+){
+
+alert(
+"Target Account Not Found"
+);
+
+return;
+
+}
+
+if(amount <= 0){
+
+return;
+
+}
+
+if(
+bankData
+.accounts[currentUser]
+.balance < amount
+){
+
+alert(
+"Insufficient Funds"
+);
+
+return;
+
+}
+
+bankData
+.accounts[currentUser]
+.balance -= amount;
+
+bankData
+.accounts[target]
+.balance += amount;
+
+addHistory(
+currentUser,
+"Transfer $" +
+amount +
+" to " +
+target
+);
+
+addHistory(
+target,
+"Received $" +
+amount +
+" from " +
+currentUser
+);
+
+updateScreen();
+
+}
+
+function loadHistory(){
+
+let box =
+document
+.getElementById(
+"history"
+);
+
+box.innerHTML = "";
+
+let history =
+bankData
+.accounts[currentUser]
+.history;
+
+history.forEach(item=>{
+
+let row =
+document
+.createElement("div");
+
+row.innerText = item;
+
+box.appendChild(row);
+
+});
 
 }
 
 function createAccount(){
 
+let name =
+document
+.getElementById(
+"newName"
+).value;
+
 let account =
-document.getElementById("newAccount").value;
+document
+.getElementById(
+"newAccount"
+).value;
 
 let pin =
-document.getElementById("newPin").value;
+document
+.getElementById(
+"newPin"
+).value;
 
 let balance =
-Number(document.getElementById("newBalance").value);
+Number(
+document
+.getElementById(
+"newBalance"
+).value
+);
 
-accounts[account] = {
-pin:pin,
-balance:balance
-};
+if(
+!name ||
+!account ||
+!pin
+){
 
-document.getElementById("adminMessage")
-.innerText =
-"Account Created: " + account;
+return;
 
 }
 
+bankData.accounts[account] = {
+
+name:name,
+pin:pin,
+balance:balance,
+history:[
+"Account Created"
+]
+
+};
+
+saveData();
+
+loadMembers();
+
+}
+
+function loadMembers(){
+
+let memberList =
+document
+.getElementById(
+"memberList"
+);
+
+memberList.innerHTML = "";
+
+let totalMoney = 0;
+let totalAccounts = 0;
+
+for(
+
+let account
+in
+bankData.accounts
+
+){
+
+let member =
+bankData
+.accounts[account];
+
+totalMoney +=
+member.balance;
+
+totalAccounts++;
+
+let div =
+document
+.createElement("div");
+
+div.className =
+"memberBox";
+
+div.innerHTML =
+
+"<b>" +
+member.name +
+"</b><br>" +
+
+"Acct: " +
+account +
+"<br>" +
+
+"Balance: $" +
+member.balance +
+"<br><br>" +
+
+"<button onclick='deleteAccount(\"" +
+account +
+"\")'>Delete</button>";
+
+memberList
+.appendChild(div);
+
+}
+
+document
+.getElementById(
+"stats"
+).innerHTML =
+
+"Members: " +
+totalAccounts +
+
+"<br><br>" +
+
+"Total Bank Balance: $" +
+totalMoney.toFixed(2);
+
+}
+
+function deleteAccount(
+account
+){
+
+if(
+confirm(
+"Delete account?"
+)
+){
+
+delete
+bankData.accounts[
+account
+];
+
+saveData();
+
+loadMembers();
+
+}
+
+}
 </script>
 
 </body>
