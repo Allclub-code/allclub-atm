@@ -185,15 +185,13 @@ Login
 <button
 class="warning"
 onclick="showAdminLogin()">
+Admin
+</button>
+
 <button
 class="success"
 onclick="showStoreLogin()">
-
 Store
-
-</button>
-Admin
-
 </button>
 
 <p id="loginMsg"></p>
@@ -721,72 +719,33 @@ document
 
 }
 
-function updateATM(){
+function deposit(amount){
 
 let member =
 bankData.accounts[currentAccount];
 
-document
-.getElementById("memberName")
-.innerText = member.name;
-
-document
-.getElementById("balance")
-.innerText =
-member.balance.toFixed(2);
-document
-.getElementById("savingsBalance")
-.innerText =
-member.savings.toFixed(2);
-document
-.getElementById("points")
-.innerText =
-member.points || 0;
-
-loadHistory();
-
-saveData();
-
+if(!member.checking){
+member.checking = 0;
 }
 
-function addHistory(
-account,
-message
-){
-
-let date =
-new Date()
-.toLocaleString();
-
-bankData
-.accounts[account]
-.history
-.unshift(
-date +
-" - " +
-message
-);
-
-saveData();
-
+if(!member.points){
+member.points = 0;
 }
 
-function deposit(amount){
+member.checking += amount;
 
-bankData
-.accounts[currentAccount]
-.balance += amount;
+member.points += amount;
 
 addHistory(
 currentAccount,
-"Deposited $" +
-amount
+"Deposited $" + amount
 );
+
+saveData();
 
 updateATM();
 
 }
-
 function withdraw(amount){
 
 if(
@@ -932,7 +891,7 @@ account +
 "<br>" +
 
 "Balance: $" +
-member.balance +
+member.checking +
 "<br><br>" +
 
 "<button onclick='deleteMember(\"" +
@@ -1096,7 +1055,7 @@ alert(
 member.name +
 
 "\nBalance: $" +
-member.balance
+member.checking
 
 );
 
@@ -1145,15 +1104,32 @@ document
 
 }
 
-document
-.getElementById("storeScreen")
-.classList.remove("hidden");
-  loadStoreMembers();
+function storeLogin(){
 
 let pin =
 document
 .getElementById("storePin")
 .value;
+
+if(pin !== STORE_PIN){
+
+alert("Wrong Store PIN");
+return;
+
+}
+
+document
+.getElementById("storeLogin")
+.classList.add("hidden");
+
+document
+.getElementById("storeScreen")
+.classList.remove("hidden");
+
+loadStoreMembers();
+
+}
+
 
 if(pin !== STORE_PIN){
 
@@ -1312,7 +1288,7 @@ account +
 "<br><br>" +
 
 "Balance: $" +
-member.balance.toFixed(2);
+member.checking.toFixed(2);
 
 }
 let account =
@@ -1374,7 +1350,7 @@ member.name +
 
 " - $" +
 
-member.balance +
+member.checking +
 
 "\n";
 
