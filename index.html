@@ -273,7 +273,36 @@
   .mini-board .row:last-child { border-bottom: none; }
   .ach-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 
+
+  .barcode-wrap { text-align: center; margin-top: 12px; }
+  .barcode-wrap canvas, .barcode-wrap svg { max-width: 100%; background: #fff; border-radius: 6px; padding: 8px; }
+  .barcode-acc {
+    font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px;
+    margin-top: 6px; color: var(--text);
+  }
+  .scan-overlay {
+    display: none; position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.92); flex-direction: column; align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .scan-overlay.active { display: flex; }
+  .scan-overlay video {
+    width: min(100%, 480px); max-height: 55vh; border-radius: 16px;
+    background: #000; object-fit: cover; border: 2px solid var(--accent);
+  }
+  .scan-frame {
+    position: relative; width: min(100%, 480px);
+  }
+  .scan-overlay .hint {
+    color: #fff; margin: 14px 0 8px; text-align: center; font-size: 1rem;
+  }
+  .scan-overlay .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .scan-status { color: var(--accent2); font-size: 0.9rem; min-height: 1.2em; text-align: center; }
+
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
 </head>
 <body>
 <div id="app">
@@ -542,9 +571,11 @@
             <img id="card-photo" class="photo" src="" alt="Photo" style="display:none">
             <div id="card-photo-placeholder" style="width:72px;height:72px;border-radius:50%;background:var(--panel2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--muted)">Photo</div>
           </div>
-          <div style="text-align:center;margin-top:12px">
-            <div class="muted" style="font-size:0.7rem;margin-bottom:4px">SCAN OR TYPE THIS CODE</div>
-            <div class="qr-box" id="card-qr" style="font-size:14px;font-weight:700;letter-spacing:1px">ACC0000</div>
+          <div class="barcode-wrap">
+            <div class="muted" style="font-size:0.7rem;margin-bottom:6px">SCAN QR CODE</div>
+            <canvas id="card-qr-canvas" width="180" height="180" style="display:block;margin:0 auto;background:#fff;border-radius:10px;padding:8px"></canvas>
+            <svg id="card-barcode" style="width:100%;max-width:260px;height:44px;margin-top:10px"></svg>
+            <div class="barcode-acc" id="card-qr">ACC0000</div>
           </div>
           <div class="muted" style="text-align:center;font-size:0.75rem;margin-top:8px">Present this card at participating stores &amp; the teller window</div>
         </div>
@@ -619,9 +650,10 @@
       <div class="card">
         <h3>Select Member</h3>
         <label>Scan / Enter Member Card</label>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <input id="bk-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
-          <button class="teal" style="white-space:nowrap" onclick="scanMember('banker')">Scan Card</button>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <input id="bk-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
+          <button class="teal" style="white-space:nowrap" onclick="scanMember('banker')">Lookup</button>
+          <button class="secondary" style="white-space:nowrap" onclick="openBarcodeScanner('banker')">📷 Camera Scan</button>
         </div>
         <label>Or choose from list</label>
         <select id="bk-member-select" onchange="previewBankerMember()"></select>
@@ -724,9 +756,10 @@
       <div class="card">
         <h3>Charge Member</h3>
         <label>Scan / Enter Member Card</label>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <input id="st-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
-          <button class="blue" style="white-space:nowrap" onclick="scanMember('store')">Scan Card</button>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <input id="st-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
+          <button class="blue" style="white-space:nowrap" onclick="scanMember('store')">Lookup</button>
+          <button class="secondary" style="white-space:nowrap" onclick="openBarcodeScanner('store')">📷 Camera Scan</button>
         </div>
         <label>Or choose from list</label>
         <select id="st-member-select" onchange="previewMemberBalance()"></select>
@@ -902,6 +935,15 @@
 
     <div id="ad-backup" class="tab-panel hidden">
       <div class="card">
+        <h3>Cloud Sync (shared across devices)</h3>
+        <p class="muted" style="margin-bottom:10px">Every device on this site shares the same members, balances, and schedules. Changes appear on other devices within seconds.</p>
+        <p class="muted" id="sync-status" style="margin-bottom:10px">Status: <strong>Connecting…</strong></p>
+        <div class="btn-row">
+          <button class="teal" onclick="syncNow()">Sync now</button>
+          <button class="secondary" onclick="forcePushCloud()">Overwrite cloud with this device</button>
+        </div>
+      </div>
+      <div class="card">
         <h3>Backup & Restore</h3>
         <div class="btn-row">
           <button onclick="exportData()">Export Bank Data</button>
@@ -931,6 +973,19 @@
 
 </div>
 
+
+<!-- Barcode Scanner Overlay (iPad camera) -->
+<div id="scan-overlay" class="scan-overlay">
+  <div class="scan-frame">
+    <video id="scan-video" playsinline muted autoplay></video>
+  </div>
+  <p class="hint">Point the camera at the member card QR code</p>
+  <p class="scan-status" id="scan-status">Starting camera…</p>
+  <div class="actions">
+    <button class="danger" onclick="closeBarcodeScanner()">Close</button>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script>
@@ -939,7 +994,13 @@
    localStorage only • No server required
    Banker role handles deposits (members cannot self-deposit)
    ============================================================ */
+const SUPABASE_URL =
+"https://yshkhkcplivhgxmedsfe.supabase.co";
 
+const SUPABASE_KEY =
+"sb_publishable_zzE1deqJoEQ6nz_KgirUgA_Kr8O1lTG";
+
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 const STORAGE_KEY = 'allclub_cu_v2';
 const MAX_PIN_ATTEMPTS = 5;
 
@@ -986,37 +1047,201 @@ const DEFAULT_DATA = {
 let db = null;
 let currentUser = null;
 
+
+function migrateDb(data) {
+  if (!data || !data.members) data = structuredClone(DEFAULT_DATA);
+  if (!data.bankerPin) data.bankerPin = '4321';
+  if (!data.tellerLog) data.tellerLog = [];
+  if (data.interestRate == null) data.interestRate = 0.005;
+  if (!data.schedules) data.schedules = {};
+  Object.values(data.members || {}).forEach(m => {
+    if (!m.notifications) m.notifications = [];
+    if (!m.createdAt) m.createdAt = new Date().toISOString();
+  });
+  return data;
+}
+
 /* ---------- Persistence ---------- */
 function loadDB() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      db = JSON.parse(raw);
-      if (!db.members) db = structuredClone(DEFAULT_DATA);
-      if (!db.bankerPin) db.bankerPin = '4321';
-      if (!db.tellerLog) db.tellerLog = [];
-      if (db.interestRate == null) db.interestRate = 0.005;
-      if (!db.schedules) db.schedules = {};
-      // Migrate older members
-      Object.values(db.members || {}).forEach(m => {
-        if (!m.notifications) m.notifications = [];
-        if (!m.createdAt) m.createdAt = new Date().toISOString();
-      });
+      db = migrateDb(JSON.parse(raw));
     } else {
       db = structuredClone(DEFAULT_DATA);
-      saveDB();
+      saveDBLocal();
     }
   } catch (e) {
     db = structuredClone(DEFAULT_DATA);
-    saveDB();
+    saveDBLocal();
   }
 }
 
-function saveDB() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+function saveDBLocal() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  } catch (e) {
+    console.warn('localStorage save failed', e);
+  }
 }
 
-/* ---------- Utils ---------- */
+function saveDB(force) {
+  if (!db) return;
+  db.updatedAt = new Date().toISOString();
+  saveDBLocal();
+  pushCloud(force);
+}
+
+/* ---------- Cloud sync (Supabase: one shared JSON document, live) ---------- */
+const STATE_ID = 'main';
+let _base = null, _version = 0, _pushing = false, _dirty = false, _force = false, _syncReady = false, _needsRefresh = false;
+const clone = o => JSON.parse(JSON.stringify(o));
+const same = (a, b) => JSON.stringify(a) === JSON.stringify(b);
+
+function updateSyncStatus(msg, ok) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.innerHTML = 'Status: <strong style="color:' + (ok ? 'var(--accent2)' : 'var(--muted)') + '">' + msg + '</strong>';
+}
+
+// Put only what THIS device changed (base -> local) on top of the cloud copy.
+function applyChanges(cloud, base, local) {
+  const out = clone(cloud), b = base || {};
+  Object.keys(local).forEach(k => { if (k !== 'members' && !same(local[k], b[k])) out[k] = clone(local[k]); });
+  out.members = out.members || {};
+  const bm = b.members || {}, lm = local.members || {};
+  Object.keys(lm).forEach(a => { if (!same(lm[a], bm[a])) out.members[a] = clone(lm[a]); });
+  Object.keys(bm).forEach(a => { if (!(a in lm)) delete out.members[a]; });
+  return out;
+}
+
+async function fetchCloud() {
+  const { data, error } = await sb.from('club_state').select('data,version').eq('id', STATE_ID).maybeSingle();
+  if (error) throw error;
+  return data;
+}
+
+// snap = state the cloud copy was built from; null = take the cloud copy as-is
+function adopt(cloudDoc, version, snap, refresh) {
+  _base = clone(cloudDoc); _version = version;
+  db = migrateDb(snap ? applyChanges(cloudDoc, snap, db) : clone(cloudDoc));
+  saveDBLocal();
+  localStorage.removeItem('allclub_base');
+  if (refresh) _needsRefresh = true;
+}
+
+async function pushCloud(force) {
+  if (!_syncReady) return;
+  if (force) _force = true;
+  if (_pushing) { _dirty = true; return; }
+  _pushing = true;
+  try {
+    do {
+      _dirty = false;
+      const snap = clone(db), old = _base;
+      let ver = _version;
+      let target = _force ? snap : applyChanges(_base, _base, snap);
+      for (let i = 0; ; i++) {
+        const { data, error } = await sb.from('club_state')
+          .update({ data: target, version: ver + 1, updated_at: new Date().toISOString() })
+          .eq('id', STATE_ID).eq('version', ver).select('version');
+        if (error) throw error;
+        if (data && data.length) { adopt(target, ver + 1, snap, !same(target, snap)); _force = false; break; }
+        if (i >= 5) throw new Error('Too many conflicts');
+        const cur = await fetchCloud();           // another device saved first: merge on top of theirs
+        ver = cur.version;
+        target = _force ? snap : applyChanges(cur.data, old, snap);
+      }
+    } while (_dirty);
+    updateSyncStatus('Synced · ' + new Date().toLocaleTimeString(), true);
+  } catch (e) {
+    console.warn('Cloud push failed', e);
+    try { localStorage.setItem('allclub_base', JSON.stringify(_base)); } catch (x) {}
+    updateSyncStatus('Offline — will retry', false);
+    clearTimeout(window._retryT);
+    window._retryT = setTimeout(() => pushCloud(), 8000);
+  } finally { _pushing = false; }
+}
+
+async function pullCloud() {
+  if (!_syncReady || _pushing) return;
+  try {
+    const { data: v } = await sb.from('club_state').select('version').eq('id', STATE_ID).maybeSingle();
+    if (!v || v.version <= _version) return;
+    const cur = await fetchCloud();
+    if (_pushing || !cur) return;
+    adopt(cur.data, cur.version, _base, true);
+    if (!same(db, _base)) pushCloud();
+    updateSyncStatus('Synced · ' + new Date().toLocaleTimeString(), true);
+  } catch (e) { console.warn('Cloud pull failed', e); }
+}
+
+async function syncNow() {
+  if (!_syncReady) { await initCloud(); return; }
+  await pullCloud(); await pushCloud(); toast('Synced');
+}
+function forcePushCloud() {
+  if (!_syncReady) return toast('Not connected to cloud', true);
+  if (!confirm('Replace the cloud data (and every other device) with this device\'s data?')) return;
+  saveDB(true); toast('Cloud overwritten');
+}
+
+// One-time import of the old per-member "members" table, if it exists
+async function importOldMembers() {
+  try {
+    const { data } = await sb.from('members').select('*');
+    (data || []).forEach(r => {
+      const m = db.members[r.accountNumber] || { accountNumber: r.accountNumber, failedAttempts: 0, locked: false, photo: null, streak: 0, lastDaily: null, createdAt: new Date().toISOString(), transactions: [], goals: [], achievements: [], lotteryTickets: 0, notifications: [] };
+      Object.assign(m, { name: r.name, pin: r.pin, checking: Number(r.checking || 0), savings: Number(r.savings || 0), points: Number(r.points || 0), rank: r.rank || m.rank });
+      db.members[r.accountNumber] = m;
+      const n = parseInt(String(r.accountNumber).replace(/\D/g, ''), 10);
+      if (n >= db.nextAcc) db.nextAcc = n + 1;
+    });
+  } catch (e) {}
+}
+
+async function initCloud() {
+  try {
+    if (!window.supabase) throw new Error('Supabase library not loaded');
+    updateSyncStatus('Connecting…', false);
+    let row = await fetchCloud();
+    if (!row) {                                   // first device ever: seed the cloud
+      await importOldMembers();
+      const { error } = await sb.from('club_state').insert({ id: STATE_ID, data: clone(db), version: 1 });
+      if (error && !(row = await fetchCloud())) throw error;
+      if (!row) row = { data: clone(db), version: 1 };
+    }
+    let pending = null;                           // edits made offline in a previous session
+    try { pending = JSON.parse(localStorage.getItem('allclub_base') || 'null'); } catch (e) {}
+    adopt(row.data, row.version, pending, true);
+    _syncReady = true;
+    if (!same(db, _base)) pushCloud();
+    sb.channel('club_state_live').on('postgres_changes', { event: '*', schema: 'public', table: 'club_state' }, () => pullCloud()).subscribe();
+    setInterval(() => {
+      pullCloud();
+      const t = ((document.activeElement || {}).tagName || '');
+      if (_needsRefresh && !/INPUT|TEXTAREA|SELECT/.test(t)) { _needsRefresh = false; refreshOpenUI(); }
+    }, 6000);
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) pullCloud(); });
+    window.addEventListener('online', () => { pullCloud(); pushCloud(); });
+    updateSyncStatus('Connected · live sync on', true);
+  } catch (e) {
+    console.warn('Cloud init failed', e);
+    updateSyncStatus('Not connected — ' + (e.message || e) + ' (running locally)', false);
+  }
+}
+
+function refreshOpenUI() {
+  if (!currentUser) {
+    if (typeof initLanding === 'function') initLanding();
+    return;
+  }
+  if (currentUser.role === 'member') refreshMemberUI();
+  if (currentUser.role === 'banker') refreshBankerUI();
+  if (currentUser.role === 'store') refreshStoreUI();
+  if (currentUser.role === 'admin') refreshAdminUI();
+}
+
 function money(n) {
   return '$' + (Number(n) || 0).toFixed(2);
 }
@@ -1099,33 +1324,182 @@ function clearAllNotifs() {
 }
 
 /* ---------- Card Scan ---------- */
-function scanMember(role) {
+function parseMemberCode(raw) {
+  const text = (raw || '').trim().toUpperCase();
+  if (!text) return null;
+  // Formats: ACC1001 | ALLCLUB|ACC1001 | ALLCLUB|ACC1001|NAME|RANK
+  const pipe = text.split('|');
+  if (pipe[0] === 'ALLCLUB' && pipe[1]) {
+    const m = pipe[1].match(/ACC\d+/);
+    if (m) return m[0];
+  }
+  const match = text.match(/ACC\d+/);
+  return match ? match[0] : null;
+}
+
+function scanMember(role, codeFromScanner) {
   const inputId = role === 'banker' ? 'bk-scan' : 'st-scan';
   const selectId = role === 'banker' ? 'bk-member-select' : 'st-member-select';
-  const raw = (document.getElementById(inputId).value || '').trim().toUpperCase();
+  const raw = (codeFromScanner || document.getElementById(inputId).value || '').trim();
   if (!raw) return toast('Enter or paste the account number from the card', true);
 
-  // Extract ACC#### pattern if present
-  let acc = raw;
-  const match = raw.match(/ACC\d+/);
-  if (match) acc = match[0];
-
-  if (!db.members[acc]) {
-    toast('No member found for "' + acc + '"', true);
-    return;
+  const acc = parseMemberCode(raw);
+  if (!acc || !db.members[acc]) {
+    toast('No member found for "' + raw + '"', true);
+    return false;
   }
 
   const sel = document.getElementById(selectId);
   sel.value = acc;
   if (role === 'banker') {
     previewBankerMember();
-    document.getElementById('bk-dep-amount').focus();
+    const amt = document.getElementById('bk-dep-amount');
+    if (amt) amt.focus();
   } else {
     previewMemberBalance();
-    document.getElementById('st-amount').focus();
+    const amt = document.getElementById('st-amount');
+    if (amt) amt.focus();
   }
-  document.getElementById(inputId).value = '';
+  const inp = document.getElementById(inputId);
+  if (inp) inp.value = '';
+  if (typeof playChime === 'function') playChime();
   toast('Card scanned — ' + db.members[acc].name + ' loaded');
+  return true;
+}
+
+function memberQrPayload(accountNumber, name, rank) {
+  const acc = accountNumber || 'ACC0000';
+  // Short, scannable payload for iPad cameras
+  return 'ALLCLUB|' + acc + (name ? '|' + String(name).slice(0, 16) : '') + (rank ? '|' + rank : '');
+}
+
+function renderMemberBarcode(accountNumber, name, rank) {
+  const acc = accountNumber || 'ACC0000';
+  const payload = memberQrPayload(acc, name, rank);
+
+  // Primary: QR code (best for iPad camera)
+  const canvas = document.getElementById('card-qr-canvas');
+  if (canvas && typeof QRCode !== 'undefined') {
+    QRCode.toCanvas(canvas, payload, {
+      width: 180,
+      margin: 2,
+      errorCorrectionLevel: 'H',
+      color: { dark: '#000000', light: '#ffffff' }
+    }, function(err) {
+      if (err) console.warn('QR failed', err);
+    });
+  }
+
+  // Secondary: linear Code128 barcode (account only — shorter)
+  const svg = document.getElementById('card-barcode');
+  if (svg && typeof JsBarcode !== 'undefined') {
+    try {
+      JsBarcode(svg, acc, {
+        format: 'CODE128',
+        lineColor: '#000',
+        width: 2,
+        height: 40,
+        displayValue: false,
+        margin: 4,
+        background: '#ffffff'
+      });
+    } catch (e) {
+      console.warn('JsBarcode failed', e);
+    }
+  }
+}
+
+/* ---------- Camera barcode scanner (iPad) ---------- */
+let _scanStream = null;
+let _scanRAF = null;
+let _scanRole = null;
+let _scanDetector = null;
+let _scanLocked = false;
+
+async function openBarcodeScanner(role) {
+  _scanRole = role;
+  _scanLocked = false;
+  const overlay = document.getElementById('scan-overlay');
+  const video = document.getElementById('scan-video');
+  const status = document.getElementById('scan-status');
+  if (!overlay || !video) return;
+
+  overlay.classList.add('active');
+  status.textContent = 'Starting camera…';
+
+  try {
+    _scanStream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    });
+    video.srcObject = _scanStream;
+    await video.play();
+    status.textContent = 'Point at barcode or QR code…';
+
+    if ('BarcodeDetector' in window) {
+      const formats = ['qr_code', 'code_128', 'code_39', 'ean_13', 'ean_8', 'upc_a', 'upc_e'];
+      try {
+        _scanDetector = new BarcodeDetector({ formats });
+      } catch (e) {
+        _scanDetector = new BarcodeDetector();
+      }
+      scanLoop();
+    } else {
+      status.textContent = 'Camera on — this iPad browser can’t auto-read barcodes. Type the code, or use Safari/Chrome.';
+    }
+  } catch (err) {
+    console.warn(err);
+    status.textContent = 'Camera permission denied or unavailable. Type the account number instead.';
+    toast('Camera not available — type the account number', true);
+  }
+}
+
+function scanLoop() {
+  const video = document.getElementById('scan-video');
+  const status = document.getElementById('scan-status');
+  if (!_scanDetector || !video || video.readyState < 2) {
+    _scanRAF = requestAnimationFrame(scanLoop);
+    return;
+  }
+  _scanDetector.detect(video).then(codes => {
+    if (_scanLocked) return;
+    if (codes && codes.length) {
+      const raw = (codes[0].rawValue || '').trim();
+      if (raw) {
+        _scanLocked = true;
+        status.textContent = 'Found: ' + raw;
+        const ok = scanMember(_scanRole, raw);
+        if (ok) {
+          closeBarcodeScanner();
+        } else {
+          status.textContent = 'Code read but no matching member: ' + raw;
+          setTimeout(() => { _scanLocked = false; status.textContent = 'Point at barcode or QR code…'; }, 1500);
+        }
+      }
+    }
+    if (!_scanLocked) _scanRAF = requestAnimationFrame(scanLoop);
+  }).catch(() => {
+    if (!_scanLocked) _scanRAF = requestAnimationFrame(scanLoop);
+  });
+}
+
+function closeBarcodeScanner() {
+  _scanLocked = true;
+  if (_scanRAF) cancelAnimationFrame(_scanRAF);
+  _scanRAF = null;
+  _scanDetector = null;
+  if (_scanStream) {
+    _scanStream.getTracks().forEach(t => t.stop());
+    _scanStream = null;
+  }
+  const video = document.getElementById('scan-video');
+  if (video) video.srcObject = null;
+  const overlay = document.getElementById('scan-overlay');
+  if (overlay) overlay.classList.remove('active');
 }
 
 /* ---------- Auth ---------- */
@@ -1744,6 +2118,7 @@ function refreshMemberUI() {
   document.getElementById('card-acc').textContent = m.accountNumber;
   document.getElementById('card-rank').textContent = m.rank || 'Bronze';
   document.getElementById('card-qr').textContent = m.accountNumber;
+  renderMemberBarcode(m.accountNumber, m.name, m.rank);
   const statusEl = document.getElementById('card-status');
   if (m.locked) {
     statusEl.textContent = 'Locked';
@@ -1827,13 +2202,13 @@ function uploadMemberPhoto(ev) {
 function printStatement() {
   const m = getMember();
   const w = window.open('', '_blank');
-  w.document.write(`<html><head><title>Statement</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px}</style></head><body>
-    <h2>All Club Credit Union — Statement</h2>
-    <p>${m.name} · ${m.accountNumber}</p>
-    <p>Checking: ${money(m.checking)} · Savings: ${money(m.savings)}</p>
-    <table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead><tbody>
-    ${(m.transactions||[]).map(t=>`<tr><td>${new Date(t.date).toLocaleString()}</td><td>${t.type}</td><td>${t.account}</td><td>${money(t.amount)}</td><td>${t.note||''}</td></tr>`).join('')}
-    </tbody></table></body></html>`);
+  w.document.write('<html><head><title>Statement</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px}</style></head><body>' +
+    '<h2>All Club Credit Union — Statement</h2>' +
+    '<p>' + m.name + ' · ' + m.accountNumber + '</p>' +
+    '<p>Checking: ' + money(m.checking) + ' · Savings: ' + money(m.savings) + '</p>' +
+    '<table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead><tbody>' +
+    (m.transactions||[]).map(t => '<tr><td>' + new Date(t.date).toLocaleString() + '</td><td>' + t.type + '</td><td>' + t.account + '</td><td>' + money(t.amount) + '</td><td>' + (t.note||'') + '</td></tr>').join('') +
+    '</tbody></table></body></html>');
   w.document.close();
   w.print();
 }
@@ -2417,7 +2792,7 @@ function importData(ev) {
       db = data;
       if (!db.bankerPin) db.bankerPin = '4321';
       if (!db.tellerLog) db.tellerLog = [];
-      saveDB();
+      saveDB(true);
       refreshAdminUI();
       document.getElementById('backup-msg').textContent = 'Import successful.';
       toast('Data imported');
@@ -2431,7 +2806,7 @@ function importData(ev) {
 function emergencyRestore() {
   if (!confirm('Restore default demo data? Current data will be overwritten.')) return;
   db = structuredClone(DEFAULT_DATA);
-  saveDB();
+  saveDB(true);
   refreshAdminUI();
   document.getElementById('backup-msg').textContent = 'Defaults restored.';
   toast('Defaults restored');
@@ -2442,7 +2817,7 @@ function resetBank() {
   if (!confirm('Are you absolutely sure?')) return;
   localStorage.removeItem(STORAGE_KEY);
   db = structuredClone(DEFAULT_DATA);
-  saveDB();
+  saveDB(true);
   refreshAdminUI();
   document.getElementById('backup-msg').textContent = 'Bank has been fully reset.';
   toast('Bank reset');
@@ -2542,9 +2917,15 @@ function initLanding() {
 }
 
 /* ---------- Boot ---------- */
-loadDB();
-showScreen('screen-role');
-initLanding();
+async function startApp() {
+  loadDB();                      // show instantly from the local cache
+  showScreen('screen-role');
+  initLanding();
+  await initCloud();             // then load/sync the shared cloud copy
+  refreshOpenUI();
+}
+
+startApp();
 </script>
 </body>
 </html>
