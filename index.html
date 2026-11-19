@@ -126,6 +126,19 @@
     display: inline-block; padding: 3px 8px; border-radius: 6px;
     font-size: 0.75rem; font-weight: 600; background: var(--purple); color: #1a0033;
   }
+  .notif-badge {
+    display: inline-block; min-width: 18px; height: 18px; padding: 0 5px;
+    border-radius: 999px; background: var(--danger); color: #fff;
+    font-size: 0.7rem; font-weight: 700; line-height: 18px; text-align: center;
+    margin-left: 4px; vertical-align: middle;
+  }
+  .notif-item {
+    padding: 10px 12px; border-bottom: 1px solid var(--border);
+    display: flex; justify-content: space-between; gap: 10px; align-items: flex-start;
+  }
+  .notif-item.unread { background: rgba(0,200,83,0.08); }
+  .notif-item .msg { flex: 1; }
+  .notif-item .time { font-size: 0.75rem; color: var(--muted); white-space: nowrap; }
   .vault-screen {
     background: radial-gradient(circle at center, #1a2a1a, #0b0f14);
     border: 3px solid #2e7d32; border-radius: 20px; padding: 30px; text-align: center;
@@ -232,6 +245,7 @@
       <div class="tab" data-tab="m-rewards" onclick="switchTab('member',this)">Rewards</div>
       <div class="tab" data-tab="m-card" onclick="switchTab('member',this)">My Card</div>
       <div class="tab" data-tab="m-goals" onclick="switchTab('member',this)">Goals</div>
+      <div class="tab" data-tab="m-notifs" onclick="switchTab('member',this)">Alerts <span id="notif-badge" class="notif-badge hidden">0</span></div>
       <div class="tab" data-tab="m-settings" onclick="switchTab('member',this)">Settings</div>
     </div>
 
@@ -346,13 +360,20 @@
               <div style="font-size:0.7rem;color:var(--muted)">ALL CLUB CREDIT UNION</div>
               <div style="font-weight:700;font-size:1.1rem" id="card-name">Member</div>
               <div class="muted" id="card-acc">ACC0000</div>
-              <div style="margin-top:8px"><span class="rank-badge" id="card-rank">Bronze</span></div>
+              <div style="margin-top:8px">
+                <span class="rank-badge" id="card-rank">Bronze</span>
+                <span id="card-status" class="rank-badge" style="background:var(--accent);color:#003d1a;margin-left:6px">Active</span>
+              </div>
+              <div class="muted" style="margin-top:6px;font-size:0.75rem">Expires: <span id="card-expires">—</span></div>
             </div>
             <img id="card-photo" class="photo" src="" alt="Photo" style="display:none">
             <div id="card-photo-placeholder" style="width:72px;height:72px;border-radius:50%;background:var(--panel2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--muted)">Photo</div>
           </div>
-          <div class="qr-box" id="card-qr">ACC0000</div>
-          <div class="muted" style="text-align:center;font-size:0.75rem">Present this card at participating stores</div>
+          <div style="text-align:center;margin-top:12px">
+            <div class="muted" style="font-size:0.7rem;margin-bottom:4px">SCAN OR TYPE THIS CODE</div>
+            <div class="qr-box" id="card-qr" style="font-size:14px;font-weight:700;letter-spacing:1px">ACC0000</div>
+          </div>
+          <div class="muted" style="text-align:center;font-size:0.75rem;margin-top:8px">Present this card at participating stores &amp; the teller window</div>
         </div>
         <div class="btn-row" style="justify-content:center;margin-top:14px">
           <button class="secondary" onclick="window.print()">Print Card</button>
@@ -375,6 +396,20 @@
         <label>Target Amount ($)</label>
         <input id="goal-target" type="number" min="1" step="1">
         <button onclick="addGoal()">Add Goal</button>
+      </div>
+    </div>
+
+    <!-- Notifications / Alerts -->
+    <div id="m-notifs" class="tab-panel hidden">
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
+          <h3 style="margin:0">Notifications</h3>
+          <div class="btn-row" style="margin:0">
+            <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="markAllNotifsRead()">Mark all read</button>
+            <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="clearAllNotifs()">Clear</button>
+          </div>
+        </div>
+        <div id="notifs-list" class="muted">No notifications yet</div>
       </div>
     </div>
 
@@ -416,7 +451,12 @@
     <div id="bk-teller" class="tab-panel">
       <div class="card">
         <h3>Select Member</h3>
-        <label>Member</label>
+        <label>Scan / Enter Member Card</label>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <input id="bk-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
+          <button class="teal" style="white-space:nowrap" onclick="scanMember('banker')">Scan Card</button>
+        </div>
+        <label>Or choose from list</label>
         <select id="bk-member-select" onchange="previewBankerMember()"></select>
         <div id="bk-balance-preview" class="muted" style="margin-bottom:12px;min-height:24px"></div>
       </div>
@@ -493,7 +533,12 @@
     <div id="st-charge" class="tab-panel">
       <div class="card">
         <h3>Charge Member</h3>
-        <label>Select Member</label>
+        <label>Scan / Enter Member Card</label>
+        <div style="display:flex;gap:8px;margin-bottom:10px">
+          <input id="st-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
+          <button class="blue" style="white-space:nowrap" onclick="scanMember('store')">Scan Card</button>
+        </div>
+        <label>Or choose from list</label>
         <select id="st-member-select" onchange="previewMemberBalance()"></select>
         <div id="st-balance-preview" class="muted" style="margin-bottom:10px"></div>
         <label>Amount</label>
@@ -684,12 +729,16 @@ const DEFAULT_DATA = {
       photo: null,
       streak: 1,
       lastDaily: null,
+      createdAt: new Date().toISOString(),
       transactions: [
         { id: 1, date: new Date().toISOString(), type: 'Deposit', account: 'checking', amount: 500, note: 'Opening deposit (Banker)' }
       ],
       goals: [],
       achievements: ['first_login'],
-      lotteryTickets: 0
+      lotteryTickets: 0,
+      notifications: [
+        { id: 'n1', date: new Date().toISOString(), message: 'Welcome to All Club Credit Union! Your account is ready.', read: false, type: 'info' }
+      ]
     }
   },
   sales: [],
@@ -710,6 +759,11 @@ function loadDB() {
       if (!db.members) db = structuredClone(DEFAULT_DATA);
       if (!db.bankerPin) db.bankerPin = '4321';
       if (!db.tellerLog) db.tellerLog = [];
+      // Migrate older members
+      Object.values(db.members || {}).forEach(m => {
+        if (!m.notifications) m.notifications = [];
+        if (!m.createdAt) m.createdAt = new Date().toISOString();
+      });
     } else {
       db = structuredClone(DEFAULT_DATA);
       saveDB();
@@ -741,7 +795,7 @@ function showScreen(id) {
 }
 function switchTab(area, el) {
   const panels = {
-    member: ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-settings'],
+    member: ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-notifs','m-settings'],
     banker: ['bk-teller','bk-members','bk-activity'],
     store: ['st-charge','st-members','st-sales','st-reports'],
     admin: ['ad-dash','ad-members','ad-create','ad-reports','ad-backup','ad-vault']
@@ -773,6 +827,68 @@ function calcRank(points) {
   return 'Bronze';
 }
 
+/* ---------- Notifications ---------- */
+function pushNotification(member, message, type) {
+  if (!member) return;
+  if (!member.notifications) member.notifications = [];
+  member.notifications.unshift({
+    id: uid(),
+    date: new Date().toISOString(),
+    message,
+    read: false,
+    type: type || 'info'
+  });
+  if (member.notifications.length > 50) member.notifications.length = 50;
+}
+
+function markAllNotifsRead() {
+  const m = getMember();
+  if (!m || !m.notifications) return;
+  m.notifications.forEach(n => n.read = true);
+  saveDB();
+  refreshMemberUI();
+  toast('All marked as read');
+}
+
+function clearAllNotifs() {
+  const m = getMember();
+  if (!m) return;
+  m.notifications = [];
+  saveDB();
+  refreshMemberUI();
+  toast('Notifications cleared');
+}
+
+/* ---------- Card Scan ---------- */
+function scanMember(role) {
+  const inputId = role === 'banker' ? 'bk-scan' : 'st-scan';
+  const selectId = role === 'banker' ? 'bk-member-select' : 'st-member-select';
+  const raw = (document.getElementById(inputId).value || '').trim().toUpperCase();
+  if (!raw) return toast('Enter or paste the account number from the card', true);
+
+  // Extract ACC#### pattern if present
+  let acc = raw;
+  const match = raw.match(/ACC\d+/);
+  if (match) acc = match[0];
+
+  if (!db.members[acc]) {
+    toast('No member found for "' + acc + '"', true);
+    return;
+  }
+
+  const sel = document.getElementById(selectId);
+  sel.value = acc;
+  if (role === 'banker') {
+    previewBankerMember();
+    document.getElementById('bk-dep-amount').focus();
+  } else {
+    previewMemberBalance();
+    document.getElementById('st-amount').focus();
+  }
+  document.getElementById(inputId).value = '';
+  toast('Card scanned — ' + db.members[acc].name + ' loaded');
+}
+
 /* ---------- Auth ---------- */
 function memberLogin() {
   const acc = document.getElementById('m-acc').value.trim().toUpperCase();
@@ -793,6 +909,7 @@ function memberLogin() {
     m.failedAttempts = (m.failedAttempts || 0) + 1;
     if (m.failedAttempts >= MAX_PIN_ATTEMPTS) {
       m.locked = true;
+      pushNotification(m, 'Your account was locked due to too many incorrect PIN attempts. Contact admin to unlock.', 'alert');
       saveDB();
       msg.textContent = 'Too many attempts. Account locked.';
       return;
@@ -807,7 +924,7 @@ function memberLogin() {
   document.getElementById('m-pin').value = '';
   showScreen('screen-member');
   document.querySelectorAll('#member-tabs .tab').forEach((t,i) => t.classList.toggle('active', i === 0));
-  ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-settings'].forEach((id,i) => {
+  ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-notifs','m-settings'].forEach((id,i) => {
     document.getElementById(id).classList.toggle('hidden', i !== 0);
   });
   refreshMemberUI();
@@ -946,12 +1063,15 @@ function claimDailyReward() {
   const today = todayKey();
   if (m.lastDaily === today) return toast('Already claimed today', true);
   const bonus = 15 + (m.streak || 0) * 2;
+  const oldRank = m.rank;
   m.points = (m.points || 0) + bonus;
   m.streak = (m.lastDaily === prevDay(today)) ? (m.streak || 0) + 1 : 1;
   m.lastDaily = today;
   m.rank = calcRank(m.points);
   addTx(m, 'Reward', 'points', bonus, 'Daily login bonus');
   checkAchievements(m);
+  pushNotification(m, 'Daily reward claimed: +' + bonus + ' points (streak ' + m.streak + ')', 'reward');
+  if (m.rank !== oldRank) pushNotification(m, 'Rank up! You are now ' + m.rank + '.', 'reward');
   saveDB();
   refreshMemberUI();
   toast('+' + bonus + ' points! Streak: ' + m.streak);
@@ -1034,9 +1154,13 @@ function bankerDeposit() {
   addTx(m, 'Deposit', acctType, amt, 'Banker: ' + note);
 
   // Points for deposits
+  const oldRank = m.rank;
   m.points = (m.points || 0) + Math.floor(amt / 10);
   m.rank = calcRank(m.points);
   checkAchievements(m);
+
+  pushNotification(m, 'Deposit of ' + money(amt) + ' received in ' + acctType + (note ? ' (' + note + ')' : ''), 'deposit');
+  if (m.rank !== oldRank) pushNotification(m, 'Rank up! You are now ' + m.rank + '.', 'reward');
 
   // Teller log
   db.tellerLog = db.tellerLog || [];
@@ -1124,6 +1248,7 @@ function contributeGoal(id, amt) {
     m.points = (m.points || 0) + 50;
     m.achievements = m.achievements || [];
     if (!m.achievements.includes('goal_complete')) m.achievements.push('goal_complete');
+    pushNotification(m, 'Goal completed: "' + g.name + '"! +50 points', 'reward');
     toast('Goal completed! +50 points');
   }
   m.rank = calcRank(m.points);
@@ -1242,7 +1367,25 @@ function refreshMemberUI() {
   document.getElementById('card-name').textContent = m.name;
   document.getElementById('card-acc').textContent = m.accountNumber;
   document.getElementById('card-rank').textContent = m.rank || 'Bronze';
-  document.getElementById('card-qr').textContent = m.accountNumber + '\n' + m.name.slice(0,12);
+  document.getElementById('card-qr').textContent = m.accountNumber;
+  const statusEl = document.getElementById('card-status');
+  if (m.locked) {
+    statusEl.textContent = 'Locked';
+    statusEl.style.background = 'var(--danger)';
+    statusEl.style.color = '#fff';
+  } else {
+    statusEl.textContent = 'Active';
+    statusEl.style.background = 'var(--accent)';
+    statusEl.style.color = '#003d1a';
+  }
+  // Expiration: 1 year from createdAt or default
+  let expDate = 'Dec 31, 2027';
+  if (m.createdAt) {
+    const d = new Date(m.createdAt);
+    d.setFullYear(d.getFullYear() + 1);
+    expDate = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+  document.getElementById('card-expires').textContent = expDate;
   const photo = document.getElementById('card-photo');
   const ph = document.getElementById('card-photo-placeholder');
   if (m.photo) {
@@ -1252,6 +1395,27 @@ function refreshMemberUI() {
   } else {
     photo.style.display = 'none';
     ph.style.display = 'flex';
+  }
+
+  // Notifications
+  const notifs = m.notifications || [];
+  const unread = notifs.filter(n => !n.read).length;
+  const badge = document.getElementById('notif-badge');
+  if (unread > 0) {
+    badge.textContent = unread > 9 ? '9+' : unread;
+    badge.classList.remove('hidden');
+  } else {
+    badge.classList.add('hidden');
+  }
+  const nList = document.getElementById('notifs-list');
+  if (!notifs.length) {
+    nList.innerHTML = '<p class="muted">No notifications yet</p>';
+  } else {
+    nList.innerHTML = notifs.map(n => `
+      <div class="notif-item ${n.read ? '' : 'unread'}">
+        <div class="msg">${n.message}</div>
+        <div class="time">${new Date(n.date).toLocaleString()}</div>
+      </div>`).join('');
   }
 
   const gEl = document.getElementById('goals-list');
@@ -1352,6 +1516,7 @@ function storeCharge() {
   });
   m.points = (m.points || 0) + Math.floor(amt / 5);
   m.rank = calcRank(m.points);
+  pushNotification(m, 'Store charge of ' + money(amt) + ' for "' + desc + '" from ' + from, 'purchase');
   saveDB();
   document.getElementById('st-amount').value = '';
   document.getElementById('st-desc').value = '';
@@ -1422,10 +1587,14 @@ function createMember() {
     photo: null,
     streak: 0,
     lastDaily: null,
+    createdAt: new Date().toISOString(),
     transactions: [],
     goals: [],
     achievements: [],
-    lotteryTickets: 0
+    lotteryTickets: 0,
+    notifications: [
+      { id: uid(), date: new Date().toISOString(), message: 'Welcome to All Club Credit Union! Your account is ready.', read: false, type: 'info' }
+    ]
   };
   if (checking > 0) {
     addTx(db.members[acc], 'Deposit', 'checking', checking, 'Opening balance (Admin)');
