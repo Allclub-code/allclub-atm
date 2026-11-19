@@ -156,9 +156,9 @@
       <button class="teal" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-banker-login')">Banker Login</button>
       <button class="blue" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-store-login')">Store Login</button>
       <button class="purple" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-admin-login')">Admin Login</button>
-      <p class="muted" style="text-align:center;margin-top:16px;font-size:0.8rem">
-        Demo: Member ACC1001 / PIN 1234<br>
-        Banker PIN 4321 · Store PIN 5678 · Admin PIN 9999
+    <p class="muted" style="text-align:center;margin-top:16px;font-size:0.8rem">
+  All Club Credit Union
+</p>
       </p>
     </div>
   </div>
@@ -392,7 +392,7 @@
       </div>
       <div class="card">
         <h3>Paycheck Simulator</h3>
-        <p class="muted">Simulate a direct-deposit paycheck into Checking (for demo).</p>
+        <p class="muted">Receive a direct-deposit paycheck into Checking.</p>
         <label>Amount</label>
         <input id="paycheck-amt" type="number" min="1" step="0.01" value="500">
         <button class="blue" onclick="simulatePaycheck()">Receive Paycheck</button>
@@ -968,7 +968,7 @@ function simulatePaycheck() {
   const amt = parseFloat(document.getElementById('paycheck-amt').value) || 0;
   if (amt <= 0) return toast('Invalid amount', true);
   m.checking = (m.checking || 0) + amt;
-  addTx(m, 'Paycheck', 'checking', amt, 'Direct deposit (simulated)');
+  addTx(m, 'Paycheck', 'checking', amt, 'Direct deposit');
   m.points = (m.points || 0) + Math.floor(amt / 20);
   m.rank = calcRank(m.points);
   saveDB();
