@@ -155,6 +155,124 @@
     .printable, .printable * { visibility: visible; }
     .printable { position: absolute; left: 0; top: 0; width: 100%; }
   }
+
+  /* ===== Fun / polish ===== */
+  .rank-bronze { color: #cd7f32 !important; }
+  .rank-silver { color: #c0c0c0 !important; }
+  .rank-gold { color: #ffd700 !important; }
+  .rank-platinum { color: #e0e7ff !important; text-shadow: 0 0 8px #a5b4fc; }
+  .rank-bar-bronze { background: linear-gradient(90deg,#8d5524,#cd7f32); }
+  .rank-bar-silver { background: linear-gradient(90deg,#9e9e9e,#e0e0e0); }
+  .rank-bar-gold { background: linear-gradient(90deg,#f9a825,#ffd700); }
+  .rank-bar-platinum { background: linear-gradient(90deg,#7c83ff,#e0e7ff); }
+
+  .landing {
+    position: relative; overflow: hidden;
+    max-width: 440px; margin: 24px auto; padding: 28px 24px 22px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 20px;
+    box-shadow: 0 0 40px rgba(0,200,83,0.08);
+  }
+  .landing-bg {
+    position: absolute; inset: 0; pointer-events: none; overflow: hidden; border-radius: 20px;
+  }
+  .float-coin {
+    position: absolute; font-size: 14px; opacity: 0.15; animation: floaty 12s linear infinite;
+  }
+  @keyframes floaty {
+    0% { transform: translateY(100%) rotate(0deg); opacity: 0; }
+    10% { opacity: 0.2; }
+    90% { opacity: 0.15; }
+    100% { transform: translateY(-120%) rotate(360deg); opacity: 0; }
+  }
+  .logo-glow {
+    font-size: 1.55rem; font-weight: 800; text-align: center; letter-spacing: 0.5px;
+    animation: pulseGlow 2.8s ease-in-out infinite;
+  }
+  .logo-glow span { color: var(--accent2); }
+  @keyframes pulseGlow {
+    0%, 100% { text-shadow: 0 0 8px rgba(0,230,118,0.25); }
+    50% { text-shadow: 0 0 22px rgba(0,230,118,0.55); }
+  }
+  .mascot {
+    width: 72px; height: 72px; margin: 0 auto 10px; display: block;
+    animation: bounce 2.5s ease-in-out infinite;
+  }
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-6px); }
+  }
+  .tagline {
+    text-align: center; color: var(--muted); font-size: 0.9rem; min-height: 1.4em;
+    margin-bottom: 14px; transition: opacity 0.35s;
+  }
+  .club-stats {
+    display: flex; justify-content: center; gap: 10px; flex-wrap: wrap;
+    margin-bottom: 18px; font-size: 0.75rem; color: var(--muted);
+  }
+  .club-stats span {
+    background: var(--panel2); border: 1px solid var(--border);
+    padding: 4px 10px; border-radius: 999px;
+  }
+  .role-btn {
+    width: 100%; margin-bottom: 10px; padding: 14px 16px;
+    display: flex; align-items: center; gap: 12px; text-align: left;
+    border-radius: 12px; transition: transform 0.12s, filter 0.12s;
+  }
+  .role-btn:hover { transform: translateY(-1px); }
+  .role-btn .icon { font-size: 1.4rem; width: 36px; text-align: center; }
+  .role-btn .txt { display: flex; flex-direction: column; gap: 2px; }
+  .role-btn .txt strong { font-size: 1rem; }
+  .role-btn .txt small { font-weight: 400; opacity: 0.85; font-size: 0.78rem; }
+  .demo-btn {
+    width: 100%; margin-top: 4px; margin-bottom: 6px;
+    background: transparent; border: 1px dashed var(--border); color: var(--muted);
+    font-weight: 500; font-size: 0.9rem;
+  }
+  .demo-btn:hover { border-color: var(--accent); color: var(--accent2); }
+
+  .greet-card {
+    background: linear-gradient(135deg, #14261a, #0f1a28);
+    border: 1px solid #1b5e20; border-radius: 14px; padding: 16px; margin-bottom: 12px;
+  }
+  .greet-card h2 { font-size: 1.15rem; margin-bottom: 4px; }
+  .rank-hero {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 14px; padding: 16px; margin-bottom: 12px;
+  }
+  .rank-hero .top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+  .rank-hero .pts { font-size: 1.5rem; font-weight: 700; color: var(--accent2); }
+  .streak-fire { display: inline-block; animation: flicker 1.2s ease-in-out infinite; }
+  @keyframes flicker {
+    0%, 100% { transform: scale(1); filter: brightness(1); }
+    50% { transform: scale(1.12); filter: brightness(1.25); }
+  }
+  .mission-strip {
+    background: linear-gradient(90deg, #1a1430, #142028);
+    border: 1px solid #5e35b1; border-radius: 12px; padding: 12px 14px;
+    margin-bottom: 12px; display: flex; align-items: center; gap: 10px;
+  }
+  .mission-strip .badge {
+    background: var(--purple); color: #1a0033; font-size: 0.7rem;
+    font-weight: 700; padding: 3px 8px; border-radius: 6px; white-space: nowrap;
+  }
+  .event-banner {
+    background: linear-gradient(90deg, #1b3a1b, #0d2818);
+    border: 1px solid var(--accent); border-radius: 10px;
+    padding: 10px 14px; margin-bottom: 12px; font-size: 0.9rem;
+    display: none;
+  }
+  .event-banner.show { display: block; }
+  .mini-board {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 12px 14px; margin-bottom: 12px;
+  }
+  .mini-board .row {
+    display: flex; justify-content: space-between; padding: 5px 0;
+    border-bottom: 1px solid var(--border); font-size: 0.9rem;
+  }
+  .mini-board .row:last-child { border-bottom: none; }
+  .ach-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+
 </style>
 </head>
 <body>
@@ -162,17 +280,41 @@
 
   <!-- ========== ROLE SELECT ========== -->
   <div id="screen-role" class="screen active">
-    <div class="login-wrap">
-      <h1>All Club <span style="color:var(--accent)">Credit Union</span></h1>
-      <p class="sub">Secure • Local • Offline-first</p>
-      <button style="width:100%;margin-bottom:10px" onclick="showScreen('screen-member-login')">Member Login</button>
-      <button class="teal" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-banker-login')">Banker Login</button>
-      <button class="blue" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-store-login')">Store Login</button>
-      <button class="purple" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-admin-login')">Admin Login</button>
-    <p class="muted" style="text-align:center;margin-top:16px;font-size:0.8rem">
-  All Club Credit Union
-</p>
-      </p>
+    <div class="landing">
+      <div class="landing-bg" id="landing-coins"></div>
+      <svg class="mascot" viewBox="0 0 72 72" aria-hidden="true">
+        <circle cx="36" cy="36" r="34" fill="#1c2430" stroke="#00c853" stroke-width="2"/>
+        <ellipse cx="36" cy="40" rx="18" ry="16" fill="#00c853" opacity="0.9"/>
+        <circle cx="28" cy="36" r="3" fill="#0b0f14"/>
+        <circle cx="44" cy="36" r="3" fill="#0b0f14"/>
+        <path d="M28 46 Q36 52 44 46" stroke="#0b0f14" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+        <text x="36" y="22" text-anchor="middle" font-size="12" fill="#00e676">$</text>
+      </svg>
+      <div class="logo-glow">All Club <span>Credit Union</span></div>
+      <p class="tagline" id="landing-tagline">Where points beat paperwork</p>
+      <div class="club-stats" id="landing-stats">
+        <span id="stat-members">— members</span>
+        <span id="stat-vault">$— in vault</span>
+        <span id="stat-streaks">— active streaks</span>
+      </div>
+      <button class="role-btn" onclick="showScreen('screen-member-login')">
+        <span class="icon">👤</span>
+        <span class="txt"><strong>Member</strong><small>Check your stash &amp; flex your rank</small></span>
+      </button>
+      <button class="role-btn teal" onclick="showScreen('screen-banker-login')">
+        <span class="icon">🏦</span>
+        <span class="txt"><strong>Banker</strong><small>Hand out the cash</small></span>
+      </button>
+      <button class="role-btn blue" onclick="showScreen('screen-store-login')">
+        <span class="icon">🛒</span>
+        <span class="txt"><strong>Store</strong><small>Ring up the club</small></span>
+      </button>
+      <button class="role-btn purple" onclick="showScreen('screen-admin-login')">
+        <span class="icon">⚙️</span>
+        <span class="txt"><strong>Admin</strong><small>Run the whole show</small></span>
+      </button>
+      <button class="demo-btn" onclick="demoLogin()">⚡ Try as Alex (demo)</button>
+      <p class="muted" style="text-align:center;margin-top:12px;font-size:0.75rem">Secure · Local · Offline-first</p>
     </div>
   </div>
 
@@ -251,6 +393,11 @@
 
     <!-- Home -->
     <div id="m-home" class="tab-panel">
+      <div class="event-banner" id="event-banner"></div>
+      <div class="greet-card">
+        <h2 id="m-greeting">Hey there 👋</h2>
+        <p class="muted" id="m-greet-sub">Welcome back to All Club</p>
+      </div>
       <div class="grid2">
         <div class="balance-box">
           <div class="label">Checking</div>
@@ -261,12 +408,34 @@
           <div class="amount" style="color:var(--blue)" id="m-savings">$0.00</div>
         </div>
       </div>
-      <div class="card" style="margin-top:12px">
-        <div class="grid3">
-          <div class="stat"><div class="num" id="m-points">0</div><div class="lbl">Points</div></div>
-          <div class="stat"><div class="num" id="m-rank">Bronze</div><div class="lbl">Rank</div></div>
-          <div class="stat"><div class="num" id="m-streak">0</div><div class="lbl">Daily Streak</div></div>
+      <div class="rank-hero" style="margin-top:12px">
+        <div class="top">
+          <div>
+            <div class="muted" style="font-size:0.75rem">Rank</div>
+            <div id="m-rank" style="font-size:1.2rem;font-weight:700">Bronze</div>
+          </div>
+          <div style="text-align:right">
+            <div class="muted" style="font-size:0.75rem">Points</div>
+            <div class="pts" id="m-points">0</div>
+          </div>
         </div>
+        <div class="progress" style="height:10px"><div id="m-rank-bar" style="width:0%"></div></div>
+        <div class="muted" style="margin-top:6px;font-size:0.8rem" id="m-rank-next">—</div>
+        <div style="margin-top:8px;font-size:0.9rem">
+          Streak: <span id="m-streak">0</span> <span class="streak-fire" id="m-streak-fire" style="display:none">🔥</span>
+        </div>
+      </div>
+      <div class="mission-strip" id="mission-strip">
+        <span class="badge">DAILY</span>
+        <div style="flex:1">
+          <div id="mission-text" style="font-weight:600;font-size:0.9rem">Claim your daily reward</div>
+          <div class="muted" id="mission-sub" style="font-size:0.78rem">Tap below to earn points</div>
+        </div>
+        <button class="purple" style="padding:8px 12px;font-size:0.85rem;white-space:nowrap" onclick="claimDailyReward()">Claim</button>
+      </div>
+      <div class="mini-board">
+        <h3 style="margin-bottom:8px;font-size:0.95rem">Top Savers</h3>
+        <div id="m-mini-board" class="muted">Loading…</div>
       </div>
       <div class="card">
         <h3>Quick Actions</h3>
@@ -278,8 +447,12 @@
         </div>
       </div>
       <div class="card">
+        <h3>Recent Achievements</h3>
+        <div id="m-home-achievements" class="ach-pills muted">None yet — go make moves</div>
+      </div>
+      <div class="card">
         <h3>Recent Activity</h3>
-        <div id="m-recent" class="muted">No recent transactions</div>
+        <div id="m-recent" class="muted">Quiet day… go make some money moves.</div>
       </div>
     </div>
 
@@ -669,10 +842,10 @@
     <div id="ad-payroll" class="tab-panel hidden">
       <div class="card">
         <h3>Daily Shift Schedule</h3>
-        <p class="muted" style="margin-bottom:12px">30-minute slots from 3:00–6:00. Assign members, what they did, and pay — then process payment for the day.</p>
+        <p class="muted" style="margin-bottom:12px">30-minute slots from 3:00–6:00. Multiple people can work different jobs in the same time slot.</p>
         <label>Schedule Date</label>
         <input id="sched-date" type="date" onchange="loadDaySchedule()">
-        <label>Default pay per slot ($)</label>
+        <label>Default pay per person ($)</label>
         <input id="sched-default-pay" type="number" min="0" step="0.01" value="10" placeholder="10.00">
         <label>Pay into</label>
         <select id="sched-pay-account">
@@ -682,22 +855,10 @@
       </div>
       <div class="card">
         <h3>Time Slots</h3>
-        <div style="overflow-x:auto">
-          <table>
-            <thead>
-              <tr>
-                <th>Time</th>
-                <th>Member (Account)</th>
-                <th>What they did / Job</th>
-                <th>Pay ($)</th>
-              </tr>
-            </thead>
-            <tbody id="sched-slots-body"></tbody>
-          </table>
-        </div>
+        <div id="sched-slots-body"></div>
         <div class="btn-row" style="margin-top:14px">
           <button class="secondary" onclick="saveDaySchedule()">Save Schedule</button>
-          <button class="teal" onclick="payDaySchedule()">Pay This Day’s Schedule</button>
+          <button class="teal" onclick="payDaySchedule()">Pay This Day's Schedule</button>
           <button class="secondary" onclick="clearDaySchedule()">Clear Day</button>
         </div>
         <p id="sched-result" class="muted" style="margin-top:10px"></p>
@@ -869,6 +1030,7 @@ function toast(msg, isError) {
 function showScreen(id) {
   document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
   document.getElementById(id).classList.add('active');
+  if (id === 'screen-role' && typeof initLanding === 'function') initLanding();
 }
 function switchTab(area, el) {
   const panels = {
@@ -1151,6 +1313,7 @@ function claimDailyReward() {
   if (m.rank !== oldRank) pushNotification(m, 'Rank up! You are now ' + m.rank + '.', 'reward');
   saveDB();
   refreshMemberUI();
+  if (typeof playChime === 'function') playChime('reward');
   toast('+' + bonus + ' points! Streak: ' + m.streak);
 }
 
@@ -1459,6 +1622,14 @@ const ACH_LABELS = {
 };
 
 /* ---------- Member UI Refresh ---------- */
+function rankProgress(points) {
+  const p = points || 0;
+  if (p >= 1000) return { rank: 'Platinum', pct: 100, next: 'Max rank!', cls: 'rank-platinum', bar: 'rank-bar-platinum' };
+  if (p >= 500) return { rank: 'Gold', pct: Math.min(100, ((p - 500) / 500) * 100), next: (1000 - p) + ' pts to Platinum', cls: 'rank-gold', bar: 'rank-bar-gold' };
+  if (p >= 150) return { rank: 'Silver', pct: Math.min(100, ((p - 150) / 350) * 100), next: (500 - p) + ' pts to Gold', cls: 'rank-silver', bar: 'rank-bar-silver' };
+  return { rank: 'Bronze', pct: Math.min(100, (p / 150) * 100), next: (150 - p) + ' pts to Silver', cls: 'rank-bronze', bar: 'rank-bar-bronze' };
+}
+
 function refreshMemberUI() {
   if (!currentUser || currentUser.role !== 'member') return;
   const m = getMember();
@@ -1466,13 +1637,80 @@ function refreshMemberUI() {
   document.getElementById('m-checking').textContent = money(m.checking);
   document.getElementById('m-savings').textContent = money(m.savings);
   document.getElementById('m-points').textContent = m.points || 0;
-  document.getElementById('m-points2').textContent = m.points || 0;
-  document.getElementById('m-rank').textContent = m.rank || 'Bronze';
+  const pts2 = document.getElementById('m-points2');
+  if (pts2) pts2.textContent = m.points || 0;
+
+  const rp = rankProgress(m.points);
+  const rankEl = document.getElementById('m-rank');
+  rankEl.textContent = m.rank || rp.rank;
+  rankEl.className = rp.cls;
+  const bar = document.getElementById('m-rank-bar');
+  if (bar) {
+    bar.style.width = rp.pct + '%';
+    bar.className = rp.bar;
+  }
+  const nextEl = document.getElementById('m-rank-next');
+  if (nextEl) nextEl.textContent = rp.next;
+
   document.getElementById('m-streak').textContent = m.streak || 0;
+  const fire = document.getElementById('m-streak-fire');
+  if (fire) fire.style.display = (m.streak || 0) > 0 ? 'inline' : 'none';
+
+  // Greeting
+  const hour = new Date().getHours();
+  const hello = hour < 12 ? 'Good morning' : hour < 17 ? 'Hey' : 'Good evening';
+  const greet = document.getElementById('m-greeting');
+  if (greet) greet.textContent = hello + ', ' + m.name.split(' ')[0] + ' 👋';
+  const sub = document.getElementById('m-greet-sub');
+  if (sub) sub.textContent = (m.rank || 'Bronze') + ' rank looking solid — keep stacking those points.';
+
+  // Daily mission
+  const today = todayKey();
+  const claimed = m.lastDaily === today;
+  const mt = document.getElementById('mission-text');
+  const ms = document.getElementById('mission-sub');
+  if (mt && ms) {
+    if (claimed) {
+      mt.textContent = 'Daily reward claimed ✓';
+      ms.textContent = 'Come back tomorrow for more points';
+    } else {
+      mt.textContent = 'Claim your daily reward';
+      ms.textContent = 'Keep the streak alive for bonus points';
+    }
+  }
+
+  // Event banner from latest announcement-style notif
+  const banner = document.getElementById('event-banner');
+  if (banner) {
+    const ann = (m.notifications || []).find(n => n.message && n.message.indexOf('📢') === 0 && !n.read);
+    if (ann) {
+      banner.textContent = ann.message.replace(/^📢\s*/, '');
+      banner.classList.add('show');
+    } else {
+      banner.classList.remove('show');
+    }
+  }
+
+  // Mini leaderboard
+  const mini = document.getElementById('m-mini-board');
+  if (mini) {
+    const top = Object.values(db.members).sort((a,b) => (b.savings||0) - (a.savings||0)).slice(0, 3);
+    mini.innerHTML = top.length
+      ? top.map((x,i) => `<div class="row"><span>${i+1}. ${x.name}</span><strong>${money(x.savings)}</strong></div>`).join('')
+      : '<span class="muted">No savers yet</span>';
+  }
+
+  // Home achievements
+  const homeAch = document.getElementById('m-home-achievements');
+  if (homeAch) {
+    homeAch.innerHTML = (m.achievements || []).length
+      ? m.achievements.map(a => `<span class="rank-badge">${ACH_LABELS[a] || a}</span>`).join('')
+      : '<span class="muted">None yet — go make moves</span>';
+  }
 
   const recent = (m.transactions || []).slice(0, 5);
   const recEl = document.getElementById('m-recent');
-  if (!recent.length) recEl.innerHTML = '<span class="muted">No recent transactions</span>';
+  if (!recent.length) recEl.innerHTML = '<span class="muted">Quiet day… go make some money moves.</span>';
   else {
     recEl.innerHTML = '<table><thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead><tbody>' +
       recent.map(t => `<tr><td>${new Date(t.date).toLocaleDateString()}</td><td>${t.type}</td><td>${money(t.amount)}</td></tr>`).join('') +
@@ -1924,7 +2162,7 @@ function postAnnouncement() {
   toast('Announcement sent to all members');
 }
 
-/* ---------- Daily Schedule (3:00–6:00, 30-min slots) ---------- */
+/* ---------- Daily Schedule (3:00–6:00, multi-person slots) ---------- */
 const SCHEDULE_SLOTS = ['15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00'];
 
 function slotLabel(t) {
@@ -1934,49 +2172,50 @@ function slotLabel(t) {
   return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
 }
 
+function memberOptionsHtml(selected) {
+  const members = Object.values(db.members || {});
+  return '<option value="">— empty —</option>' + members.map(m =>
+    `<option value="${m.accountNumber}"${m.accountNumber === selected ? ' selected' : ''}>${m.accountNumber} — ${m.name}</option>`
+  ).join('');
+}
+
+function normalizeSlotEntries(raw) {
+  // Support old single-object format and new array format
+  if (!raw) return [];
+  if (Array.isArray(raw)) return raw;
+  if (typeof raw === 'object' && (raw.account || raw.job || raw.pay)) return [raw];
+  return [];
+}
+
 function loadDaySchedule() {
   const dateEl = document.getElementById('sched-date');
   if (!dateEl) return;
   if (!dateEl.value) dateEl.value = todayKey();
   const date = dateEl.value;
   const day = (db.schedules && db.schedules[date]) || { slots: {}, paid: false };
-  const members = Object.values(db.members || {});
-  const memberOpts = '<option value="">— empty —</option>' + members.map(m =>
-    `<option value="${m.accountNumber}">${m.accountNumber} — ${m.name}</option>`
-  ).join('');
   const defaultPay = document.getElementById('sched-default-pay')?.value || '10';
-
+  const locked = !!day.paid;
   const body = document.getElementById('sched-slots-body');
   if (!body) return;
 
   body.innerHTML = SCHEDULE_SLOTS.map(slot => {
-    const s = day.slots[slot] || {};
-    const selected = s.account || '';
-    const job = s.job || '';
-    const pay = s.pay != null ? s.pay : defaultPay;
-    const disabled = day.paid ? 'disabled' : '';
-    return `<tr data-slot="${slot}">
-      <td style="font-weight:600;white-space:nowrap">${slotLabel(slot)}</td>
-      <td>
-        <select class="sched-member" data-slot="${slot}" ${disabled} style="margin-bottom:0">
-          ${memberOpts.replace(`value="${selected}"`, `value="${selected}" selected`)}
-        </select>
-      </td>
-      <td>
-        <input class="sched-job" data-slot="${slot}" value="${job.replace(/"/g, '&quot;')}" placeholder="What they did..." ${disabled} style="margin-bottom:0">
-      </td>
-      <td style="width:100px">
-        <input class="sched-pay" data-slot="${slot}" type="number" min="0" step="0.01" value="${pay}" ${disabled} style="margin-bottom:0">
-      </td>
-    </tr>`;
+    let entries = normalizeSlotEntries(day.slots[slot]);
+    if (!entries.length) entries = [{ account: '', job: '', pay: defaultPay }];
+    const rows = entries.map((s, idx) => `
+      <div class="sched-person" data-slot="${slot}" data-idx="${idx}" style="display:grid;grid-template-columns:1.4fr 1.6fr 90px 36px;gap:6px;margin-bottom:6px;align-items:center">
+        <select class="sched-member" ${locked ? 'disabled' : ''} style="margin:0">${memberOptionsHtml(s.account || '')}</select>
+        <input class="sched-job" value="${(s.job || '').replace(/"/g, '&quot;')}" placeholder="What they did / job..." ${locked ? 'disabled' : ''} style="margin:0">
+        <input class="sched-pay" type="number" min="0" step="0.01" value="${s.pay != null ? s.pay : defaultPay}" ${locked ? 'disabled' : ''} style="margin:0">
+        <button type="button" class="secondary" style="padding:6px 0;margin:0;font-size:0.85rem" ${locked ? 'disabled' : ''} onclick="removeSchedulePerson('${slot}',${idx})" title="Remove">✕</button>
+      </div>`).join('');
+    return `<div class="sched-slot-block" data-slot="${slot}" style="margin-bottom:16px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+        <strong style="font-size:1rem">${slotLabel(slot)}</strong>
+        <button type="button" class="secondary" style="padding:5px 10px;font-size:0.8rem" ${locked ? 'disabled' : ''} onclick="addSchedulePerson('${slot}')">+ Add person</button>
+      </div>
+      ${rows}
+    </div>`;
   }).join('');
-
-  // Fix selected options properly
-  SCHEDULE_SLOTS.forEach(slot => {
-    const s = day.slots[slot] || {};
-    const sel = body.querySelector(`select.sched-member[data-slot="${slot}"]`);
-    if (sel && s.account) sel.value = s.account;
-  });
 
   const res = document.getElementById('sched-result');
   if (res) {
@@ -1986,15 +2225,48 @@ function loadDaySchedule() {
   }
 }
 
+function addSchedulePerson(slot) {
+  const date = document.getElementById('sched-date').value || todayKey();
+  if (!db.schedules) db.schedules = {};
+  if (!db.schedules[date]) db.schedules[date] = { date, slots: {}, paid: false, paidAt: null };
+  if (db.schedules[date].paid) return toast('This day is locked (already paid)', true);
+  const cur = normalizeSlotEntries(db.schedules[date].slots[slot]);
+  // Also merge any unsaved form values first
+  const live = collectDaySlots();
+  Object.keys(live).forEach(k => { db.schedules[date].slots[k] = live[k]; });
+  const list = normalizeSlotEntries(db.schedules[date].slots[slot]);
+  const defaultPay = parseFloat(document.getElementById('sched-default-pay')?.value) || 10;
+  list.push({ account: '', job: '', pay: defaultPay });
+  db.schedules[date].slots[slot] = list;
+  loadDaySchedule();
+}
+
+function removeSchedulePerson(slot, idx) {
+  const date = document.getElementById('sched-date').value || todayKey();
+  if (!db.schedules || !db.schedules[date] || db.schedules[date].paid) return;
+  // Collect live form first
+  const live = collectDaySlots();
+  Object.keys(live).forEach(k => { db.schedules[date].slots[k] = live[k]; });
+  const list = normalizeSlotEntries(db.schedules[date].slots[slot]);
+  list.splice(idx, 1);
+  if (!list.length) delete db.schedules[date].slots[slot];
+  else db.schedules[date].slots[slot] = list;
+  loadDaySchedule();
+}
+
 function collectDaySlots() {
   const slots = {};
   SCHEDULE_SLOTS.forEach(slot => {
-    const acc = document.querySelector(`select.sched-member[data-slot="${slot}"]`)?.value || '';
-    const job = (document.querySelector(`input.sched-job[data-slot="${slot}"]`)?.value || '').trim();
-    const pay = parseFloat(document.querySelector(`input.sched-pay[data-slot="${slot}"]`)?.value) || 0;
-    if (acc || job || pay) {
-      slots[slot] = { account: acc, job, pay };
-    }
+    const block = document.querySelector(`.sched-slot-block[data-slot="${slot}"]`);
+    if (!block) return;
+    const people = [];
+    block.querySelectorAll('.sched-person').forEach(row => {
+      const account = row.querySelector('.sched-member')?.value || '';
+      const job = (row.querySelector('.sched-job')?.value || '').trim();
+      const pay = parseFloat(row.querySelector('.sched-pay')?.value) || 0;
+      if (account || job || pay) people.push({ account, job, pay });
+    });
+    if (people.length) slots[slot] = people;
   });
   return slots;
 }
@@ -2004,7 +2276,6 @@ function saveDaySchedule() {
   if (!db.schedules) db.schedules = {};
   const existing = db.schedules[date] || {};
   if (existing.paid) return toast('This day is already paid and locked', true);
-
   db.schedules[date] = {
     date,
     slots: collectDaySlots(),
@@ -2020,10 +2291,15 @@ function saveDaySchedule() {
 function payDaySchedule() {
   const date = document.getElementById('sched-date').value || todayKey();
   if (!db.schedules) db.schedules = {};
-  // Always collect latest form values
   const slots = collectDaySlots();
-  const filled = Object.entries(slots).filter(([, s]) => s.account && s.pay > 0);
-  if (!filled.length) return toast('Fill at least one slot with a member and pay amount', true);
+  // Flatten all people across all slots
+  const filled = [];
+  Object.entries(slots).forEach(([slot, people]) => {
+    (people || []).forEach(s => {
+      if (s.account && s.pay > 0) filled.push({ slot, ...s });
+    });
+  });
+  if (!filled.length) return toast('Add at least one person with a pay amount', true);
 
   const existing = db.schedules[date];
   if (existing && existing.paid) return toast('This day was already paid', true);
@@ -2033,16 +2309,16 @@ function payDaySchedule() {
   let total = 0;
   const logLines = [];
 
-  filled.forEach(([slot, s]) => {
+  filled.forEach(s => {
     const m = db.members[s.account];
     if (!m || m.locked) return;
     m[acctType] = (m[acctType] || 0) + s.pay;
     const jobNote = s.job || 'Shift work';
-    addTx(m, 'Payroll', acctType, s.pay, slotLabel(slot) + ' — ' + jobNote);
+    addTx(m, 'Payroll', acctType, s.pay, slotLabel(s.slot) + ' — ' + jobNote);
     m.points = (m.points || 0) + Math.floor(s.pay / 10);
     m.rank = calcRank(m.points);
     checkAchievements(m);
-    pushNotification(m, 'Paid ' + money(s.pay) + ' for ' + slotLabel(slot) + ': ' + jobNote, 'deposit');
+    pushNotification(m, 'Paid ' + money(s.pay) + ' for ' + slotLabel(s.slot) + ': ' + jobNote, 'deposit');
 
     db.tellerLog = db.tellerLog || [];
     db.tellerLog.push({
@@ -2053,11 +2329,11 @@ function payDaySchedule() {
       type: 'Payroll',
       acctType,
       amount: s.pay,
-      note: slotLabel(slot) + ' — ' + jobNote
+      note: slotLabel(s.slot) + ' — ' + jobNote
     });
     paidCount++;
     total += s.pay;
-    logLines.push(slotLabel(slot) + ': ' + m.name + ' — ' + jobNote + ' (' + money(s.pay) + ')');
+    logLines.push(slotLabel(s.slot) + ': ' + m.name + ' — ' + jobNote + ' (' + money(s.pay) + ')');
   });
 
   if (db.tellerLog && db.tellerLog.length > 300) db.tellerLog = db.tellerLog.slice(-300);
@@ -2077,22 +2353,14 @@ function payDaySchedule() {
   refreshAdminUI();
 
   const res = document.getElementById('sched-result');
-  if (res) res.textContent = 'Paid ' + paidCount + ' slot(s) totaling ' + money(total);
-  toast('Schedule paid: ' + paidCount + ' people · ' + money(total));
+  if (res) res.textContent = 'Paid ' + paidCount + ' person-slot(s) totaling ' + money(total);
+  toast('Schedule paid: ' + paidCount + ' payments · ' + money(total));
 }
 
 function clearDaySchedule() {
   const date = document.getElementById('sched-date').value || todayKey();
   if (!db.schedules || !db.schedules[date]) {
-    // just clear the form
-    SCHEDULE_SLOTS.forEach(slot => {
-      const sel = document.querySelector(`select.sched-member[data-slot="${slot}"]`);
-      const job = document.querySelector(`input.sched-job[data-slot="${slot}"]`);
-      const pay = document.querySelector(`input.sched-pay[data-slot="${slot}"]`);
-      if (sel) sel.value = '';
-      if (job) job.value = '';
-      if (pay) pay.value = document.getElementById('sched-default-pay')?.value || '10';
-    });
+    loadDaySchedule();
     toast('Form cleared');
     return;
   }
@@ -2126,6 +2394,7 @@ function renderScheduleHistory() {
   }).join('');
 }
 
+/* ---------- Backup ---------- */
 /* ---------- Backup ---------- */
 /* ---------- Backup ---------- */
 function exportData() {
@@ -2179,9 +2448,103 @@ function resetBank() {
   toast('Bank reset');
 }
 
+/* ---------- Fun: landing, demo, sounds ---------- */
+const TAGLINES = [
+  'Where points beat paperwork',
+  'Your money, your club, your rules',
+  'Stack ranks. Flex savings.',
+  'Offline-first. Fun always on.',
+  'Deposits in, streaks up'
+];
+
+function playChime(kind) {
+  try {
+    const ctx = new (window.AudioContext || window.webkitAudioContext)();
+    const o = ctx.createOscillator();
+    const g = ctx.createGain();
+    o.connect(g); g.connect(ctx.destination);
+    o.type = 'sine';
+    if (kind === 'reward') {
+      o.frequency.setValueAtTime(523, ctx.currentTime);
+      o.frequency.setValueAtTime(659, ctx.currentTime + 0.1);
+      o.frequency.setValueAtTime(784, ctx.currentTime + 0.2);
+    } else {
+      o.frequency.value = 880;
+    }
+    g.gain.setValueAtTime(0.12, ctx.currentTime);
+    g.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.35);
+    o.start(ctx.currentTime);
+    o.stop(ctx.currentTime + 0.35);
+  } catch (e) {}
+}
+
+function demoLogin() {
+  loadDB();
+  if (!db.members['ACC1001']) {
+    toast('Demo member missing — reset defaults from Admin', true);
+    return;
+  }
+  currentUser = { role: 'member', account: 'ACC1001' };
+  showScreen('screen-member');
+  document.querySelectorAll('#member-tabs .tab').forEach((t,i) => t.classList.toggle('active', i === 0));
+  ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-notifs','m-settings'].forEach((id,i) => {
+    const el = document.getElementById(id);
+    if (el) el.classList.toggle('hidden', i !== 0);
+  });
+  refreshMemberUI();
+  playChime('reward');
+  toast('Welcome, Alex (demo)');
+}
+
+function initLanding() {
+  // Floating coins
+  const bg = document.getElementById('landing-coins');
+  if (bg && !bg.dataset.ready) {
+    bg.dataset.ready = '1';
+    for (let i = 0; i < 8; i++) {
+      const c = document.createElement('div');
+      c.className = 'float-coin';
+      c.textContent = ['💰','🪙','⭐','💎'][i % 4];
+      c.style.left = (8 + Math.random() * 84) + '%';
+      c.style.animationDelay = (Math.random() * 10) + 's';
+      c.style.animationDuration = (10 + Math.random() * 8) + 's';
+      bg.appendChild(c);
+    }
+  }
+  // Rotating tagline
+  const tag = document.getElementById('landing-tagline');
+  if (tag) {
+    let i = 0;
+    tag.textContent = TAGLINES[0];
+    if (!window._tagTimer) {
+      window._tagTimer = setInterval(() => {
+        i = (i + 1) % TAGLINES.length;
+        tag.style.opacity = '0';
+        setTimeout(() => {
+          tag.textContent = TAGLINES[i];
+          tag.style.opacity = '1';
+        }, 280);
+      }, 3800);
+    }
+  }
+  // Live-ish stats
+  try {
+    const members = Object.values(db.members || {});
+    const total = members.reduce((a,m) => a + (m.checking||0) + (m.savings||0), 0);
+    const streaks = members.filter(m => (m.streak||0) > 0).length;
+    const sm = document.getElementById('stat-members');
+    const sv = document.getElementById('stat-vault');
+    const ss = document.getElementById('stat-streaks');
+    if (sm) sm.textContent = members.length + ' member' + (members.length === 1 ? '' : 's');
+    if (sv) sv.textContent = money(total) + ' in vault';
+    if (ss) ss.textContent = streaks + ' active streak' + (streaks === 1 ? '' : 's');
+  } catch (e) {}
+}
+
 /* ---------- Boot ---------- */
 loadDB();
 showScreen('screen-role');
+initLanding();
 </script>
 </body>
 </html>
