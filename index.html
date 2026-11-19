@@ -273,7 +273,38 @@
   .mini-board .row:last-child { border-bottom: none; }
   .ach-pills { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
 
+
+  .barcode-wrap { text-align: center; margin-top: 12px; }
+  .barcode-wrap canvas, .barcode-wrap svg { max-width: 100%; background: #fff; border-radius: 6px; padding: 8px; }
+  .barcode-acc {
+    font-family: monospace; font-size: 1.1rem; font-weight: 700; letter-spacing: 2px;
+    margin-top: 6px; color: var(--text);
+  }
+  .scan-overlay {
+    display: none; position: fixed; inset: 0; z-index: 10000;
+    background: rgba(0,0,0,0.92); flex-direction: column; align-items: center; justify-content: center;
+    padding: 16px;
+  }
+  .scan-overlay.active { display: flex; }
+  .scan-overlay video {
+    width: min(100%, 480px); max-height: 55vh; border-radius: 16px;
+    background: #000; object-fit: cover; border: 2px solid var(--accent);
+  }
+  .scan-frame {
+    position: relative; width: min(100%, 480px);
+  }
+  .scan-overlay .hint {
+    color: #fff; margin: 14px 0 8px; text-align: center; font-size: 1rem;
+  }
+  .scan-overlay .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
+  .scan-status { color: var(--accent2); font-size: 0.9rem; min-height: 1.2em; text-align: center; }
+
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.14.1/firebase-database-compat.js"></script>
 </head>
 <body>
 <div id="app">
@@ -542,9 +573,11 @@
             <img id="card-photo" class="photo" src="" alt="Photo" style="display:none">
             <div id="card-photo-placeholder" style="width:72px;height:72px;border-radius:50%;background:var(--panel2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--muted)">Photo</div>
           </div>
-          <div style="text-align:center;margin-top:12px">
-            <div class="muted" style="font-size:0.7rem;margin-bottom:4px">SCAN OR TYPE THIS CODE</div>
-            <div class="qr-box" id="card-qr" style="font-size:14px;font-weight:700;letter-spacing:1px">ACC0000</div>
+          <div class="barcode-wrap">
+            <div class="muted" style="font-size:0.7rem;margin-bottom:6px">SCAN QR CODE</div>
+            <canvas id="card-qr-canvas" width="180" height="180" style="display:block;margin:0 auto;background:#fff;border-radius:10px;padding:8px"></canvas>
+            <svg id="card-barcode" style="width:100%;max-width:260px;height:44px;margin-top:10px"></svg>
+            <div class="barcode-acc" id="card-qr">ACC0000</div>
           </div>
           <div class="muted" style="text-align:center;font-size:0.75rem;margin-top:8px">Present this card at participating stores &amp; the teller window</div>
         </div>
@@ -619,9 +652,10 @@
       <div class="card">
         <h3>Select Member</h3>
         <label>Scan / Enter Member Card</label>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <input id="bk-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
-          <button class="teal" style="white-space:nowrap" onclick="scanMember('banker')">Scan Card</button>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <input id="bk-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
+          <button class="teal" style="white-space:nowrap" onclick="scanMember('banker')">Lookup</button>
+          <button class="secondary" style="white-space:nowrap" onclick="openBarcodeScanner('banker')">📷 Camera Scan</button>
         </div>
         <label>Or choose from list</label>
         <select id="bk-member-select" onchange="previewBankerMember()"></select>
@@ -724,9 +758,10 @@
       <div class="card">
         <h3>Charge Member</h3>
         <label>Scan / Enter Member Card</label>
-        <div style="display:flex;gap:8px;margin-bottom:10px">
-          <input id="st-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
-          <button class="blue" style="white-space:nowrap" onclick="scanMember('store')">Scan Card</button>
+        <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+          <input id="st-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
+          <button class="blue" style="white-space:nowrap" onclick="scanMember('store')">Lookup</button>
+          <button class="secondary" style="white-space:nowrap" onclick="openBarcodeScanner('store')">📷 Camera Scan</button>
         </div>
         <label>Or choose from list</label>
         <select id="st-member-select" onchange="previewMemberBalance()"></select>
@@ -902,6 +937,31 @@
 
     <div id="ad-backup" class="tab-panel hidden">
       <div class="card">
+        <h3>Cloud Sync (shared across iPads)</h3>
+        <p class="muted" style="margin-bottom:10px">Connect Firebase so every iPad sees the same members, balances, and schedules.</p>
+        <p class="muted" id="sync-status" style="margin-bottom:10px">Status: <strong>Local only</strong></p>
+        <label>Firebase config (paste the full firebaseConfig object or JSON)</label>
+        <textarea id="firebase-config" rows="8" placeholder='{
+  "apiKey": "...",
+  "authDomain": "...",
+  "databaseURL": "https://YOUR-PROJECT-default-rtdb.firebaseio.com",
+  "projectId": "...",
+  "storageBucket": "...",
+  "messagingSenderId": "...",
+  "appId": "..."
+}' style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:0.85rem;font-family:monospace;margin-bottom:10px;resize:vertical"></textarea>
+        <div class="btn-row">
+          <button class="teal" onclick="saveFirebaseConfig()">Connect &amp; Sync</button>
+          <button class="secondary" onclick="disconnectFirebase()">Disconnect</button>
+          <button class="blue" onclick="forcePullCloud()">Pull from Cloud</button>
+          <button class="secondary" onclick="forcePushCloud()">Push to Cloud</button>
+        </div>
+        <p class="muted" style="margin-top:10px;font-size:0.8rem">
+          Setup: Firebase Console → create project → Realtime Database → start in <strong>test mode</strong> (or add read/write rules) → Project settings → Your apps → Web → copy config.
+          You need a <strong>databaseURL</strong> (Realtime Database).
+        </p>
+      </div>
+      <div class="card">
         <h3>Backup & Restore</h3>
         <div class="btn-row">
           <button onclick="exportData()">Export Bank Data</button>
@@ -931,6 +991,19 @@
 
 </div>
 
+
+<!-- Barcode Scanner Overlay (iPad camera) -->
+<div id="scan-overlay" class="scan-overlay">
+  <div class="scan-frame">
+    <video id="scan-video" playsinline muted autoplay></video>
+  </div>
+  <p class="hint">Point the camera at the member card QR code</p>
+  <p class="scan-status" id="scan-status">Starting camera…</p>
+  <div class="actions">
+    <button class="danger" onclick="closeBarcodeScanner()">Close</button>
+  </div>
+</div>
+
 <div id="toast" class="toast"></div>
 
 <script>
@@ -939,7 +1012,17 @@
    localStorage only • No server required
    Banker role handles deposits (members cannot self-deposit)
    ============================================================ */
+const SUPABASE_URL =
+"https://yshkhkcplivhgxmedsfe.supabase.co";
 
+const SUPABASE_KEY =
+"sb_publishable_zzE1deqJoEQ6nz_KgirUgA_Kr8O1lTG";
+
+const supabase =
+window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
 const STORAGE_KEY = 'allclub_cu_v2';
 const MAX_PIN_ATTEMPTS = 5;
 
@@ -985,38 +1068,317 @@ const DEFAULT_DATA = {
 
 let db = null;
 let currentUser = null;
+let _firebaseApp = null;
+let _firebaseRef = null;
+let _applyingCloud = false;
+let _syncReady = false;
+
+const FIREBASE_CFG_KEY = 'allclub_firebase_cfg';
+
+function migrateDb(data) {
+  if (!data || !data.members) data = structuredClone(DEFAULT_DATA);
+  if (!data.bankerPin) data.bankerPin = '4321';
+  if (!data.tellerLog) data.tellerLog = [];
+  if (data.interestRate == null) data.interestRate = 0.005;
+  if (!data.schedules) data.schedules = {};
+  Object.values(data.members || {}).forEach(m => {
+    if (!m.notifications) m.notifications = [];
+    if (!m.createdAt) m.createdAt = new Date().toISOString();
+  });
+  return data;
+}
 
 /* ---------- Persistence ---------- */
 function loadDB() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (raw) {
-      db = JSON.parse(raw);
-      if (!db.members) db = structuredClone(DEFAULT_DATA);
-      if (!db.bankerPin) db.bankerPin = '4321';
-      if (!db.tellerLog) db.tellerLog = [];
-      if (db.interestRate == null) db.interestRate = 0.005;
-      if (!db.schedules) db.schedules = {};
-      // Migrate older members
-      Object.values(db.members || {}).forEach(m => {
-        if (!m.notifications) m.notifications = [];
-        if (!m.createdAt) m.createdAt = new Date().toISOString();
-      });
+      db = migrateDb(JSON.parse(raw));
     } else {
       db = structuredClone(DEFAULT_DATA);
-      saveDB();
+      saveDBLocal();
     }
   } catch (e) {
     db = structuredClone(DEFAULT_DATA);
-    saveDB();
+    saveDBLocal();
+  }
+}
+
+function saveDBLocal() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  } catch (e) {
+    console.warn('localStorage save failed', e);
   }
 }
 
 function saveDB() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
+  if (!db) return;
+  db.updatedAt = new Date().toISOString();
+  saveDBLocal();
+  saveMembersToCloud();
+  pushToCloud();
+}
+
+/* ---------- Cloud sync (Firebase Realtime Database) ---------- */
+function getStoredFirebaseConfig() {
+  try {
+    const raw = localStorage.getItem(FIREBASE_CFG_KEY);
+    return raw ? JSON.parse(raw) : null;
+  } catch (e) {
+    return null;
+  }
+}
+
+function parseFirebaseConfigText(text) {
+  text = (text || '').trim();
+  if (!text) return null;
+  const objMatch = text.match(/\{[\s\S]*\}/);
+  if (!objMatch) throw new Error('No { ... } object found');
+  let jsonish = objMatch[0]
+    .replace(/([,{]\s*)(\w+)\s*:/g, '$1"$2":')
+    .replace(/'/g, '"')
+    .replace(/,\s*}/g, '}')
+    .replace(/,\s*]/g, ']');
+  return JSON.parse(jsonish);
+}
+
+function updateSyncStatus(msg, ok) {
+  const el = document.getElementById('sync-status');
+  if (!el) return;
+  el.innerHTML = 'Status: <strong style="color:' + (ok ? 'var(--accent2)' : 'var(--muted)') + '">' + msg + '</strong>';
+}
+
+function refreshOpenUI() {
+  if (!currentUser) {
+    if (typeof initLanding === 'function') initLanding();
+    return;
+  }
+  if (currentUser.role === 'member') refreshMemberUI();
+  if (currentUser.role === 'banker') refreshBankerUI();
+  if (currentUser.role === 'store') refreshStoreUI();
+  if (currentUser.role === 'admin') refreshAdminUI();
+}
+
+function initFirebaseFromConfig(cfg) {
+  if (!cfg || !cfg.apiKey || !cfg.databaseURL) {
+    throw new Error('Config needs at least apiKey and databaseURL');
+  }
+  if (typeof firebase === 'undefined') {
+    throw new Error('Firebase SDK not loaded (need internet)');
+  }
+  if (_firebaseRef) {
+    try { _firebaseRef.off(); } catch (e) {}
+    _firebaseRef = null;
+  }
+  try {
+    if (!firebase.apps.length) {
+      firebase.initializeApp(cfg);
+    }
+  } catch (e) {
+    // already initialized with different config — reload page advised
+    if (!firebase.apps.length) throw e;
+  }
+  _firebaseApp = firebase.app();
+  _firebaseRef = firebase.database().ref('allclub_cu');
+  _syncReady = true;
+
+  _firebaseRef.on('value', function(snap) {
+    if (_applyingCloud) return;
+    const remote = snap.val();
+    if (!remote || !remote.members) return;
+    if (db && db.updatedAt && remote.updatedAt && remote.updatedAt === db.updatedAt) return;
+    if (db && db.updatedAt && remote.updatedAt && remote.updatedAt < db.updatedAt) {
+      pushToCloud();
+      return;
+    }
+    _applyingCloud = true;
+    try {
+      db = migrateDb(remote);
+      saveDBLocal();
+      refreshOpenUI();
+      updateSyncStatus('Synced · ' + new Date().toLocaleTimeString(), true);
+    } finally {
+      _applyingCloud = false;
+    }
+  });
+  updateSyncStatus('Connected · live sync on', true);
+}
+
+function pushToCloud() {
+  if (!_syncReady || !_firebaseRef || _applyingCloud || !db) return;
+  try {
+    _firebaseRef.set(JSON.parse(JSON.stringify(db))).catch(function(err) {
+      console.warn('Cloud push failed', err);
+      updateSyncStatus('Push failed: ' + (err.message || err), false);
+    });
+  } catch (e) {
+    console.warn('Cloud push error', e);
+  }
+}
+
+function forcePushCloud() {
+  if (!_syncReady) return toast('Connect Firebase first', true);
+  db.updatedAt = new Date().toISOString();
+  saveDBLocal();
+  _firebaseRef.set(JSON.parse(JSON.stringify(db)))
+    .then(function() {
+      toast('Pushed to cloud');
+      updateSyncStatus('Pushed · ' + new Date().toLocaleTimeString(), true);
+    })
+    .catch(function(err) {
+      toast('Push failed: ' + err.message, true);
+    });
+}
+
+function forcePullCloud() {
+  if (!_syncReady) return toast('Connect Firebase first', true);
+  _firebaseRef.once('value').then(function(snap) {
+    const remote = snap.val();
+    if (!remote || !remote.members) {
+      toast('Cloud is empty — push local data first', true);
+      return;
+    }
+    _applyingCloud = true;
+    try {
+      db = migrateDb(remote);
+      saveDBLocal();
+      refreshOpenUI();
+      toast('Pulled from cloud');
+      updateSyncStatus('Pulled · ' + new Date().toLocaleTimeString(), true);
+    } finally {
+      _applyingCloud = false;
+    }
+  }).catch(function(err) {
+    toast('Pull failed: ' + err.message, true);
+  });
+}
+
+function saveFirebaseConfig() {
+  const text = document.getElementById('firebase-config').value;
+  try {
+    const cfg = parseFirebaseConfigText(text);
+    if (!cfg.databaseURL) throw new Error('databaseURL is required (Realtime Database)');
+    localStorage.setItem(FIREBASE_CFG_KEY, JSON.stringify(cfg));
+    // If already initialized with other config, soft-fail
+    if (firebase.apps && firebase.apps.length) {
+      // Reuse existing app; only swap ref path
+      _firebaseRef = firebase.database().ref('allclub_cu');
+      _syncReady = true;
+    } else {
+      initFirebaseFromConfig(cfg);
+    }
+    if (!_syncReady) initFirebaseFromConfig(cfg);
+    _firebaseRef.once('value').then(function(snap) {
+      if (!snap.val() || !snap.val().members) {
+        forcePushCloud();
+      } else {
+        updateSyncStatus('Connected · live sync on', true);
+      }
+    });
+    toast('Cloud sync connected');
+  } catch (e) {
+    toast('Config error: ' + e.message, true);
+    updateSyncStatus('Not connected', false);
+  }
+}
+
+function disconnectFirebase() {
+  if (_firebaseRef) {
+    try { _firebaseRef.off(); } catch (e) {}
+  }
+  _firebaseRef = null;
+  _syncReady = false;
+  localStorage.removeItem(FIREBASE_CFG_KEY);
+  const ta = document.getElementById('firebase-config');
+  if (ta) ta.value = '';
+  updateSyncStatus('Local only', false);
+  toast('Disconnected — this iPad is local only');
+}
+
+function bootCloudSync() {
+  const cfg = getStoredFirebaseConfig();
+  const ta = document.getElementById('firebase-config');
+  if (ta && cfg) ta.value = JSON.stringify(cfg, null, 2);
+  if (cfg) {
+    try {
+      initFirebaseFromConfig(cfg);
+    } catch (e) {
+      updateSyncStatus('Connect failed: ' + e.message, false);
+    }
+  } else {
+    updateSyncStatus('Local only', false);
+  }
 }
 
 /* ---------- Utils ---------- */
+async function saveMembersToCloud() {
+
+  if (!window.supabase) return;
+
+  const members = Object.values(db.members || {});
+
+  for (const member of members) {
+
+    const { error } = await supabase
+      .from("members")
+      .upsert({
+        accountNumber: member.accountNumber,
+        name: member.name,
+        checking: member.checking,
+        savings: member.savings,
+        pin: member.pin,
+        points: member.points,
+        rank: member.rank
+      });
+
+    if (error) {
+      console.error("Supabase Save Error:", error);
+    }
+
+  }
+
+}
+async function loadMembersFromCloud() {
+
+  const { data, error } = await supabase
+    .from("members")
+    .select("*");
+
+  if (error) {
+    console.error("Supabase Load Error:", error);
+    return;
+  }
+
+  if (!data) return;
+
+  data.forEach(member => {
+
+    db.members[member.accountNumber] = {
+
+      ...db.members[member.accountNumber],
+
+      accountNumber: member.accountNumber,
+      name: member.name,
+      checking: Number(member.checking || 0),
+      savings: Number(member.savings || 0),
+      pin: member.pin,
+      points: Number(member.points || 0),
+      rank: member.rank
+
+    };
+
+  });
+
+  saveDBLocal();
+
+  console.log(
+    "Loaded",
+    data.length,
+    "members from Supabase"
+  );
+
+}
 function money(n) {
   return '$' + (Number(n) || 0).toFixed(2);
 }
@@ -1099,33 +1461,182 @@ function clearAllNotifs() {
 }
 
 /* ---------- Card Scan ---------- */
-function scanMember(role) {
+function parseMemberCode(raw) {
+  const text = (raw || '').trim().toUpperCase();
+  if (!text) return null;
+  // Formats: ACC1001 | ALLCLUB|ACC1001 | ALLCLUB|ACC1001|NAME|RANK
+  const pipe = text.split('|');
+  if (pipe[0] === 'ALLCLUB' && pipe[1]) {
+    const m = pipe[1].match(/ACC\d+/);
+    if (m) return m[0];
+  }
+  const match = text.match(/ACC\d+/);
+  return match ? match[0] : null;
+}
+
+function scanMember(role, codeFromScanner) {
   const inputId = role === 'banker' ? 'bk-scan' : 'st-scan';
   const selectId = role === 'banker' ? 'bk-member-select' : 'st-member-select';
-  const raw = (document.getElementById(inputId).value || '').trim().toUpperCase();
+  const raw = (codeFromScanner || document.getElementById(inputId).value || '').trim();
   if (!raw) return toast('Enter or paste the account number from the card', true);
 
-  // Extract ACC#### pattern if present
-  let acc = raw;
-  const match = raw.match(/ACC\d+/);
-  if (match) acc = match[0];
-
-  if (!db.members[acc]) {
-    toast('No member found for "' + acc + '"', true);
-    return;
+  const acc = parseMemberCode(raw);
+  if (!acc || !db.members[acc]) {
+    toast('No member found for "' + raw + '"', true);
+    return false;
   }
 
   const sel = document.getElementById(selectId);
   sel.value = acc;
   if (role === 'banker') {
     previewBankerMember();
-    document.getElementById('bk-dep-amount').focus();
+    const amt = document.getElementById('bk-dep-amount');
+    if (amt) amt.focus();
   } else {
     previewMemberBalance();
-    document.getElementById('st-amount').focus();
+    const amt = document.getElementById('st-amount');
+    if (amt) amt.focus();
   }
-  document.getElementById(inputId).value = '';
+  const inp = document.getElementById(inputId);
+  if (inp) inp.value = '';
+  if (typeof playChime === 'function') playChime();
   toast('Card scanned — ' + db.members[acc].name + ' loaded');
+  return true;
+}
+
+function memberQrPayload(accountNumber, name, rank) {
+  const acc = accountNumber || 'ACC0000';
+  // Short, scannable payload for iPad cameras
+  return 'ALLCLUB|' + acc + (name ? '|' + String(name).slice(0, 16) : '') + (rank ? '|' + rank : '');
+}
+
+function renderMemberBarcode(accountNumber, name, rank) {
+  const acc = accountNumber || 'ACC0000';
+  const payload = memberQrPayload(acc, name, rank);
+
+  // Primary: QR code (best for iPad camera)
+  const canvas = document.getElementById('card-qr-canvas');
+  if (canvas && typeof QRCode !== 'undefined') {
+    QRCode.toCanvas(canvas, payload, {
+      width: 180,
+      margin: 2,
+      errorCorrectionLevel: 'H',
+      color: { dark: '#000000', light: '#ffffff' }
+    }, function(err) {
+      if (err) console.warn('QR failed', err);
+    });
+  }
+
+  // Secondary: linear Code128 barcode (account only — shorter)
+  const svg = document.getElementById('card-barcode');
+  if (svg && typeof JsBarcode !== 'undefined') {
+    try {
+      JsBarcode(svg, acc, {
+        format: 'CODE128',
+        lineColor: '#000',
+        width: 2,
+        height: 40,
+        displayValue: false,
+        margin: 4,
+        background: '#ffffff'
+      });
+    } catch (e) {
+      console.warn('JsBarcode failed', e);
+    }
+  }
+}
+
+/* ---------- Camera barcode scanner (iPad) ---------- */
+let _scanStream = null;
+let _scanRAF = null;
+let _scanRole = null;
+let _scanDetector = null;
+let _scanLocked = false;
+
+async function openBarcodeScanner(role) {
+  _scanRole = role;
+  _scanLocked = false;
+  const overlay = document.getElementById('scan-overlay');
+  const video = document.getElementById('scan-video');
+  const status = document.getElementById('scan-status');
+  if (!overlay || !video) return;
+
+  overlay.classList.add('active');
+  status.textContent = 'Starting camera…';
+
+  try {
+    _scanStream = await navigator.mediaDevices.getUserMedia({
+      audio: false,
+      video: {
+        facingMode: { ideal: 'environment' },
+        width: { ideal: 1280 },
+        height: { ideal: 720 }
+      }
+    });
+    video.srcObject = _scanStream;
+    await video.play();
+    status.textContent = 'Point at barcode or QR code…';
+
+    if ('BarcodeDetector' in window) {
+      const formats = ['qr_code', 'code_128', 'code_39', 'ean_13', 'ean_8', 'upc_a', 'upc_e'];
+      try {
+        _scanDetector = new BarcodeDetector({ formats });
+      } catch (e) {
+        _scanDetector = new BarcodeDetector();
+      }
+      scanLoop();
+    } else {
+      status.textContent = 'Camera on — this iPad browser can’t auto-read barcodes. Type the code, or use Safari/Chrome.';
+    }
+  } catch (err) {
+    console.warn(err);
+    status.textContent = 'Camera permission denied or unavailable. Type the account number instead.';
+    toast('Camera not available — type the account number', true);
+  }
+}
+
+function scanLoop() {
+  const video = document.getElementById('scan-video');
+  const status = document.getElementById('scan-status');
+  if (!_scanDetector || !video || video.readyState < 2) {
+    _scanRAF = requestAnimationFrame(scanLoop);
+    return;
+  }
+  _scanDetector.detect(video).then(codes => {
+    if (_scanLocked) return;
+    if (codes && codes.length) {
+      const raw = (codes[0].rawValue || '').trim();
+      if (raw) {
+        _scanLocked = true;
+        status.textContent = 'Found: ' + raw;
+        const ok = scanMember(_scanRole, raw);
+        if (ok) {
+          closeBarcodeScanner();
+        } else {
+          status.textContent = 'Code read but no matching member: ' + raw;
+          setTimeout(() => { _scanLocked = false; status.textContent = 'Point at barcode or QR code…'; }, 1500);
+        }
+      }
+    }
+    if (!_scanLocked) _scanRAF = requestAnimationFrame(scanLoop);
+  }).catch(() => {
+    if (!_scanLocked) _scanRAF = requestAnimationFrame(scanLoop);
+  });
+}
+
+function closeBarcodeScanner() {
+  _scanLocked = true;
+  if (_scanRAF) cancelAnimationFrame(_scanRAF);
+  _scanRAF = null;
+  _scanDetector = null;
+  if (_scanStream) {
+    _scanStream.getTracks().forEach(t => t.stop());
+    _scanStream = null;
+  }
+  const video = document.getElementById('scan-video');
+  if (video) video.srcObject = null;
+  const overlay = document.getElementById('scan-overlay');
+  if (overlay) overlay.classList.remove('active');
 }
 
 /* ---------- Auth ---------- */
@@ -1744,6 +2255,7 @@ function refreshMemberUI() {
   document.getElementById('card-acc').textContent = m.accountNumber;
   document.getElementById('card-rank').textContent = m.rank || 'Bronze';
   document.getElementById('card-qr').textContent = m.accountNumber;
+  renderMemberBarcode(m.accountNumber, m.name, m.rank);
   const statusEl = document.getElementById('card-status');
   if (m.locked) {
     statusEl.textContent = 'Locked';
@@ -1827,13 +2339,13 @@ function uploadMemberPhoto(ev) {
 function printStatement() {
   const m = getMember();
   const w = window.open('', '_blank');
-  w.document.write(`<html><head><title>Statement</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px}</style></head><body>
-    <h2>All Club Credit Union — Statement</h2>
-    <p>${m.name} · ${m.accountNumber}</p>
-    <p>Checking: ${money(m.checking)} · Savings: ${money(m.savings)}</p>
-    <table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead><tbody>
-    ${(m.transactions||[]).map(t=>`<tr><td>${new Date(t.date).toLocaleString()}</td><td>${t.type}</td><td>${t.account}</td><td>${money(t.amount)}</td><td>${t.note||''}</td></tr>`).join('')}
-    </tbody></table></body></html>`);
+  w.document.write('<html><head><title>Statement</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px}</style></head><body>' +
+    '<h2>All Club Credit Union — Statement</h2>' +
+    '<p>' + m.name + ' · ' + m.accountNumber + '</p>' +
+    '<p>Checking: ' + money(m.checking) + ' · Savings: ' + money(m.savings) + '</p>' +
+    '<table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead><tbody>' +
+    (m.transactions||[]).map(t => '<tr><td>' + new Date(t.date).toLocaleString() + '</td><td>' + t.type + '</td><td>' + t.account + '</td><td>' + money(t.amount) + '</td><td>' + (t.note||'') + '</td></tr>').join('') +
+    '</tbody></table></body></html>');
   w.document.close();
   w.print();
 }
@@ -2542,9 +3054,19 @@ function initLanding() {
 }
 
 /* ---------- Boot ---------- */
-loadDB();
-showScreen('screen-role');
-initLanding();
+async function startApp(){
+
+  loadDB();
+
+  await loadMembersFromCloud();
+
+  showScreen('screen-role');
+
+  initLanding();
+
+}
+
+startApp();
 </script>
 </body>
 </html>
