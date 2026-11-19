@@ -151,6 +151,24 @@ class="card">
 id="accountInput"
 placeholder="Account Number">
 
+<div class="grid">
+
+<button onclick="addNumber(1)">1</button>
+<button onclick="addNumber(2)">2</button>
+<button onclick="addNumber(3)">3</button>
+
+<button onclick="addNumber(4)">4</button>
+<button onclick="addNumber(5)">5</button>
+<button onclick="addNumber(6)">6</button>
+
+<button onclick="addNumber(7)">7</button>
+<button onclick="addNumber(8)">8</button>
+<button onclick="addNumber(9)">9</button>
+
+<button onclick="clearNumber()">C</button>
+<button onclick="addNumber(0)">0</button>
+
+</div>
 <input
 id="pinInput"
 type="password"
@@ -251,8 +269,24 @@ Member
 </h2>
 
 <div class="balance">
+<div>
 
+Points:
+<span id="points">
+0
+</span>
+
+<div class="balance">
+
+Checking:
 $<span id="balance">0</span>
+
+</div>
+
+<div>
+
+Savings:
+$<span id="savingsBalance">0</span>
 
 </div>
 
@@ -315,6 +349,25 @@ Transfer
 </button>
 
 <br><br>
+  <h3>Savings</h3>
+
+<button
+class="success"
+onclick="moveToSavings()">
+
+Move $10 To Savings
+
+</button>
+
+<button
+class="primary"
+onclick="moveFromSavings()">
+
+Move $10 To Checking
+
+</button>
+
+<br><br>
 <h3>Transaction History</h3>
 
 <div
@@ -358,7 +411,22 @@ class="card hidden">
 <input
 id="purchaseAccount"
 placeholder="Account Number">
+<select id="memberSelect">
+</select>
+<div
+id="selectedMemberInfo"
+class="memberCard">
 
+Select a Member
+
+</div>
+<button
+class="primary"
+onclick="loadSelectedMember()">
+
+Select Member
+
+</button>
 <input
 id="purchaseAmount"
 type="number"
@@ -442,6 +510,15 @@ Bank Report
 </button>
 
 <br><br>
+  <button
+class="success"
+onclick="showLeaderboard()">
+
+Top Savers
+
+</button>
+
+<br><br>
 <h3>Members</h3>
 
 <div
@@ -465,7 +542,7 @@ Logout
 const ADMIN_PIN = "9999";
 const STORE_PIN = "5555";
 let currentAccount = null;
-
+let failedAttempts = {};
 let bankData =
 JSON.parse(
 localStorage.getItem("allClubV3")
@@ -578,7 +655,9 @@ document
 
 let member =
 bankData.accounts[account];
-
+if(!failedAttempts[account]){
+failedAttempts[account]=0;
+}
 if(!member){
 
 alert("Account Not Found");
@@ -587,12 +666,33 @@ return;
 }
 
 if(member.pin !== pin){
+if(
+failedAttempts[account] >= 3
+){
 
-alert("Wrong PIN");
+alert("Account Locked");
 return;
 
 }
 
+if(member.pin !== pin){
+
+failedAttempts[account]++;
+
+alert(
+"Wrong PIN (" +
+failedAttempts[account] +
+"/3)"
+);
+
+return;
+
+}
+alert("Wrong PIN");
+return;
+
+}
+failedAttempts[account] = 0;
 currentAccount = account;
 
 document
@@ -634,6 +734,14 @@ document
 .getElementById("balance")
 .innerText =
 member.balance.toFixed(2);
+document
+.getElementById("savingsBalance")
+.innerText =
+member.savings.toFixed(2);
+document
+.getElementById("points")
+.innerText =
+member.points || 0;
 
 loadHistory();
 
@@ -772,7 +880,9 @@ bankData.accounts[account] = {
 
 name:name,
 pin:pin,
-balance:balance,
+checking:balance,
+savings:0,
+points:0,
 history:[
 "Account Created"
 ]
@@ -927,8 +1037,7 @@ member.name +
 
 "\nBalance: $" +
 
-member.balance.toFixed(2)
-
+member.checking.toFixed(2)
 );
 
 }
@@ -1036,7 +1145,10 @@ document
 
 }
 
-function storeLogin(){
+document
+.getElementById("storeScreen")
+.classList.remove("hidden");
+  loadStoreMembers();
 
 let pin =
 document
@@ -1123,6 +1235,216 @@ saveData();
 alert(
 "Purchase Complete"
 );
+
+}
+  function loadStoreMembers(){
+
+let select =
+document.getElementById(
+"memberSelect"
+);
+
+select.innerHTML = "";
+
+for(
+let account
+in
+bankData.accounts
+){
+
+let option =
+document.createElement(
+"option"
+);
+
+option.value =
+account;
+
+option.text =
+
+bankData.accounts[
+account
+].name +
+
+" (" +
+
+account +
+
+")";
+
+select.appendChild(
+option
+);
+
+}
+
+}
+
+function loadSelectedMember(){
+
+let account =
+document.getElementById(
+"memberSelect"
+).value;
+
+document
+.getElementById(
+"purchaseAccount"
+)
+.value = account;
+
+let member =
+bankData.accounts[account];
+
+document
+.getElementById(
+"selectedMemberInfo"
+)
+.innerHTML =
+
+"<h3>" +
+member.name +
+"</h3>" +
+
+"Account: " +
+account +
+
+"<br><br>" +
+
+"Balance: $" +
+member.balance.toFixed(2);
+
+}
+let account =
+document.getElementById(
+"memberSelect"
+).value;
+
+document
+.getElementById(
+"purchaseAccount"
+)
+.value = account;
+
+}
+  function showLeaderboard(){
+
+let members = [];
+
+for(
+let account
+in
+bankData.accounts
+){
+
+members.push({
+
+name:
+bankData.accounts[
+account
+].name,
+
+balance:
+bankData.accounts[
+account
+].balance
+
+});
+
+}
+
+members.sort(
+(a,b)=>
+b.balance-a.balance
+);
+
+let text =
+"TOP SAVERS\n\n";
+
+members.forEach(
+(member,index)=>{
+
+text +=
+
+(index+1) +
+
+". " +
+
+member.name +
+
+" - $" +
+
+member.balance +
+
+"\n";
+
+});
+
+alert(text);
+
+}
+  function moveToSavings(){
+
+let member =
+bankData.accounts[currentAccount];
+
+if(member.checking < 10){
+alert("Not Enough Money");
+return;
+}
+
+member.checking -= 10;
+
+member.savings += 10;
+
+addHistory(
+currentAccount,
+"Moved $10 To Savings"
+);
+
+saveData();
+
+updateATM();
+
+}
+
+function moveFromSavings(){
+
+let member =
+bankData.accounts[currentAccount];
+
+if(member.savings < 10){
+alert("Not Enough Savings");
+return;
+}
+
+member.savings -= 10;
+
+member.checking += 10;
+
+addHistory(
+currentAccount,
+"Moved $10 To Checking"
+);
+
+saveData();
+
+updateATM();
+
+}
+  function addNumber(num){
+
+document
+.getElementById("accountInput")
+.value += num;
+
+}
+
+function clearNumber(){
+
+document
+.getElementById("accountInput")
+.value = "";
 
 }
 </script>
