@@ -18,6 +18,7 @@
     --muted: #8b9bb4;
     --blue: #40c4ff;
     --purple: #b388ff;
+    --teal: #26a69a;
   }
   * { box-sizing: border-box; margin: 0; padding: 0; }
   body {
@@ -72,6 +73,7 @@
   button.warn { background: var(--warn); color: #3e2723; }
   button.blue { background: var(--blue); color: #00263a; }
   button.purple { background: var(--purple); color: #1a0033; }
+  button.teal { background: var(--teal); color: #00332e; }
   button:disabled { opacity: 0.5; cursor: not-allowed; }
   .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
   .balance-box {
@@ -99,12 +101,6 @@
   }
   .login-wrap h1 { font-size: 1.4rem; margin-bottom: 6px; text-align: center; }
   .login-wrap .sub { text-align: center; color: var(--muted); margin-bottom: 20px; font-size: 0.9rem; }
-  .pin-display {
-    letter-spacing: 8px; font-size: 1.4rem; text-align: center;
-    padding: 12px; background: var(--panel2); border-radius: 8px; margin-bottom: 12px;
-  }
-  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
-  .keypad button { padding: 16px; font-size: 1.2rem; background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
   .toast {
     position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
     background: var(--panel2); border: 1px solid var(--border); padding: 12px 20px;
@@ -157,11 +153,12 @@
       <h1>All Club <span style="color:var(--accent)">Credit Union</span></h1>
       <p class="sub">Secure • Local • Offline-first</p>
       <button style="width:100%;margin-bottom:10px" onclick="showScreen('screen-member-login')">Member Login</button>
+      <button class="teal" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-banker-login')">Banker Login</button>
       <button class="blue" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-store-login')">Store Login</button>
       <button class="purple" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-admin-login')">Admin Login</button>
       <p class="muted" style="text-align:center;margin-top:16px;font-size:0.8rem">
         Demo: Member ACC1001 / PIN 1234<br>
-        Store PIN 5678 · Admin PIN 9999
+        Banker PIN 4321 · Store PIN 5678 · Admin PIN 9999
       </p>
     </div>
   </div>
@@ -177,6 +174,19 @@
       <input id="m-pin" type="password" maxlength="6" placeholder="••••" autocomplete="off">
       <div id="m-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
       <button style="width:100%" onclick="memberLogin()">Login</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
+    </div>
+  </div>
+
+  <!-- ========== BANKER LOGIN ========== -->
+  <div id="screen-banker-login" class="screen">
+    <div class="login-wrap">
+      <h1>Banker Login</h1>
+      <p class="sub">Teller / Cashier terminal</p>
+      <label>Banker PIN</label>
+      <input id="b-pin" type="password" maxlength="6" placeholder="••••">
+      <div id="b-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
+      <button class="teal" style="width:100%" onclick="bankerLogin()">Login</button>
       <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
     </div>
   </div>
@@ -246,10 +256,10 @@
       </div>
       <div class="card">
         <h3>Quick Actions</h3>
+        <p class="muted" style="margin-bottom:10px">Deposits are handled by a banker at the branch.</p>
         <div class="btn-row">
-          <button onclick="openModal('modal-deposit')">Deposit</button>
-          <button class="secondary" onclick="openModal('modal-withdraw')">Withdraw</button>
-          <button class="blue" onclick="openModal('modal-transfer')">Transfer</button>
+          <button class="secondary" onclick="openMemberWithdraw()">Withdraw</button>
+          <button class="blue" onclick="document.querySelector('[data-tab=m-transact]').click()">Transfer</button>
           <button class="purple" onclick="claimDailyReward()">Daily Reward</button>
         </div>
       </div>
@@ -259,18 +269,10 @@
       </div>
     </div>
 
-    <!-- Banking -->
+    <!-- Banking (no self-deposit) -->
     <div id="m-transact" class="tab-panel hidden">
       <div class="card">
-        <h3>Deposit</h3>
-        <label>Account</label>
-        <select id="dep-account"><option value="checking">Checking</option><option value="savings">Savings</option></select>
-        <label>Amount</label>
-        <input id="dep-amount" type="number" min="0.01" step="0.01" placeholder="0.00">
-        <button onclick="doDeposit()">Deposit</button>
-      </div>
-      <div class="card">
-        <h3>Withdraw</h3>
+        <h3>Withdraw (ATM-style)</h3>
         <label>Account</label>
         <select id="wd-account"><option value="checking">Checking</option><option value="savings">Savings</option></select>
         <label>Amount</label>
@@ -278,7 +280,7 @@
         <button class="secondary" onclick="doWithdraw()">Withdraw</button>
       </div>
       <div class="card">
-        <h3>Transfer</h3>
+        <h3>Transfer Between My Accounts</h3>
         <label>From</label>
         <select id="tr-from"><option value="checking">Checking</option><option value="savings">Savings</option></select>
         <label>To</label>
@@ -286,6 +288,9 @@
         <label>Amount</label>
         <input id="tr-amount" type="number" min="0.01" step="0.01" placeholder="0.00">
         <button class="blue" onclick="doTransfer()">Transfer</button>
+      </div>
+      <div class="card">
+        <p class="muted">Need to deposit cash or a check? Please visit a banker / teller.</p>
       </div>
     </div>
 
@@ -309,7 +314,7 @@
     <div id="m-rewards" class="tab-panel hidden">
       <div class="card">
         <h3>Your Points: <span id="m-points2">0</span></h3>
-        <p class="muted">Earn points with deposits, daily login, and savings goals.</p>
+        <p class="muted">Earn points with deposits (via banker), daily login, and savings goals.</p>
       </div>
       <div class="card">
         <h3>Reward Store</h3>
@@ -387,10 +392,87 @@
       </div>
       <div class="card">
         <h3>Paycheck Simulator</h3>
-        <p class="muted">Simulate a paycheck deposit into Checking.</p>
+        <p class="muted">Simulate a direct-deposit paycheck into Checking (for demo).</p>
         <label>Amount</label>
         <input id="paycheck-amt" type="number" min="1" step="0.01" value="500">
         <button class="blue" onclick="simulatePaycheck()">Receive Paycheck</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== BANKER DASHBOARD ========== -->
+  <div id="screen-banker" class="screen">
+    <header class="app-header">
+      <div class="logo">Banker <span>Terminal</span></div>
+      <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="logout()">Logout</button>
+    </header>
+
+    <div class="tabs">
+      <div class="tab active" data-tab="bk-teller" onclick="switchTab('banker',this)">Teller</div>
+      <div class="tab" data-tab="bk-members" onclick="switchTab('banker',this)">Members</div>
+      <div class="tab" data-tab="bk-activity" onclick="switchTab('banker',this)">Activity</div>
+    </div>
+
+    <div id="bk-teller" class="tab-panel">
+      <div class="card">
+        <h3>Select Member</h3>
+        <label>Member</label>
+        <select id="bk-member-select" onchange="previewBankerMember()"></select>
+        <div id="bk-balance-preview" class="muted" style="margin-bottom:12px;min-height:24px"></div>
+      </div>
+
+      <div class="grid2">
+        <div class="card">
+          <h3>Deposit (Cash / Check)</h3>
+          <label>Account</label>
+          <select id="bk-dep-account">
+            <option value="checking">Checking</option>
+            <option value="savings">Savings</option>
+          </select>
+          <label>Amount</label>
+          <input id="bk-dep-amount" type="number" min="0.01" step="0.01" placeholder="0.00">
+          <label>Note (optional)</label>
+          <input id="bk-dep-note" placeholder="Cash deposit, check #123...">
+          <button class="teal" onclick="bankerDeposit()">Process Deposit</button>
+        </div>
+
+        <div class="card">
+          <h3>Withdrawal</h3>
+          <label>Account</label>
+          <select id="bk-wd-account">
+            <option value="checking">Checking</option>
+            <option value="savings">Savings</option>
+          </select>
+          <label>Amount</label>
+          <input id="bk-wd-amount" type="number" min="0.01" step="0.01" placeholder="0.00">
+          <label>Note (optional)</label>
+          <input id="bk-wd-note" placeholder="Cash withdrawal">
+          <button class="secondary" onclick="bankerWithdraw()">Process Withdrawal</button>
+        </div>
+      </div>
+    </div>
+
+    <div id="bk-members" class="tab-panel hidden">
+      <div class="card">
+        <h3>All Members</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Account</th><th>Name</th><th>Checking</th><th>Savings</th><th>Status</th></tr></thead>
+            <tbody id="bk-members-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="bk-activity" class="tab-panel hidden">
+      <div class="card">
+        <h3>Recent Teller Activity</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Date</th><th>Member</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead>
+            <tbody id="bk-activity-body"></tbody>
+          </table>
+        </div>
       </div>
     </div>
   </div>
@@ -570,22 +652,23 @@
 
 </div>
 
-<!-- Simple modals (reused via content swap if needed) -->
 <div id="toast" class="toast"></div>
 
 <script>
 /* ============================================================
    All Club Credit Union - Single-file banking app
    localStorage only • No server required
+   Banker role handles deposits (members cannot self-deposit)
    ============================================================ */
 
-const STORAGE_KEY = 'allclub_cu_v1';
+const STORAGE_KEY = 'allclub_cu_v2';
 const MAX_PIN_ATTEMPTS = 5;
 
 const DEFAULT_DATA = {
-  version: 1,
+  version: 2,
   storePin: '5678',
   adminPin: '9999',
+  bankerPin: '4321',
   nextAcc: 1002,
   members: {
     'ACC1001': {
@@ -602,7 +685,7 @@ const DEFAULT_DATA = {
       streak: 1,
       lastDaily: null,
       transactions: [
-        { id: 1, date: new Date().toISOString(), type: 'Deposit', account: 'checking', amount: 500, note: 'Opening deposit' }
+        { id: 1, date: new Date().toISOString(), type: 'Deposit', account: 'checking', amount: 500, note: 'Opening deposit (Banker)' }
       ],
       goals: [],
       achievements: ['first_login'],
@@ -610,12 +693,13 @@ const DEFAULT_DATA = {
     }
   },
   sales: [],
+  tellerLog: [],
   lotteryPool: 0,
   lastLottery: null
 };
 
 let db = null;
-let currentUser = null; // { role: 'member'|'store'|'admin', account?: string }
+let currentUser = null;
 
 /* ---------- Persistence ---------- */
 function loadDB() {
@@ -624,6 +708,8 @@ function loadDB() {
     if (raw) {
       db = JSON.parse(raw);
       if (!db.members) db = structuredClone(DEFAULT_DATA);
+      if (!db.bankerPin) db.bankerPin = '4321';
+      if (!db.tellerLog) db.tellerLog = [];
     } else {
       db = structuredClone(DEFAULT_DATA);
       saveDB();
@@ -656,6 +742,7 @@ function showScreen(id) {
 function switchTab(area, el) {
   const panels = {
     member: ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-settings'],
+    banker: ['bk-teller','bk-members','bk-activity'],
     store: ['st-charge','st-members','st-sales','st-reports'],
     admin: ['ad-dash','ad-members','ad-create','ad-reports','ad-backup','ad-vault']
   };
@@ -669,6 +756,7 @@ function switchTab(area, el) {
   el.classList.add('active');
 
   if (area === 'member') refreshMemberUI();
+  if (area === 'banker') refreshBankerUI();
   if (area === 'store') refreshStoreUI();
   if (area === 'admin') refreshAdminUI();
 }
@@ -718,15 +806,30 @@ function memberLogin() {
   currentUser = { role: 'member', account: acc };
   document.getElementById('m-pin').value = '';
   showScreen('screen-member');
-  // reset tabs
-  document.querySelectorAll('#member-tabs .tab').forEach((t,i) => {
-    t.classList.toggle('active', i === 0);
-  });
+  document.querySelectorAll('#member-tabs .tab').forEach((t,i) => t.classList.toggle('active', i === 0));
   ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-settings'].forEach((id,i) => {
     document.getElementById(id).classList.toggle('hidden', i !== 0);
   });
   refreshMemberUI();
   toast('Welcome, ' + m.name);
+}
+
+function bankerLogin() {
+  const pin = document.getElementById('b-pin').value.trim();
+  const msg = document.getElementById('b-login-msg');
+  if (pin !== db.bankerPin) {
+    msg.textContent = 'Incorrect banker PIN.';
+    return;
+  }
+  currentUser = { role: 'banker' };
+  document.getElementById('b-pin').value = '';
+  showScreen('screen-banker');
+  document.querySelectorAll('#screen-banker .tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  ['bk-teller','bk-members','bk-activity'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('hidden', i!==0);
+  });
+  refreshBankerUI();
+  toast('Banker terminal ready');
 }
 
 function storeLogin() {
@@ -785,22 +888,6 @@ function addTx(member, type, account, amount, note) {
   if (member.transactions.length > 200) member.transactions.length = 200;
 }
 
-function doDeposit() {
-  const m = getMember();
-  const acct = document.getElementById('dep-account').value;
-  const amt = parseFloat(document.getElementById('dep-amount').value);
-  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
-  m[acct] = (m[acct] || 0) + amt;
-  addTx(m, 'Deposit', acct, amt, 'Member deposit');
-  m.points = (m.points || 0) + Math.floor(amt / 10);
-  m.rank = calcRank(m.points);
-  checkAchievements(m);
-  saveDB();
-  document.getElementById('dep-amount').value = '';
-  refreshMemberUI();
-  toast('Deposited ' + money(amt));
-}
-
 function doWithdraw() {
   const m = getMember();
   const acct = document.getElementById('wd-account').value;
@@ -808,11 +895,16 @@ function doWithdraw() {
   if (!amt || amt <= 0) return toast('Enter a valid amount', true);
   if ((m[acct] || 0) < amt) return toast('Insufficient funds', true);
   m[acct] -= amt;
-  addTx(m, 'Withdrawal', acct, -amt, 'Member withdrawal');
+  addTx(m, 'Withdrawal', acct, -amt, 'ATM / Member withdrawal');
   saveDB();
   document.getElementById('wd-amount').value = '';
   refreshMemberUI();
   toast('Withdrew ' + money(amt));
+}
+
+function openMemberWithdraw() {
+  document.querySelector('[data-tab=m-transact]').click();
+  document.getElementById('wd-amount').focus();
 }
 
 function doTransfer() {
@@ -876,12 +968,131 @@ function simulatePaycheck() {
   const amt = parseFloat(document.getElementById('paycheck-amt').value) || 0;
   if (amt <= 0) return toast('Invalid amount', true);
   m.checking = (m.checking || 0) + amt;
-  addTx(m, 'Paycheck', 'checking', amt, 'Simulated paycheck');
+  addTx(m, 'Paycheck', 'checking', amt, 'Direct deposit (simulated)');
   m.points = (m.points || 0) + Math.floor(amt / 20);
   m.rank = calcRank(m.points);
   saveDB();
   refreshMemberUI();
   toast('Paycheck of ' + money(amt) + ' deposited');
+}
+
+/* ---------- Banker Functions ---------- */
+function refreshBankerUI() {
+  const members = Object.values(db.members);
+  const sel = document.getElementById('bk-member-select');
+  sel.innerHTML = members.map(m =>
+    `<option value="${m.accountNumber}">${m.accountNumber} — ${m.name}</option>`
+  ).join('');
+  previewBankerMember();
+
+  document.getElementById('bk-members-body').innerHTML = members.map(m =>
+    `<tr>
+      <td>${m.accountNumber}</td>
+      <td>${m.name}</td>
+      <td>${money(m.checking)}</td>
+      <td>${money(m.savings)}</td>
+      <td>${m.locked ? '🔒 Locked' : 'Active'}</td>
+    </tr>`
+  ).join('');
+
+  const log = (db.tellerLog || []).slice().reverse().slice(0, 50);
+  document.getElementById('bk-activity-body').innerHTML = log.length
+    ? log.map(t =>
+        `<tr>
+          <td>${new Date(t.date).toLocaleString()}</td>
+          <td>${t.memberName} (${t.account})</td>
+          <td>${t.type}</td>
+          <td>${t.acctType}</td>
+          <td>${money(t.amount)}</td>
+          <td>${t.note || ''}</td>
+        </tr>`
+      ).join('')
+    : '<tr><td colspan="6" class="muted">No teller activity yet</td></tr>';
+}
+
+function previewBankerMember() {
+  const acc = document.getElementById('bk-member-select').value;
+  const m = db.members[acc];
+  const el = document.getElementById('bk-balance-preview');
+  if (!m) { el.textContent = ''; return; }
+  el.innerHTML = `<strong>${m.name}</strong> · Checking: <strong>${money(m.checking)}</strong> · Savings: <strong>${money(m.savings)}</strong>${m.locked ? ' · <span class="error">LOCKED</span>' : ''}`;
+}
+
+function bankerDeposit() {
+  const acc = document.getElementById('bk-member-select').value;
+  const m = db.members[acc];
+  if (!m) return toast('Select a member', true);
+  if (m.locked) return toast('Account is locked', true);
+
+  const acctType = document.getElementById('bk-dep-account').value;
+  const amt = parseFloat(document.getElementById('bk-dep-amount').value);
+  const note = document.getElementById('bk-dep-note').value.trim() || 'Cash/Check deposit';
+
+  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+
+  m[acctType] = (m[acctType] || 0) + amt;
+  addTx(m, 'Deposit', acctType, amt, 'Banker: ' + note);
+
+  // Points for deposits
+  m.points = (m.points || 0) + Math.floor(amt / 10);
+  m.rank = calcRank(m.points);
+  checkAchievements(m);
+
+  // Teller log
+  db.tellerLog = db.tellerLog || [];
+  db.tellerLog.push({
+    id: uid(),
+    date: new Date().toISOString(),
+    account: acc,
+    memberName: m.name,
+    type: 'Deposit',
+    acctType,
+    amount: amt,
+    note
+  });
+  if (db.tellerLog.length > 300) db.tellerLog = db.tellerLog.slice(-300);
+
+  saveDB();
+  document.getElementById('bk-dep-amount').value = '';
+  document.getElementById('bk-dep-note').value = '';
+  refreshBankerUI();
+  toast('Deposited ' + money(amt) + ' to ' + m.name);
+}
+
+function bankerWithdraw() {
+  const acc = document.getElementById('bk-member-select').value;
+  const m = db.members[acc];
+  if (!m) return toast('Select a member', true);
+  if (m.locked) return toast('Account is locked', true);
+
+  const acctType = document.getElementById('bk-wd-account').value;
+  const amt = parseFloat(document.getElementById('bk-wd-amount').value);
+  const note = document.getElementById('bk-wd-note').value.trim() || 'Cash withdrawal';
+
+  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if ((m[acctType] || 0) < amt) return toast('Insufficient funds', true);
+
+  m[acctType] -= amt;
+  addTx(m, 'Withdrawal', acctType, -amt, 'Banker: ' + note);
+
+  db.tellerLog = db.tellerLog || [];
+  db.tellerLog.push({
+    id: uid(),
+    date: new Date().toISOString(),
+    account: acc,
+    memberName: m.name,
+    type: 'Withdrawal',
+    acctType,
+    amount: -amt,
+    note
+  });
+  if (db.tellerLog.length > 300) db.tellerLog = db.tellerLog.slice(-300);
+
+  saveDB();
+  document.getElementById('bk-wd-amount').value = '';
+  document.getElementById('bk-wd-note').value = '';
+  refreshBankerUI();
+  toast('Withdrew ' + money(amt) + ' from ' + m.name);
 }
 
 /* ---------- Goals ---------- */
@@ -996,7 +1207,6 @@ function refreshMemberUI() {
   document.getElementById('m-rank').textContent = m.rank || 'Bronze';
   document.getElementById('m-streak').textContent = m.streak || 0;
 
-  // recent
   const recent = (m.transactions || []).slice(0, 5);
   const recEl = document.getElementById('m-recent');
   if (!recent.length) recEl.innerHTML = '<span class="muted">No recent transactions</span>';
@@ -1006,13 +1216,11 @@ function refreshMemberUI() {
       '</tbody></table>';
   }
 
-  // full history
   const body = document.getElementById('m-tx-body');
   body.innerHTML = (m.transactions || []).map(t =>
     `<tr><td>${new Date(t.date).toLocaleString()}</td><td>${t.type}</td><td>${t.account}</td><td>${money(t.amount)}</td><td>${t.note || ''}</td></tr>`
   ).join('') || '<tr><td colspan="5" class="muted">No transactions</td></tr>';
 
-  // rewards store
   document.getElementById('reward-store').innerHTML = REWARD_ITEMS.map(r =>
     `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
       <div><strong>${r.name}</strong><div class="muted">${r.desc} · ${r.cost} pts</div></div>
@@ -1020,12 +1228,10 @@ function refreshMemberUI() {
     </div>`
   ).join('');
 
-  // achievements
   document.getElementById('m-achievements').innerHTML = (m.achievements || []).length
     ? (m.achievements.map(a => `<span class="rank-badge" style="margin:3px">${ACH_LABELS[a] || a}</span>`).join(' '))
     : '<span class="muted">None yet</span>';
 
-  // leaderboard
   const list = Object.values(db.members).sort((a,b) => (b.savings||0) - (a.savings||0)).slice(0, 5);
   document.getElementById('leaderboard').innerHTML = list.map((x,i) =>
     `<div style="padding:6px 0;border-bottom:1px solid var(--border)">${i+1}. <strong>${x.name}</strong> — ${money(x.savings)}</div>`
@@ -1033,7 +1239,6 @@ function refreshMemberUI() {
 
   document.getElementById('lottery-info').textContent = `Your tickets: ${m.lotteryTickets || 0} · Pool tickets: ${db.lotteryPool || 0}`;
 
-  // card
   document.getElementById('card-name').textContent = m.name;
   document.getElementById('card-acc').textContent = m.accountNumber;
   document.getElementById('card-rank').textContent = m.rank || 'Bronze';
@@ -1049,7 +1254,6 @@ function refreshMemberUI() {
     ph.style.display = 'flex';
   }
 
-  // goals
   const gEl = document.getElementById('goals-list');
   if (!(m.goals || []).length) gEl.innerHTML = '<p class="muted">No goals yet</p>';
   else {
@@ -1171,7 +1375,8 @@ function refreshAdminUI() {
   document.getElementById('ad-analytics').innerHTML = `
     <p>Average points: <strong>${avgPoints}</strong></p>
     <p>Locked accounts: <strong>${members.filter(m=>m.locked).length}</strong></p>
-    <p>Store sales volume: <strong>${money((db.sales||[]).reduce((a,s)=>a+s.amount,0))}</strong></p>`;
+    <p>Store sales volume: <strong>${money((db.sales||[]).reduce((a,s)=>a+s.amount,0))}</strong></p>
+    <p>Teller transactions: <strong>${(db.tellerLog||[]).length}</strong></p>`;
 
   renderAdminMembers();
 }
@@ -1217,18 +1422,16 @@ function createMember() {
     photo: null,
     streak: 0,
     lastDaily: null,
-    transactions: [{
-      id: uid(), date: new Date().toISOString(), type: 'Deposit', account: 'checking', amount: checking, note: 'Opening balance'
-    }],
+    transactions: [],
     goals: [],
     achievements: [],
     lotteryTickets: 0
   };
-  if (checking > 0) { /* already added */ }
+  if (checking > 0) {
+    addTx(db.members[acc], 'Deposit', 'checking', checking, 'Opening balance (Admin)');
+  }
   if (savings > 0) {
-    db.members[acc].transactions.push({
-      id: uid(), date: new Date().toISOString(), type: 'Deposit', account: 'savings', amount: savings, note: 'Opening balance'
-    });
+    addTx(db.members[acc], 'Deposit', 'savings', savings, 'Opening balance (Admin)');
   }
   saveDB();
   document.getElementById('new-name').value = '';
@@ -1278,8 +1481,10 @@ function runReport(type) {
       (m.transactions || []).forEach(t => { if (t.date.slice(0,10) === today) txCount++; });
     });
     const salesToday = (db.sales || []).filter(s => s.date.slice(0,10) === today);
+    const tellerToday = (db.tellerLog || []).filter(t => t.date.slice(0,10) === today);
     out.innerHTML = `<p><strong>Daily Report — ${today}</strong></p>
       <p>Member transactions today: ${txCount}</p>
+      <p>Teller actions today: ${tellerToday.length}</p>
       <p>Store sales today: ${salesToday.length} · ${money(salesToday.reduce((a,s)=>a+s.amount,0))}</p>
       <p>Active members: ${members.length}</p>`;
   } else if (type === 'topsavers') {
@@ -1329,8 +1534,10 @@ function importData(ev) {
   reader.onload = function(e) {
     try {
       const data = JSON.parse(e.target.result);
-      if (!data.members || !data.version) throw new Error('Invalid file');
+      if (!data.members) throw new Error('Invalid file');
       db = data;
+      if (!db.bankerPin) db.bankerPin = '4321';
+      if (!db.tellerLog) db.tellerLog = [];
       saveDB();
       refreshAdminUI();
       document.getElementById('backup-msg').textContent = 'Import successful.';
