@@ -1018,11 +1018,14 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_zzE1deqJoEQ6nz_KgirUgA_Kr8O1lTG";
 
-const supabase =
-window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+let supabase = null;
+try {
+  if (window.supabase && typeof window.supabase.createClient === 'function') {
+    supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  }
+} catch (e) {
+  console.warn('Supabase init failed', e);
+}
 const STORAGE_KEY = 'allclub_cu_v2';
 const MAX_PIN_ATTEMPTS = 5;
 
@@ -1077,7 +1080,7 @@ const FIREBASE_CFG_KEY = 'allclub_firebase_cfg';
 
 function migrateDb(data) {
   if (!data || !data.members) data = structuredClone(DEFAULT_DATA);
-  if (!data.bankerPin) data.bankerPin = '4321';
+  if (!data.bankerPin) data.bankerPin = '0000';
   if (!data.tellerLog) data.tellerLog = [];
   if (data.interestRate == null) data.interestRate = 0.005;
   if (!data.schedules) data.schedules = {};
@@ -1313,74 +1316,85 @@ function bootCloudSync() {
 
 /* ---------- Utils ---------- */
 async function saveMembersToCloud() {
-
-  if (!window.supabase) return;
-
-  const members = Object.values(db.members || {});
-
-  for (const member of members) {
-
-    const { error } = await supabase
-      .from("members")
-      .upsert({
-        accountNumber: member.accountNumber,
-        name: member.name,
-        checking: member.checking,
-        savings: member.savings,
-        pin: member.pin,
-        points: member.points,
-        rank: member.rank
-      });
-
-    if (error) {
-      console.error("Supabase Save Error:", error);
+  if (!window.supabase || !supabase || !db) return;
+  try {
+    const members = Object.values(db.members || {});
+    for (const member of members) {
+      const { error } = await supabase
+        .from("members")
+        .upsert({
+          accountNumber: member.accountNumber,
+          name: member.name,
+          checking: roundMoney(member.checking),
+          savings: roundMoney(member.savings),
+          pin: member.pin,
+          points: member.points || 0,
+          rank: member.rank || calcRank(member.points || 0)
+        });
+      if (error) console.error("Supabase Save Error:", error);
     }
-
+  } catch (e) {
+    console.error("Supabase Save Exception:", e);
   }
-
 }
 async function loadMembersFromCloud() {
+  if (!window.supabase || !supabase) return;
+  try {
+    const { data, error } = await supabase
+      .from("members")
+      .select("*");
 
-  const { data, error } = await supabase
-    .from("members")
-    .select("*");
+    if (error) {
+      console.error("Supabase Load Error:", error);
+      return;
+    }
+    if (!data || !data.length) return;
 
-  if (error) {
-    console.error("Supabase Load Error:", error);
-    return;
+    data.forEach(row => {
+      const acc = row.accountNumber;
+      if (!acc) return;
+      const existing = db.members[acc] || {};
+      db.members[acc] = {
+        accountNumber: acc,
+        name: row.name != null ? row.name : (existing.name || 'Member'),
+        pin: row.pin != null ? String(row.pin) : (existing.pin || '1234'),
+        checking: roundMoney(row.checking != null ? row.checking : (existing.checking || 0)),
+        savings: roundMoney(row.savings != null ? row.savings : (existing.savings || 0)),
+        points: Number(row.points != null ? row.points : (existing.points || 0)),
+        rank: row.rank || existing.rank || calcRank(Number(row.points != null ? row.points : (existing.points || 0))),
+        failedAttempts: existing.failedAttempts || 0,
+        locked: existing.locked || false,
+        photo: existing.photo || null,
+        streak: existing.streak || 0,
+        lastDaily: existing.lastDaily || null,
+        createdAt: existing.createdAt || new Date().toISOString(),
+        transactions: existing.transactions || [],
+        goals: existing.goals || [],
+        achievements: existing.achievements || [],
+        lotteryTickets: existing.lotteryTickets || 0,
+        notifications: existing.notifications || []
+      };
+    });
+
+    saveDBLocal();
+    console.log("Loaded", data.length, "members from Supabase");
+  } catch (e) {
+    console.error("Supabase Load Exception:", e);
   }
-
-  if (!data) return;
-
-  data.forEach(member => {
-
-    db.members[member.accountNumber] = {
-
-      ...db.members[member.accountNumber],
-
-      accountNumber: member.accountNumber,
-      name: member.name,
-      checking: Number(member.checking || 0),
-      savings: Number(member.savings || 0),
-      pin: member.pin,
-      points: Number(member.points || 0),
-      rank: member.rank
-
-    };
-
-  });
-
-  saveDBLocal();
-
-  console.log(
-    "Loaded",
-    data.length,
-    "members from Supabase"
-  );
-
 }
 function money(n) {
-  return '$' + (Number(n) || 0).toFixed(2);
+  return '$' + roundMoney(n).toFixed(2);
+}
+function roundMoney(n) {
+  return Math.round((Number(n) || 0) * 100) / 100;
+}
+function escapeHtml(str) {
+  return String(str == null ? '' : str)
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;');
 }
 function toast(msg, isError) {
   const t = document.getElementById('toast');
@@ -1761,7 +1775,7 @@ function doWithdraw() {
   const amt = parseFloat(document.getElementById('wd-amount').value);
   if (!amt || amt <= 0) return toast('Enter a valid amount', true);
   if ((m[acct] || 0) < amt) return toast('Insufficient funds', true);
-  m[acct] -= amt;
+  m[acct] = roundMoney((m[acct] || 0) - amt);
   addTx(m, 'Withdrawal', acct, -amt, 'ATM / Member withdrawal');
   saveDB();
   document.getElementById('wd-amount').value = '';
@@ -1782,8 +1796,8 @@ function doTransfer() {
   if (from === to) return toast('Choose different accounts', true);
   if (!amt || amt <= 0) return toast('Enter a valid amount', true);
   if ((m[from] || 0) < amt) return toast('Insufficient funds', true);
-  m[from] -= amt;
-  m[to] = (m[to] || 0) + amt;
+  m[from] = roundMoney((m[from] || 0) - amt);
+  m[to] = roundMoney((m[to] || 0) + amt);
   addTx(m, 'Transfer', from, -amt, 'To ' + to);
   addTx(m, 'Transfer', to, amt, 'From ' + from);
   saveDB();
@@ -1839,14 +1853,14 @@ function refreshBankerUI() {
   const members = Object.values(db.members);
   const sel = document.getElementById('bk-member-select');
   sel.innerHTML = members.map(m =>
-    `<option value="${m.accountNumber}">${m.accountNumber} — ${m.name}</option>`
+    `<option value="${m.accountNumber}">${escapeHtml(m.accountNumber)} — ${escapeHtml(m.name)}</option>`
   ).join('');
   previewBankerMember();
 
   document.getElementById('bk-members-body').innerHTML = members.map(m =>
     `<tr>
-      <td>${m.accountNumber}</td>
-      <td>${m.name}</td>
+      <td>${escapeHtml(m.accountNumber)}</td>
+      <td>${escapeHtml(m.name)}</td>
       <td>${money(m.checking)}</td>
       <td>${money(m.savings)}</td>
       <td>${m.locked ? '🔒 Locked' : 'Active'}</td>
@@ -1860,7 +1874,7 @@ function refreshBankerUI() {
       ? members.map(m => `
           <label style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-bottom:1px solid var(--border)">
             <input type="checkbox" class="bk-bulk-check" value="${m.accountNumber}" ${m.locked ? 'disabled' : ''}>
-            <span style="flex:1">${m.accountNumber} — ${m.name}${m.locked ? ' <span class="error">(Locked)</span>' : ''}</span>
+            <span style="flex:1">${escapeHtml(m.accountNumber)} — ${escapeHtml(m.name)}${m.locked ? ' <span class="error">(Locked)</span>' : ''}</span>
             <span class="muted" style="font-size:0.8rem">${money(m.checking)} / ${money(m.savings)}</span>
           </label>`).join('')
       : '<p class="muted">No members</p>';
@@ -1877,7 +1891,7 @@ function refreshBankerUI() {
           <td>${t.type}</td>
           <td>${t.acctType}</td>
           <td>${money(t.amount)}</td>
-          <td>${t.note || ''}</td>
+          <td>${escapeHtml(t.note || '')}</td>
         </tr>`
       ).join('')
     : '<tr><td colspan="6" class="muted">No teller activity yet</td></tr>';
@@ -1888,7 +1902,7 @@ function previewBankerMember() {
   const m = db.members[acc];
   const el = document.getElementById('bk-balance-preview');
   if (!m) { el.textContent = ''; return; }
-  el.innerHTML = `<strong>${m.name}</strong> · Checking: <strong>${money(m.checking)}</strong> · Savings: <strong>${money(m.savings)}</strong>${m.locked ? ' · <span class="error">LOCKED</span>' : ''}`;
+  el.innerHTML = `<strong>${escapeHtml(m.name)}</strong> · Checking: <strong>${money(m.checking)}</strong> · Savings: <strong>${money(m.savings)}</strong>${m.locked ? ' · <span class="error">LOCKED</span>' : ''}`;
 }
 
 function bankerDeposit() {
@@ -1903,7 +1917,7 @@ function bankerDeposit() {
 
   if (!amt || amt <= 0) return toast('Enter a valid amount', true);
 
-  m[acctType] = (m[acctType] || 0) + amt;
+  m[acctType] = roundMoney((m[acctType] || 0) + amt);
   addTx(m, 'Deposit', acctType, amt, 'Banker: ' + note);
 
   // Points for deposits
@@ -1949,7 +1963,7 @@ function bankerWithdraw() {
   if (!amt || amt <= 0) return toast('Enter a valid amount', true);
   if ((m[acctType] || 0) < amt) return toast('Insufficient funds', true);
 
-  m[acctType] -= amt;
+  m[acctType] = roundMoney((m[acctType] || 0) - amt);
   addTx(m, 'Withdrawal', acctType, -amt, 'Banker: ' + note);
 
   db.tellerLog = db.tellerLog || [];
@@ -1998,7 +2012,7 @@ function bankerBulkDeposit() {
       skipped++;
       return;
     }
-    m[acctType] = (m[acctType] || 0) + amt;
+    m[acctType] = roundMoney((m[acctType] || 0) + amt);
     addTx(m, 'Deposit', acctType, amt, 'Banker bulk: ' + note);
     const oldRank = m.rank;
     m.points = (m.points || 0) + Math.floor(amt / 10);
@@ -2050,11 +2064,12 @@ function contributeGoal(id, amt) {
   const m = getMember();
   const g = (m.goals || []).find(x => x.id === id);
   if (!g) return;
+  if (amt == null || amt === '') return; // user cancelled prompt
   amt = parseFloat(amt);
-  if (!amt || amt <= 0) return;
+  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
   if ((m.savings || 0) < amt) return toast('Not enough savings', true);
-  m.savings -= amt;
-  g.saved = (g.saved || 0) + amt;
+  m.savings = roundMoney((m.savings || 0) - amt);
+  g.saved = roundMoney((g.saved || 0) + amt);
   addTx(m, 'Goal', 'savings', -amt, 'Toward: ' + g.name);
   if (g.saved >= g.target) {
     m.points = (m.points || 0) + 50;
@@ -2087,8 +2102,8 @@ function buyReward(id) {
     db.lotteryPool = (db.lotteryPool || 0) + 3;
   }
   if (id === 'bonus_int') {
-    const boost = (m.savings || 0) * 0.01;
-    m.savings += boost;
+    const boost = roundMoney((m.savings || 0) * 0.01);
+    m.savings = roundMoney((m.savings || 0) + boost);
     addTx(m, 'Reward', 'savings', boost, 'Bonus interest');
   }
   addTx(m, 'Redeem', 'points', -item.cost, item.name);
@@ -2207,7 +2222,7 @@ function refreshMemberUI() {
   if (mini) {
     const top = Object.values(db.members).sort((a,b) => (b.savings||0) - (a.savings||0)).slice(0, 3);
     mini.innerHTML = top.length
-      ? top.map((x,i) => `<div class="row"><span>${i+1}. ${x.name}</span><strong>${money(x.savings)}</strong></div>`).join('')
+      ? top.map((x,i) => `<div class="row"><span>${i+1}. ${escapeHtml(x.name)}</span><strong>${money(x.savings)}</strong></div>`).join('')
       : '<span class="muted">No savers yet</span>';
   }
 
@@ -2230,7 +2245,7 @@ function refreshMemberUI() {
 
   const body = document.getElementById('m-tx-body');
   body.innerHTML = (m.transactions || []).map(t =>
-    `<tr><td>${new Date(t.date).toLocaleString()}</td><td>${t.type}</td><td>${t.account}</td><td>${money(t.amount)}</td><td>${t.note || ''}</td></tr>`
+    `<tr><td>${new Date(t.date).toLocaleString()}</td><td>${escapeHtml(t.type)}</td><td>${escapeHtml(t.account)}</td><td>${money(t.amount)}</td><td>${escapeHtml(t.note || '')}</td></tr>`
   ).join('') || '<tr><td colspan="5" class="muted">No transactions</td></tr>';
 
   document.getElementById('reward-store').innerHTML = REWARD_ITEMS.map(r =>
@@ -2246,7 +2261,7 @@ function refreshMemberUI() {
 
   const list = Object.values(db.members).sort((a,b) => (b.savings||0) - (a.savings||0)).slice(0, 5);
   document.getElementById('leaderboard').innerHTML = list.map((x,i) =>
-    `<div style="padding:6px 0;border-bottom:1px solid var(--border)">${i+1}. <strong>${x.name}</strong> — ${money(x.savings)}</div>`
+    `<div style="padding:6px 0;border-bottom:1px solid var(--border)">${i+1}. <strong>${escapeHtml(x.name)}</strong> — ${money(x.savings)}</div>`
   ).join('');
 
   document.getElementById('lottery-info').textContent = `Your tickets: ${m.lotteryTickets || 0} · Pool tickets: ${db.lotteryPool || 0}`;
@@ -2301,7 +2316,7 @@ function refreshMemberUI() {
   } else {
     nList.innerHTML = notifs.map(n => `
       <div class="notif-item ${n.read ? '' : 'unread'}">
-        <div class="msg">${n.message}</div>
+        <div class="msg">${escapeHtml(n.message)}</div>
         <div class="time">${new Date(n.date).toLocaleString()}</div>
       </div>`).join('');
   }
@@ -2312,7 +2327,7 @@ function refreshMemberUI() {
     gEl.innerHTML = m.goals.map(g => {
       const pct = Math.min(100, Math.round((g.saved / g.target) * 100));
       return `<div style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between"><strong>${g.name}</strong><span>${money(g.saved)} / ${money(g.target)}</span></div>
+        <div style="display:flex;justify-content:space-between"><strong>${escapeHtml(g.name)}</strong><span>${money(g.saved)} / ${money(g.target)}</span></div>
         <div class="progress"><div style="width:${pct}%"></div></div>
         <div class="btn-row" style="margin-top:6px">
           <button style="padding:5px 10px;font-size:0.8rem" onclick="contributeGoal('${g.id}', prompt('Amount from savings:'))">Add from Savings</button>
@@ -2354,15 +2369,15 @@ function printStatement() {
 function refreshStoreUI() {
   const sel = document.getElementById('st-member-select');
   const members = Object.values(db.members);
-  sel.innerHTML = members.map(m => `<option value="${m.accountNumber}">${m.accountNumber} — ${m.name}</option>`).join('');
+  sel.innerHTML = members.map(m => `<option value="${m.accountNumber}">${escapeHtml(m.accountNumber)} — ${escapeHtml(m.name)}</option>`).join('');
   previewMemberBalance();
 
   document.getElementById('st-members-body').innerHTML = members.map(m =>
-    `<tr><td>${m.accountNumber}</td><td>${m.name}</td><td>${money(m.checking)}</td><td>${money(m.savings)}</td></tr>`
+    `<tr><td>${escapeHtml(m.accountNumber)}</td><td>${escapeHtml(m.name)}</td><td>${money(m.checking)}</td><td>${money(m.savings)}</td></tr>`
   ).join('');
 
   document.getElementById('st-sales-body').innerHTML = (db.sales || []).slice().reverse().map(s =>
-    `<tr><td>${new Date(s.date).toLocaleString()}</td><td>${s.memberName} (${s.account})</td><td>${money(s.amount)}</td><td>${s.desc}</td></tr>`
+    `<tr><td>${new Date(s.date).toLocaleString()}</td><td>${escapeHtml(s.memberName)} (${escapeHtml(s.account)})</td><td>${money(s.amount)}</td><td>${escapeHtml(s.desc)}</td></tr>`
   ).join('') || '<tr><td colspan="4" class="muted">No sales yet</td></tr>';
 
   const total = (db.sales || []).reduce((a,s) => a + s.amount, 0);
@@ -2390,7 +2405,7 @@ function storeCharge() {
   const from = document.getElementById('st-from').value;
   if (!amt || amt <= 0) return toast('Enter amount', true);
   if ((m[from] || 0) < amt) return toast('Insufficient funds in ' + from, true);
-  m[from] -= amt;
+  m[from] = roundMoney((m[from] || 0) - amt);
   addTx(m, 'Purchase', from, -amt, 'Store: ' + desc);
   db.sales = db.sales || [];
   db.sales.push({
@@ -2457,8 +2472,8 @@ function renderAdminMembers() {
   );
   document.getElementById('ad-members-body').innerHTML = members.map(m =>
     `<tr>
-      <td>${m.accountNumber}${m.locked?' 🔒':''}</td>
-      <td>${m.name}</td>
+      <td>${escapeHtml(m.accountNumber)}${m.locked?' 🔒':''}</td>
+      <td>${escapeHtml(m.name)}</td>
       <td>${money(m.checking)}</td>
       <td>${money(m.savings)}</td>
       <td>${m.points||0}</td>
@@ -2519,8 +2534,8 @@ function editBalances() {
   if (!m) return toast('Account not found', true);
   const c = parseFloat(document.getElementById('edit-checking').value);
   const s = parseFloat(document.getElementById('edit-savings').value);
-  if (!isNaN(c)) m.checking = c;
-  if (!isNaN(s)) m.savings = s;
+  if (!isNaN(c)) m.checking = roundMoney(c);
+  if (!isNaN(s)) m.savings = roundMoney(s);
   addTx(m, 'Adjustment', 'admin', 0, 'Admin balance edit');
   saveDB();
   refreshAdminUI();
@@ -2650,7 +2665,7 @@ function applyInterest() {
   Object.values(db.members).forEach(m => {
     const interest = (m.savings || 0) * rate;
     if (interest > 0) {
-      m.savings += interest;
+      m.savings = roundMoney((m.savings || 0) + interest);
       addTx(m, 'Interest', 'savings', interest, pctLabel + ' savings interest');
       pushNotification(m, 'Interest of ' + money(interest) + ' added to your savings (' + pctLabel + ')', 'deposit');
       total += interest;
@@ -2824,7 +2839,7 @@ function payDaySchedule() {
   filled.forEach(s => {
     const m = db.members[s.account];
     if (!m || m.locked) return;
-    m[acctType] = (m[acctType] || 0) + s.pay;
+    m[acctType] = roundMoney((m[acctType] || 0) + s.pay);
     const jobNote = s.job || 'Shift work';
     addTx(m, 'Payroll', acctType, s.pay, slotLabel(s.slot) + ' — ' + jobNote);
     m.points = (m.points || 0) + Math.floor(s.pay / 10);
@@ -2926,9 +2941,7 @@ function importData(ev) {
     try {
       const data = JSON.parse(e.target.result);
       if (!data.members) throw new Error('Invalid file');
-      db = data;
-      if (!db.bankerPin) db.bankerPin = '4321';
-      if (!db.tellerLog) db.tellerLog = [];
+      db = migrateDb(data);
       saveDB();
       refreshAdminUI();
       document.getElementById('backup-msg').textContent = 'Import successful.';
@@ -3055,15 +3068,15 @@ function initLanding() {
 
 /* ---------- Boot ---------- */
 async function startApp(){
-
   loadDB();
-
-  await loadMembersFromCloud();
-
+  try {
+    await loadMembersFromCloud();
+  } catch (e) {
+    console.warn('Cloud member load skipped', e);
+  }
+  bootCloudSync();
   showScreen('screen-role');
-
   initLanding();
-
 }
 
 startApp();
