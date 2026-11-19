@@ -1,1838 +1,1370 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>All Club Credit Union V4</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>All Club Credit Union</title>
+<style>
+  :root {
+    --bg: #0b0f14;
+    --panel: #141a22;
+    --panel2: #1c2430;
+    --border: #2a3444;
+    --accent: #00c853;
+    --accent2: #00e676;
+    --danger: #ff5252;
+    --warn: #ffab40;
+    --text: #e8eef7;
+    --muted: #8b9bb4;
+    --blue: #40c4ff;
+    --purple: #b388ff;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    line-height: 1.4;
+  }
+  #app { max-width: 1100px; margin: 0 auto; padding: 12px; }
+  .screen { display: none; }
+  .screen.active { display: block; }
+  header.app-header {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 14px 16px; background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; margin-bottom: 16px;
+  }
+  .logo { font-weight: 700; font-size: 1.15rem; letter-spacing: 0.5px; }
+  .logo span { color: var(--accent); }
+  .role-badge {
+    font-size: 0.75rem; padding: 4px 10px; border-radius: 999px;
+    background: var(--panel2); border: 1px solid var(--border); color: var(--muted);
+  }
+  .card {
+    background: var(--panel); border: 1px solid var(--border);
+    border-radius: 12px; padding: 16px; margin-bottom: 12px;
+  }
+  .card h2, .card h3 { margin-bottom: 12px; font-size: 1.05rem; }
+  .grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+  @media (max-width: 700px) {
+    .grid2, .grid3 { grid-template-columns: 1fr; }
+  }
+  label { display: block; font-size: 0.8rem; color: var(--muted); margin-bottom: 4px; }
+  input, select, textarea {
+    width: 100%; padding: 10px 12px; border-radius: 8px;
+    border: 1px solid var(--border); background: var(--panel2); color: var(--text);
+    font-size: 1rem; margin-bottom: 10px;
+  }
+  input:focus, select:focus, textarea:focus {
+    outline: none; border-color: var(--accent);
+  }
+  button, .btn {
+    display: inline-flex; align-items: center; justify-content: center;
+    gap: 6px; padding: 10px 14px; border-radius: 8px; border: none;
+    font-size: 0.95rem; font-weight: 600; cursor: pointer;
+    background: var(--accent); color: #003d1a; transition: 0.15s;
+  }
+  button:hover, .btn:hover { filter: brightness(1.08); }
+  button.secondary { background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+  button.danger { background: var(--danger); color: #fff; }
+  button.warn { background: var(--warn); color: #3e2723; }
+  button.blue { background: var(--blue); color: #00263a; }
+  button.purple { background: var(--purple); color: #1a0033; }
+  button:disabled { opacity: 0.5; cursor: not-allowed; }
+  .btn-row { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 8px; }
+  .balance-box {
+    background: linear-gradient(135deg, #0d2818, #143d2a);
+    border: 1px solid #1b5e20; border-radius: 12px; padding: 16px;
+  }
+  .balance-box .label { font-size: 0.8rem; color: #a5d6a7; }
+  .balance-box .amount { font-size: 1.6rem; font-weight: 700; color: var(--accent2); }
+  .muted { color: var(--muted); font-size: 0.85rem; }
+  .success { color: var(--accent2); }
+  .error { color: var(--danger); }
+  table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+  th, td { padding: 8px 10px; text-align: left; border-bottom: 1px solid var(--border); }
+  th { color: var(--muted); font-weight: 600; font-size: 0.8rem; }
+  .tabs { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 14px; }
+  .tab {
+    padding: 8px 12px; border-radius: 8px; background: var(--panel2);
+    border: 1px solid var(--border); color: var(--muted); cursor: pointer; font-size: 0.9rem;
+  }
+  .tab.active { background: var(--accent); color: #003d1a; border-color: var(--accent); font-weight: 600; }
+  .hidden { display: none !important; }
+  .login-wrap {
+    max-width: 400px; margin: 40px auto; padding: 24px;
+    background: var(--panel); border: 1px solid var(--border); border-radius: 16px;
+  }
+  .login-wrap h1 { font-size: 1.4rem; margin-bottom: 6px; text-align: center; }
+  .login-wrap .sub { text-align: center; color: var(--muted); margin-bottom: 20px; font-size: 0.9rem; }
+  .pin-display {
+    letter-spacing: 8px; font-size: 1.4rem; text-align: center;
+    padding: 12px; background: var(--panel2); border-radius: 8px; margin-bottom: 12px;
+  }
+  .keypad { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .keypad button { padding: 16px; font-size: 1.2rem; background: var(--panel2); color: var(--text); border: 1px solid var(--border); }
+  .toast {
+    position: fixed; bottom: 20px; left: 50%; transform: translateX(-50%);
+    background: var(--panel2); border: 1px solid var(--border); padding: 12px 20px;
+    border-radius: 10px; z-index: 9999; display: none; max-width: 90%;
+  }
+  .toast.show { display: block; }
+  .member-card {
+    background: linear-gradient(145deg, #1a2332, #0f1620);
+    border: 2px solid var(--accent); border-radius: 16px; padding: 20px;
+    max-width: 340px; margin: 0 auto; position: relative;
+  }
+  .member-card .photo {
+    width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
+    background: var(--panel2); border: 2px solid var(--border);
+  }
+  .qr-box {
+    width: 120px; height: 120px; background: #fff; color: #000;
+    display: flex; align-items: center; justify-content: center;
+    font-family: monospace; font-size: 11px; word-break: break-all;
+    padding: 6px; border-radius: 6px; margin: 10px auto;
+  }
+  .rank-badge {
+    display: inline-block; padding: 3px 8px; border-radius: 6px;
+    font-size: 0.75rem; font-weight: 600; background: var(--purple); color: #1a0033;
+  }
+  .vault-screen {
+    background: radial-gradient(circle at center, #1a2a1a, #0b0f14);
+    border: 3px solid #2e7d32; border-radius: 20px; padding: 30px; text-align: center;
+  }
+  .stat { text-align: center; padding: 12px; background: var(--panel2); border-radius: 10px; }
+  .stat .num { font-size: 1.4rem; font-weight: 700; color: var(--accent2); }
+  .stat .lbl { font-size: 0.75rem; color: var(--muted); }
+  .progress {
+    height: 8px; background: var(--panel2); border-radius: 4px; overflow: hidden; margin-top: 6px;
+  }
+  .progress > div { height: 100%; background: var(--accent); border-radius: 4px; }
+  @media print {
+    body * { visibility: hidden; }
+    .printable, .printable * { visibility: visible; }
+    .printable { position: absolute; left: 0; top: 0; width: 100%; }
+  }
+</style>
 </head>
 <body>
+<div id="app">
 
-<h1>All Club Credit Union</h1>
+  <!-- ========== ROLE SELECT ========== -->
+  <div id="screen-role" class="screen active">
+    <div class="login-wrap">
+      <h1>All Club <span style="color:var(--accent)">Credit Union</span></h1>
+      <p class="sub">Secure • Local • Offline-first</p>
+      <button style="width:100%;margin-bottom:10px" onclick="showScreen('screen-member-login')">Member Login</button>
+      <button class="blue" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-store-login')">Store Login</button>
+      <button class="purple" style="width:100%;margin-bottom:10px" onclick="showScreen('screen-admin-login')">Admin Login</button>
+      <p class="muted" style="text-align:center;margin-top:16px;font-size:0.8rem">
+        Demo: Member ACC1001 / PIN 1234<br>
+        Store PIN 5678 · Admin PIN 9999
+      </p>
+    </div>
+  </div>
+
+  <!-- ========== MEMBER LOGIN ========== -->
+  <div id="screen-member-login" class="screen">
+    <div class="login-wrap">
+      <h1>Member Login</h1>
+      <p class="sub">Enter account number and PIN</p>
+      <label>Account Number</label>
+      <input id="m-acc" type="text" placeholder="e.g. ACC1001" autocomplete="off">
+      <label>PIN</label>
+      <input id="m-pin" type="password" maxlength="6" placeholder="••••" autocomplete="off">
+      <div id="m-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
+      <button style="width:100%" onclick="memberLogin()">Login</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
+    </div>
+  </div>
+
+  <!-- ========== STORE LOGIN ========== -->
+  <div id="screen-store-login" class="screen">
+    <div class="login-wrap">
+      <h1>Store Login</h1>
+      <label>Store PIN</label>
+      <input id="s-pin" type="password" maxlength="6" placeholder="••••">
+      <div id="s-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
+      <button class="blue" style="width:100%" onclick="storeLogin()">Login</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
+    </div>
+  </div>
+
+  <!-- ========== ADMIN LOGIN ========== -->
+  <div id="screen-admin-login" class="screen">
+    <div class="login-wrap">
+      <h1>Admin Login</h1>
+      <label>Admin PIN</label>
+      <input id="a-pin" type="password" maxlength="6" placeholder="••••">
+      <div id="a-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
+      <button class="purple" style="width:100%" onclick="adminLogin()">Login</button>
+      <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
+    </div>
+  </div>
+
+  <!-- ========== MEMBER DASHBOARD ========== -->
+  <div id="screen-member" class="screen">
+    <header class="app-header">
+      <div class="logo">All Club <span>CU</span></div>
+      <div style="display:flex;align-items:center;gap:10px">
+        <span class="role-badge" id="m-name-badge">Member</span>
+        <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <div class="tabs" id="member-tabs">
+      <div class="tab active" data-tab="m-home" onclick="switchTab('member',this)">Home</div>
+      <div class="tab" data-tab="m-transact" onclick="switchTab('member',this)">Banking</div>
+      <div class="tab" data-tab="m-history" onclick="switchTab('member',this)">History</div>
+      <div class="tab" data-tab="m-rewards" onclick="switchTab('member',this)">Rewards</div>
+      <div class="tab" data-tab="m-card" onclick="switchTab('member',this)">My Card</div>
+      <div class="tab" data-tab="m-goals" onclick="switchTab('member',this)">Goals</div>
+      <div class="tab" data-tab="m-settings" onclick="switchTab('member',this)">Settings</div>
+    </div>
+
+    <!-- Home -->
+    <div id="m-home" class="tab-panel">
+      <div class="grid2">
+        <div class="balance-box">
+          <div class="label">Checking</div>
+          <div class="amount" id="m-checking">$0.00</div>
+        </div>
+        <div class="balance-box" style="background:linear-gradient(135deg,#0d1a28,#142a3d);border-color:#1565c0">
+          <div class="label" style="color:#90caf9">Savings</div>
+          <div class="amount" style="color:var(--blue)" id="m-savings">$0.00</div>
+        </div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <div class="grid3">
+          <div class="stat"><div class="num" id="m-points">0</div><div class="lbl">Points</div></div>
+          <div class="stat"><div class="num" id="m-rank">Bronze</div><div class="lbl">Rank</div></div>
+          <div class="stat"><div class="num" id="m-streak">0</div><div class="lbl">Daily Streak</div></div>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Quick Actions</h3>
+        <div class="btn-row">
+          <button onclick="openModal('modal-deposit')">Deposit</button>
+          <button class="secondary" onclick="openModal('modal-withdraw')">Withdraw</button>
+          <button class="blue" onclick="openModal('modal-transfer')">Transfer</button>
+          <button class="purple" onclick="claimDailyReward()">Daily Reward</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>Recent Activity</h3>
+        <div id="m-recent" class="muted">No recent transactions</div>
+      </div>
+    </div>
+
+    <!-- Banking -->
+    <div id="m-transact" class="tab-panel hidden">
+      <div class="card">
+        <h3>Deposit</h3>
+        <label>Account</label>
+        <select id="dep-account"><option value="checking">Checking</option><option value="savings">Savings</option></select>
+        <label>Amount</label>
+        <input id="dep-amount" type="number" min="0.01" step="0.01" placeholder="0.00">
+        <button onclick="doDeposit()">Deposit</button>
+      </div>
+      <div class="card">
+        <h3>Withdraw</h3>
+        <label>Account</label>
+        <select id="wd-account"><option value="checking">Checking</option><option value="savings">Savings</option></select>
+        <label>Amount</label>
+        <input id="wd-amount" type="number" min="0.01" step="0.01" placeholder="0.00">
+        <button class="secondary" onclick="doWithdraw()">Withdraw</button>
+      </div>
+      <div class="card">
+        <h3>Transfer</h3>
+        <label>From</label>
+        <select id="tr-from"><option value="checking">Checking</option><option value="savings">Savings</option></select>
+        <label>To</label>
+        <select id="tr-to"><option value="savings">Savings</option><option value="checking">Checking</option></select>
+        <label>Amount</label>
+        <input id="tr-amount" type="number" min="0.01" step="0.01" placeholder="0.00">
+        <button class="blue" onclick="doTransfer()">Transfer</button>
+      </div>
+    </div>
+
+    <!-- History -->
+    <div id="m-history" class="tab-panel hidden">
+      <div class="card">
+        <h3>Transaction History</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead>
+            <tbody id="m-tx-body"></tbody>
+          </table>
+        </div>
+        <div class="btn-row" style="margin-top:12px">
+          <button class="secondary" onclick="printStatement()">Print Statement</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Rewards -->
+    <div id="m-rewards" class="tab-panel hidden">
+      <div class="card">
+        <h3>Your Points: <span id="m-points2">0</span></h3>
+        <p class="muted">Earn points with deposits, daily login, and savings goals.</p>
+      </div>
+      <div class="card">
+        <h3>Reward Store</h3>
+        <div id="reward-store"></div>
+      </div>
+      <div class="card">
+        <h3>Achievements</h3>
+        <div id="m-achievements"></div>
+      </div>
+      <div class="card">
+        <h3>Top Savers Leaderboard</h3>
+        <div id="leaderboard"></div>
+      </div>
+      <div class="card">
+        <h3>Lottery</h3>
+        <p class="muted">Spend 50 points for a ticket. Weekly drawing (simulated).</p>
+        <button class="purple" onclick="buyLotteryTicket()">Buy Ticket (50 pts)</button>
+        <div id="lottery-info" class="muted" style="margin-top:8px"></div>
+      </div>
+    </div>
+
+    <!-- Card -->
+    <div id="m-card" class="tab-panel hidden">
+      <div class="card">
+        <h3>Member Card</h3>
+        <div class="member-card printable" id="member-card-print">
+          <div style="display:flex;justify-content:space-between;align-items:flex-start">
+            <div>
+              <div style="font-size:0.7rem;color:var(--muted)">ALL CLUB CREDIT UNION</div>
+              <div style="font-weight:700;font-size:1.1rem" id="card-name">Member</div>
+              <div class="muted" id="card-acc">ACC0000</div>
+              <div style="margin-top:8px"><span class="rank-badge" id="card-rank">Bronze</span></div>
+            </div>
+            <img id="card-photo" class="photo" src="" alt="Photo" style="display:none">
+            <div id="card-photo-placeholder" style="width:72px;height:72px;border-radius:50%;background:var(--panel2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--muted)">Photo</div>
+          </div>
+          <div class="qr-box" id="card-qr">ACC0000</div>
+          <div class="muted" style="text-align:center;font-size:0.75rem">Present this card at participating stores</div>
+        </div>
+        <div class="btn-row" style="justify-content:center;margin-top:14px">
+          <button class="secondary" onclick="window.print()">Print Card</button>
+          <label class="btn secondary" style="cursor:pointer">
+            Upload Photo
+            <input type="file" accept="image/*" style="display:none" onchange="uploadMemberPhoto(event)">
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Goals -->
+    <div id="m-goals" class="tab-panel hidden">
+      <div class="card">
+        <h3>Savings Goals</h3>
+        <div id="goals-list"></div>
+        <hr style="border-color:var(--border);margin:14px 0">
+        <label>Goal Name</label>
+        <input id="goal-name" placeholder="Vacation, Emergency Fund...">
+        <label>Target Amount ($)</label>
+        <input id="goal-target" type="number" min="1" step="1">
+        <button onclick="addGoal()">Add Goal</button>
+      </div>
+    </div>
+
+    <!-- Settings -->
+    <div id="m-settings" class="tab-panel hidden">
+      <div class="card">
+        <h3>Change PIN</h3>
+        <label>Current PIN</label>
+        <input id="pin-old" type="password" maxlength="6">
+        <label>New PIN (4-6 digits)</label>
+        <input id="pin-new" type="password" maxlength="6">
+        <label>Confirm New PIN</label>
+        <input id="pin-confirm" type="password" maxlength="6">
+        <button onclick="changeMemberPin()">Update PIN</button>
+      </div>
+      <div class="card">
+        <h3>Paycheck Simulator</h3>
+        <p class="muted">Simulate a paycheck deposit into Checking.</p>
+        <label>Amount</label>
+        <input id="paycheck-amt" type="number" min="1" step="0.01" value="500">
+        <button class="blue" onclick="simulatePaycheck()">Receive Paycheck</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== STORE DASHBOARD ========== -->
+  <div id="screen-store" class="screen">
+    <header class="app-header">
+      <div class="logo">Store <span>Terminal</span></div>
+      <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="logout()">Logout</button>
+    </header>
+    <div class="tabs">
+      <div class="tab active" data-tab="st-charge" onclick="switchTab('store',this)">Charge</div>
+      <div class="tab" data-tab="st-members" onclick="switchTab('store',this)">Members</div>
+      <div class="tab" data-tab="st-sales" onclick="switchTab('store',this)">Sales</div>
+      <div class="tab" data-tab="st-reports" onclick="switchTab('store',this)">Reports</div>
+    </div>
+
+    <div id="st-charge" class="tab-panel">
+      <div class="card">
+        <h3>Charge Member</h3>
+        <label>Select Member</label>
+        <select id="st-member-select" onchange="previewMemberBalance()"></select>
+        <div id="st-balance-preview" class="muted" style="margin-bottom:10px"></div>
+        <label>Amount</label>
+        <input id="st-amount" type="number" min="0.01" step="0.01">
+        <label>Description</label>
+        <input id="st-desc" placeholder="Item / service">
+        <label>Charge From</label>
+        <select id="st-from"><option value="checking">Checking</option><option value="savings">Savings</option></select>
+        <button class="blue" onclick="storeCharge()">Charge Account</button>
+      </div>
+    </div>
+
+    <div id="st-members" class="tab-panel hidden">
+      <div class="card">
+        <h3>All Members</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Account</th><th>Name</th><th>Checking</th><th>Savings</th></tr></thead>
+            <tbody id="st-members-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="st-sales" class="tab-panel hidden">
+      <div class="card">
+        <h3>Sales History</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead><tr><th>Date</th><th>Member</th><th>Amount</th><th>Desc</th></tr></thead>
+            <tbody id="st-sales-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="st-reports" class="tab-panel hidden">
+      <div class="card">
+        <h3>Store Sales Report</h3>
+        <div id="st-report"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ========== ADMIN DASHBOARD ========== -->
+  <div id="screen-admin" class="screen">
+    <header class="app-header">
+      <div class="logo">Admin <span>Console</span></div>
+      <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="logout()">Logout</button>
+    </header>
+    <div class="tabs">
+      <div class="tab active" data-tab="ad-dash" onclick="switchTab('admin',this)">Dashboard</div>
+      <div class="tab" data-tab="ad-members" onclick="switchTab('admin',this)">Members</div>
+      <div class="tab" data-tab="ad-create" onclick="switchTab('admin',this)">Create</div>
+      <div class="tab" data-tab="ad-reports" onclick="switchTab('admin',this)">Reports</div>
+      <div class="tab" data-tab="ad-backup" onclick="switchTab('admin',this)">Backup</div>
+      <div class="tab" data-tab="ad-vault" onclick="switchTab('admin',this)">Vault</div>
+    </div>
+
+    <div id="ad-dash" class="tab-panel">
+      <div class="grid3">
+        <div class="stat"><div class="num" id="ad-count">0</div><div class="lbl">Members</div></div>
+        <div class="stat"><div class="num" id="ad-total-check">$0</div><div class="lbl">Total Checking</div></div>
+        <div class="stat"><div class="num" id="ad-total-sav">$0</div><div class="lbl">Total Savings</div></div>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <h3>Quick Analytics</h3>
+        <div id="ad-analytics"></div>
+      </div>
+    </div>
+
+    <div id="ad-members" class="tab-panel hidden">
+      <div class="card">
+        <h3>Search & Manage Members</h3>
+        <input id="ad-search" placeholder="Search name or account..." oninput="renderAdminMembers()">
+        <div style="overflow-x:auto;margin-top:10px">
+          <table>
+            <thead><tr><th>Account</th><th>Name</th><th>Checking</th><th>Savings</th><th>Points</th><th>Actions</th></tr></thead>
+            <tbody id="ad-members-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div id="ad-create" class="tab-panel hidden">
+      <div class="card">
+        <h3>Create Member</h3>
+        <label>Full Name</label>
+        <input id="new-name" placeholder="Jane Doe">
+        <label>Starting Checking</label>
+        <input id="new-checking" type="number" value="100" min="0" step="0.01">
+        <label>Starting Savings</label>
+        <input id="new-savings" type="number" value="50" min="0" step="0.01">
+        <label>Initial PIN (4-6 digits)</label>
+        <input id="new-pin" type="text" value="1234" maxlength="6">
+        <button onclick="createMember()">Create Member</button>
+      </div>
+      <div class="card">
+        <h3>Edit Balances</h3>
+        <label>Account Number</label>
+        <input id="edit-acc" placeholder="ACC1001">
+        <label>Checking</label>
+        <input id="edit-checking" type="number" step="0.01">
+        <label>Savings</label>
+        <input id="edit-savings" type="number" step="0.01">
+        <button class="warn" onclick="editBalances()">Update Balances</button>
+      </div>
+    </div>
+
+    <div id="ad-reports" class="tab-panel hidden">
+      <div class="card">
+        <h3>Bank Reports</h3>
+        <div class="btn-row">
+          <button class="secondary" onclick="runReport('daily')">Daily Report</button>
+          <button class="secondary" onclick="runReport('topsavers')">Top Savers</button>
+          <button class="secondary" onclick="runReport('active')">Most Active</button>
+          <button class="secondary" onclick="runReport('richest')">Richest</button>
+        </div>
+        <div id="ad-report-out" style="margin-top:14px"></div>
+      </div>
+      <div class="card">
+        <h3>Interest Payment</h3>
+        <p class="muted">Apply 0.5% interest to all savings balances.</p>
+        <button class="blue" onclick="applyInterest()">Pay Interest</button>
+      </div>
+    </div>
+
+    <div id="ad-backup" class="tab-panel hidden">
+      <div class="card">
+        <h3>Backup & Restore</h3>
+        <div class="btn-row">
+          <button onclick="exportData()">Export Bank Data</button>
+          <label class="btn secondary" style="cursor:pointer">
+            Import Bank Data
+            <input type="file" accept="application/json" style="display:none" onchange="importData(event)">
+          </label>
+          <button class="warn" onclick="emergencyRestore()">Emergency Restore Defaults</button>
+          <button class="danger" onclick="resetBank()">Reset Entire Bank</button>
+        </div>
+        <p class="muted" style="margin-top:10px" id="backup-msg"></p>
+      </div>
+    </div>
+
+    <div id="ad-vault" class="tab-panel hidden">
+      <div class="vault-screen">
+        <h2 style="margin-bottom:8px">🏦 Bank Vault</h2>
+        <p class="muted">Total assets under management</p>
+        <div style="font-size:2.2rem;font-weight:700;color:var(--accent2);margin:16px 0" id="vault-total">$0.00</div>
+        <div class="grid2" style="max-width:400px;margin:0 auto">
+          <div class="stat"><div class="num" id="vault-check">$0</div><div class="lbl">Checking</div></div>
+          <div class="stat"><div class="num" id="vault-sav">$0</div><div class="lbl">Savings</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Simple modals (reused via content swap if needed) -->
+<div id="toast" class="toast"></div>
 
 <script>
+/* ============================================================
+   All Club Credit Union - Single-file banking app
+   localStorage only • No server required
+   ============================================================ */
 
-const ADMIN_PIN = "9999";
-const STORE_PIN = "5555";
+const STORAGE_KEY = 'allclub_cu_v1';
+const MAX_PIN_ATTEMPTS = 5;
 
-let currentUser = null;
-
-function memberLogin(){
-
-alert("Member login system loaded.");
-
-}
-
-function showAdminLogin(){
-
-alert("Admin login selected.");
-
-}
-
-function showStoreLogin(){
-
-alert("Store login selected.");
-
-}
-
-function logout(){
-
-currentUser = null;
-
-alert("Logged Out");
-
-}
-let bankData =
-JSON.parse(
-localStorage.getItem("allClubBank")
-) || {
-
-accounts:{
-
-"1001":{
-name:"Demo Member",
-pin:"1234",
-checking:100,
-savings:0,
-points:0,
-history:[]
-},
-
-"1002":{
-name:"Club President",
-pin:"5678",
-checking:250,
-savings:50,
-points:25,
-history:[]
-}
-
-}
-
+const DEFAULT_DATA = {
+  version: 1,
+  storePin: '5678',
+  adminPin: '9999',
+  nextAcc: 1002,
+  members: {
+    'ACC1001': {
+      accountNumber: 'ACC1001',
+      name: 'Alex Rivera',
+      pin: '1234',
+      checking: 1250.50,
+      savings: 3400.00,
+      points: 120,
+      rank: 'Silver',
+      failedAttempts: 0,
+      locked: false,
+      photo: null,
+      streak: 1,
+      lastDaily: null,
+      transactions: [
+        { id: 1, date: new Date().toISOString(), type: 'Deposit', account: 'checking', amount: 500, note: 'Opening deposit' }
+      ],
+      goals: [],
+      achievements: ['first_login'],
+      lotteryTickets: 0
+    }
+  },
+  sales: [],
+  lotteryPool: 0,
+  lastLottery: null
 };
 
-saveBank();
+let db = null;
+let currentUser = null; // { role: 'member'|'store'|'admin', account?: string }
 
-function saveBank(){
-
-localStorage.setItem(
-"allClubBank",
-JSON.stringify(bankData)
-);
-
+/* ---------- Persistence ---------- */
+function loadDB() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) {
+      db = JSON.parse(raw);
+      if (!db.members) db = structuredClone(DEFAULT_DATA);
+    } else {
+      db = structuredClone(DEFAULT_DATA);
+      saveDB();
+    }
+  } catch (e) {
+    db = structuredClone(DEFAULT_DATA);
+    saveDB();
+  }
 }
 
-function getMember(account){
-
-return bankData.accounts[account];
-
+function saveDB() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
 }
 
-function createMember(
-account,
-name,
-pin,
-startingBalance
-){
+/* ---------- Utils ---------- */
+function money(n) {
+  return '$' + (Number(n) || 0).toFixed(2);
+}
+function toast(msg, isError) {
+  const t = document.getElementById('toast');
+  t.textContent = msg;
+  t.style.borderColor = isError ? 'var(--danger)' : 'var(--accent)';
+  t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2800);
+}
+function showScreen(id) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+function switchTab(area, el) {
+  const panels = {
+    member: ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-settings'],
+    store: ['st-charge','st-members','st-sales','st-reports'],
+    admin: ['ad-dash','ad-members','ad-create','ad-reports','ad-backup','ad-vault']
+  };
+  panels[area].forEach(id => {
+    const p = document.getElementById(id);
+    if (p) p.classList.add('hidden');
+  });
+  const target = el.dataset.tab;
+  document.getElementById(target).classList.remove('hidden');
+  el.parentElement.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
 
-bankData.accounts[account] = {
-
-name:name,
-pin:pin,
-checking:startingBalance,
-savings:0,
-points:0,
-history:[
-"Account Created"
-]
-
-};
-
-saveBank();
-
+  if (area === 'member') refreshMemberUI();
+  if (area === 'store') refreshStoreUI();
+  if (area === 'admin') refreshAdminUI();
+}
+function uid() {
+  return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+function todayKey() {
+  return new Date().toISOString().slice(0, 10);
+}
+function calcRank(points) {
+  if (points >= 1000) return 'Platinum';
+  if (points >= 500) return 'Gold';
+  if (points >= 150) return 'Silver';
+  return 'Bronze';
 }
 
-function depositMoney(
-account,
-amount
-){
+/* ---------- Auth ---------- */
+function memberLogin() {
+  const acc = document.getElementById('m-acc').value.trim().toUpperCase();
+  const pin = document.getElementById('m-pin').value.trim();
+  const msg = document.getElementById('m-login-msg');
+  msg.textContent = '';
 
-let member =
-getMember(account);
-
-member.checking += amount;
-
-member.points += amount;
-
-member.history.unshift(
-
-"Deposit $" +
-amount
-
-);
-
-saveBank();
-
+  const m = db.members[acc];
+  if (!m) {
+    msg.textContent = 'Account not found.';
+    return;
+  }
+  if (m.locked) {
+    msg.textContent = 'Account locked. Contact admin.';
+    return;
+  }
+  if (m.pin !== pin) {
+    m.failedAttempts = (m.failedAttempts || 0) + 1;
+    if (m.failedAttempts >= MAX_PIN_ATTEMPTS) {
+      m.locked = true;
+      saveDB();
+      msg.textContent = 'Too many attempts. Account locked.';
+      return;
+    }
+    saveDB();
+    msg.textContent = `Incorrect PIN. ${MAX_PIN_ATTEMPTS - m.failedAttempts} tries left.`;
+    return;
+  }
+  m.failedAttempts = 0;
+  saveDB();
+  currentUser = { role: 'member', account: acc };
+  document.getElementById('m-pin').value = '';
+  showScreen('screen-member');
+  // reset tabs
+  document.querySelectorAll('#member-tabs .tab').forEach((t,i) => {
+    t.classList.toggle('active', i === 0);
+  });
+  ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-settings'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('hidden', i !== 0);
+  });
+  refreshMemberUI();
+  toast('Welcome, ' + m.name);
 }
 
-function withdrawMoney(
-account,
-amount
-){
-
-let member =
-getMember(account);
-
-if(
-member.checking < amount
-){
-
-return false;
-
+function storeLogin() {
+  const pin = document.getElementById('s-pin').value.trim();
+  const msg = document.getElementById('s-login-msg');
+  if (pin !== db.storePin) {
+    msg.textContent = 'Incorrect store PIN.';
+    return;
+  }
+  currentUser = { role: 'store' };
+  document.getElementById('s-pin').value = '';
+  showScreen('screen-store');
+  document.querySelectorAll('#screen-store .tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  ['st-charge','st-members','st-sales','st-reports'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('hidden', i!==0);
+  });
+  refreshStoreUI();
+  toast('Store terminal ready');
 }
 
-member.checking -= amount;
-
-member.history.unshift(
-
-"Withdraw $" +
-amount
-
-);
-
-saveBank();
-
-return true;
-
+function adminLogin() {
+  const pin = document.getElementById('a-pin').value.trim();
+  const msg = document.getElementById('a-login-msg');
+  if (pin !== db.adminPin) {
+    msg.textContent = 'Incorrect admin PIN.';
+    return;
+  }
+  currentUser = { role: 'admin' };
+  document.getElementById('a-pin').value = '';
+  showScreen('screen-admin');
+  document.querySelectorAll('#screen-admin .tab').forEach((t,i) => t.classList.toggle('active', i===0));
+  ['ad-dash','ad-members','ad-create','ad-reports','ad-backup','ad-vault'].forEach((id,i) => {
+    document.getElementById(id).classList.toggle('hidden', i!==0);
+  });
+  refreshAdminUI();
+  toast('Admin access granted');
 }
 
-function getBalance(
-account
-){
-
-let member =
-getMember(account);
-
-return member.checking;
-
-}
-// PART 3 TRANSFERS HERE
-function loginMember(account,pin){
-
-let member =
-getMember(account);
-
-if(!member){
-
-return false;
-
+function logout() {
+  currentUser = null;
+  showScreen('screen-role');
 }
 
-if(member.pin !== pin){
-
-return false;
-
+/* ---------- Member Banking ---------- */
+function getMember() {
+  return db.members[currentUser.account];
 }
 
-currentUser = account;
-
-return true;
-
+function addTx(member, type, account, amount, note) {
+  if (!member.transactions) member.transactions = [];
+  member.transactions.unshift({
+    id: uid(),
+    date: new Date().toISOString(),
+    type, account, amount: Number(amount), note: note || ''
+  });
+  if (member.transactions.length > 200) member.transactions.length = 200;
 }
 
-function memberLogin(){
-
-let account =
-prompt(
-"Account Number"
-);
-
-let pin =
-prompt(
-"PIN"
-);
-
-if(
-loginMember(
-account,
-pin
-)
-){
-
-let member =
-getMember(account);
-
-alert(
-
-"Welcome " +
-
-member.name +
-
-"\n\nChecking: $" +
-
-member.checking +
-
-"\nSavings: $" +
-
-member.savings +
-
-"\nPoints: " +
-
-member.points
-
-);
-
-}else{
-
-alert(
-"Login Failed"
-);
-
+function doDeposit() {
+  const m = getMember();
+  const acct = document.getElementById('dep-account').value;
+  const amt = parseFloat(document.getElementById('dep-amount').value);
+  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  m[acct] = (m[acct] || 0) + amt;
+  addTx(m, 'Deposit', acct, amt, 'Member deposit');
+  m.points = (m.points || 0) + Math.floor(amt / 10);
+  m.rank = calcRank(m.points);
+  checkAchievements(m);
+  saveDB();
+  document.getElementById('dep-amount').value = '';
+  refreshMemberUI();
+  toast('Deposited ' + money(amt));
 }
 
+function doWithdraw() {
+  const m = getMember();
+  const acct = document.getElementById('wd-account').value;
+  const amt = parseFloat(document.getElementById('wd-amount').value);
+  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if ((m[acct] || 0) < amt) return toast('Insufficient funds', true);
+  m[acct] -= amt;
+  addTx(m, 'Withdrawal', acct, -amt, 'Member withdrawal');
+  saveDB();
+  document.getElementById('wd-amount').value = '';
+  refreshMemberUI();
+  toast('Withdrew ' + money(amt));
 }
 
-function transferMoney(
-fromAccount,
-toAccount,
-amount
-){
-
-if(
-!bankData.accounts[toAccount]
-){
-
-return false;
-
+function doTransfer() {
+  const m = getMember();
+  const from = document.getElementById('tr-from').value;
+  const to = document.getElementById('tr-to').value;
+  const amt = parseFloat(document.getElementById('tr-amount').value);
+  if (from === to) return toast('Choose different accounts', true);
+  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if ((m[from] || 0) < amt) return toast('Insufficient funds', true);
+  m[from] -= amt;
+  m[to] = (m[to] || 0) + amt;
+  addTx(m, 'Transfer', from, -amt, 'To ' + to);
+  addTx(m, 'Transfer', to, amt, 'From ' + from);
+  saveDB();
+  document.getElementById('tr-amount').value = '';
+  refreshMemberUI();
+  toast('Transferred ' + money(amt));
 }
 
-if(
-bankData.accounts[fromAccount]
-.checking < amount
-){
-
-return false;
-
+function changeMemberPin() {
+  const m = getMember();
+  const oldP = document.getElementById('pin-old').value;
+  const newP = document.getElementById('pin-new').value;
+  const conf = document.getElementById('pin-confirm').value;
+  if (oldP !== m.pin) return toast('Current PIN incorrect', true);
+  if (!/^\d{4,6}$/.test(newP)) return toast('PIN must be 4-6 digits', true);
+  if (newP !== conf) return toast('PINs do not match', true);
+  m.pin = newP;
+  saveDB();
+  document.getElementById('pin-old').value = '';
+  document.getElementById('pin-new').value = '';
+  document.getElementById('pin-confirm').value = '';
+  toast('PIN updated');
 }
 
-bankData.accounts[fromAccount]
-.checking -= amount;
-
-bankData.accounts[toAccount]
-.checking += amount;
-
-bankData.accounts[fromAccount]
-.history.unshift(
-
-"Sent $" +
-amount +
-" to " +
-toAccount
-
-);
-
-bankData.accounts[toAccount]
-.history.unshift(
-
-"Received $" +
-amount +
-" from " +
-fromAccount
-
-);
-
-saveBank();
-
-return true;
-
+function claimDailyReward() {
+  const m = getMember();
+  const today = todayKey();
+  if (m.lastDaily === today) return toast('Already claimed today', true);
+  const bonus = 15 + (m.streak || 0) * 2;
+  m.points = (m.points || 0) + bonus;
+  m.streak = (m.lastDaily === prevDay(today)) ? (m.streak || 0) + 1 : 1;
+  m.lastDaily = today;
+  m.rank = calcRank(m.points);
+  addTx(m, 'Reward', 'points', bonus, 'Daily login bonus');
+  checkAchievements(m);
+  saveDB();
+  refreshMemberUI();
+  toast('+' + bonus + ' points! Streak: ' + m.streak);
 }
 
-function showBalance(){
-
-if(!currentUser){
-
-alert("Not Logged In");
-return;
-
+function prevDay(iso) {
+  const d = new Date(iso);
+  d.setDate(d.getDate() - 1);
+  return d.toISOString().slice(0, 10);
 }
 
-let member =
-getMember(currentUser);
-
-alert(
-
-"Checking: $" +
-
-member.checking +
-
-"\nSavings: $" +
-
-member.savings +
-
-"\nPoints: " +
-
-member.points
-
-);
-
-}
-// PART 4 STORE HERE
-let storeSales = [];
-
-function storeLogin(){
-
-let pin =
-prompt("Store PIN");
-
-if(pin !== STORE_PIN){
-
-alert("Wrong Store PIN");
-return;
-
+function simulatePaycheck() {
+  const m = getMember();
+  const amt = parseFloat(document.getElementById('paycheck-amt').value) || 0;
+  if (amt <= 0) return toast('Invalid amount', true);
+  m.checking = (m.checking || 0) + amt;
+  addTx(m, 'Paycheck', 'checking', amt, 'Simulated paycheck');
+  m.points = (m.points || 0) + Math.floor(amt / 20);
+  m.rank = calcRank(m.points);
+  saveDB();
+  refreshMemberUI();
+  toast('Paycheck of ' + money(amt) + ' deposited');
 }
 
-alert("Store Logged In");
-
+/* ---------- Goals ---------- */
+function addGoal() {
+  const m = getMember();
+  const name = document.getElementById('goal-name').value.trim();
+  const target = parseFloat(document.getElementById('goal-target').value);
+  if (!name || !target || target <= 0) return toast('Fill goal name and target', true);
+  if (!m.goals) m.goals = [];
+  m.goals.push({ id: uid(), name, target, saved: 0 });
+  saveDB();
+  document.getElementById('goal-name').value = '';
+  document.getElementById('goal-target').value = '';
+  refreshMemberUI();
+  toast('Goal added');
 }
 
-function chargeMember(
-account,
-amount,
-storeName
-){
-
-let member =
-getMember(account);
-
-if(!member){
-
-return false;
-
+function contributeGoal(id, amt) {
+  const m = getMember();
+  const g = (m.goals || []).find(x => x.id === id);
+  if (!g) return;
+  amt = parseFloat(amt);
+  if (!amt || amt <= 0) return;
+  if ((m.savings || 0) < amt) return toast('Not enough savings', true);
+  m.savings -= amt;
+  g.saved = (g.saved || 0) + amt;
+  addTx(m, 'Goal', 'savings', -amt, 'Toward: ' + g.name);
+  if (g.saved >= g.target) {
+    m.points = (m.points || 0) + 50;
+    m.achievements = m.achievements || [];
+    if (!m.achievements.includes('goal_complete')) m.achievements.push('goal_complete');
+    toast('Goal completed! +50 points');
+  }
+  m.rank = calcRank(m.points);
+  saveDB();
+  refreshMemberUI();
 }
 
-if(
-member.checking < amount
-){
-
-return false;
-
-}
-
-member.checking -= amount;
-
-member.history.unshift(
-
-"Purchase $" +
-amount +
-" at " +
-storeName
-
-);
-
-storeSales.push({
-
-account:account,
-store:storeName,
-amount:amount,
-date:new Date()
-.toLocaleString()
-
-});
-
-saveBank();
-
-return true;
-
-}
-
-function storePurchase(){
-
-let account =
-prompt(
-"Account Number"
-);
-
-let amount =
-Number(
-prompt(
-"Amount"
-)
-);
-
-let store =
-prompt(
-"Store Name"
-);
-
-let result =
-chargeMember(
-account,
-amount,
-store
-);
-
-if(result){
-
-alert(
-"Purchase Complete"
-);
-
-}else{
-
-alert(
-"Purchase Failed"
-);
-
-}
-
-}
-
-function showStoreMembers(){
-
-let text =
-"MEMBERS\n\n";
-
-for(
-let account
-in
-bankData.accounts
-){
-
-let member =
-bankData.accounts[account];
-
-text +=
-
-member.name +
-
-" (" +
-
-account +
-
-") - $" +
-
-member.checking +
-
-"\n";
-
-}
-
-alert(text);
-
-}
-
-function storeReport(){
-
-let total = 0;
-
-storeSales.forEach(
-sale=>{
-
-total += sale.amount;
-
-});
-
-alert(
-
-"STORE REPORT\n\n" +
-
-"Sales: " +
-
-storeSales.length +
-
-"\n\nTotal: $" +
-
-total
-
-);
-
-}
-// PART 5 SAVINGS HERE
-function moveToSavings(
-account,
-amount
-){
-
-let member =
-getMember(account);
-
-if(
-member.checking < amount
-){
-
-return false;
-
-}
-
-member.checking -= amount;
-
-member.savings += amount;
-
-member.history.unshift(
-
-"Moved $" +
-amount +
-" To Savings"
-
-);
-
-saveBank();
-
-return true;
-
-}
-
-function moveToChecking(
-account,
-amount
-){
-
-let member =
-getMember(account);
-
-if(
-member.savings < amount
-){
-
-return false;
-
-}
-
-member.savings -= amount;
-
-member.checking += amount;
-
-member.history.unshift(
-
-"Moved $" +
-amount +
-" To Checking"
-
-);
-
-saveBank();
-
-return true;
-
-}
-
-function giveInterest(){
-
-for(
-let account
-in
-bankData.accounts
-){
-
-let member =
-bankData.accounts[account];
-
-let interest =
-
-Math.floor(
-member.savings * 0.01 * 100
-)/100;
-
-member.savings += interest;
-
-member.history.unshift(
-
-"Interest Earned $" +
-interest
-
-);
-
-}
-
-saveBank();
-
-alert(
-"Interest Applied"
-);
-
-}
-
-function savingsGoal(){
-
-if(!currentUser){
-
-return;
-
-}
-
-let goal =
-Number(
-prompt(
-"Savings Goal"
-)
-);
-
-let member =
-getMember(currentUser);
-
-let percent =
-
-Math.floor(
-
-(member.savings / goal)
-
-* 100
-
-);
-
-alert(
-
-"Savings: $" +
-
-member.savings +
-
-"\nGoal: $" +
-
-goal +
-
-"\nComplete: " +
-
-percent +
-
-"%"
-
-);
-
-}
-
-function showTopSavers(){
-
-let members = [];
-
-for(
-let account
-in
-bankData.accounts
-){
-
-members.push({
-
-name:
-bankData.accounts[account]
-.name,
-
-savings:
-bankData.accounts[account]
-.savings
-
-});
-
-}
-
-members.sort(
-(a,b)=>
-b.savings-a.savings
-);
-
-let text =
-"TOP SAVERS\n\n";
-
-members.forEach(
-(member,index)=>{
-
-text +=
-
-(index+1) +
-
-". " +
-
-member.name +
-
-" - $" +
-
-member.savings +
-
-"\n";
-
-});
-
-alert(text);
-
-}
-// PART 6 REWARDS HERE
-let rewardStore = [
-
-{
-name:"Candy Bar",
-cost:25
-},
-
-{
-name:"Soda",
-cost:50
-},
-
-{
-name:"Chips",
-cost:75
-},
-
-{
-name:"Free Snack",
-cost:100
-},
-
-{
-name:"VIP Pass",
-cost:250
-}
-
+/* ---------- Rewards & Achievements ---------- */
+const REWARD_ITEMS = [
+  { id: 'fee_waiver', name: 'Fee Waiver Coupon', cost: 100, desc: 'One free overdraft fee waiver' },
+  { id: 'bonus_int', name: 'Bonus Interest Boost', cost: 200, desc: '+1% one-time savings boost' },
+  { id: 'merch', name: 'Club Merch Credit', cost: 150, desc: '$10 store credit' },
+  { id: 'lottery_pack', name: '3 Lottery Tickets', cost: 120, desc: 'Three drawing entries' }
 ];
 
-function showPoints(){
-
-if(!currentUser){
-
-alert("Not Logged In");
-return;
-
+function buyReward(id) {
+  const m = getMember();
+  const item = REWARD_ITEMS.find(r => r.id === id);
+  if (!item) return;
+  if ((m.points || 0) < item.cost) return toast('Not enough points', true);
+  m.points -= item.cost;
+  if (id === 'lottery_pack') {
+    m.lotteryTickets = (m.lotteryTickets || 0) + 3;
+    db.lotteryPool = (db.lotteryPool || 0) + 3;
+  }
+  if (id === 'bonus_int') {
+    const boost = (m.savings || 0) * 0.01;
+    m.savings += boost;
+    addTx(m, 'Reward', 'savings', boost, 'Bonus interest');
+  }
+  addTx(m, 'Redeem', 'points', -item.cost, item.name);
+  m.rank = calcRank(m.points);
+  saveDB();
+  refreshMemberUI();
+  toast('Redeemed: ' + item.name);
 }
 
-let member =
-getMember(currentUser);
-
-alert(
-
-"Reward Points: " +
-
-member.points
-
-);
-
+function buyLotteryTicket() {
+  const m = getMember();
+  if ((m.points || 0) < 50) return toast('Need 50 points', true);
+  m.points -= 50;
+  m.lotteryTickets = (m.lotteryTickets || 0) + 1;
+  db.lotteryPool = (db.lotteryPool || 0) + 1;
+  saveDB();
+  refreshMemberUI();
+  toast('Ticket purchased');
 }
 
-function rewardStoreMenu(){
-
-let text =
-"REWARD STORE\n\n";
-
-rewardStore.forEach(
-(item,index)=>{
-
-text +=
-
-(index + 1) +
-
-". " +
-
-item.name +
-
-" - " +
-
-item.cost +
-
-" Points\n";
-
-});
-
-alert(text);
-
+function checkAchievements(m) {
+  m.achievements = m.achievements || [];
+  if ((m.savings || 0) >= 1000 && !m.achievements.includes('saver_1k')) {
+    m.achievements.push('saver_1k');
+    m.points += 75;
+  }
+  if ((m.points || 0) >= 500 && !m.achievements.includes('points_500')) {
+    m.achievements.push('points_500');
+  }
+  if ((m.transactions || []).length >= 10 && !m.achievements.includes('active_10')) {
+    m.achievements.push('active_10');
+    m.points += 30;
+  }
 }
 
-function buyReward(){
-
-if(!currentUser){
-
-alert("Not Logged In");
-return;
-
-}
-
-let itemNumber =
-Number(
-prompt(
-"Reward Number"
-)
-);
-
-let item =
-rewardStore[
-itemNumber - 1
-];
-
-if(!item){
-
-alert("Invalid Item");
-return;
-
-}
-
-let member =
-getMember(currentUser);
-
-if(
-member.points <
-item.cost
-){
-
-alert(
-"Not Enough Points"
-);
-
-return;
-
-}
-
-member.points -=
-item.cost;
-
-member.history.unshift(
-
-"Purchased Reward: " +
-
-item.name
-
-);
-
-saveBank();
-
-alert(
-
-"You bought: " +
-
-item.name
-
-);
-
-}
-
-function showAchievements(){
-
-if(!currentUser){
-
-return;
-
-}
-
-let member =
-getMember(currentUser);
-
-let badges = [];
-
-if(
-member.checking >= 100
-){
-badges.push(
-"💵 Saver"
-);
-}
-
-if(
-member.savings >= 500
-){
-badges.push(
-"🏦 Super Saver"
-);
-}
-
-if(
-member.points >= 250
-){
-badges.push(
-"⭐ Rewards Master"
-);
-}
-
-if(
-badges.length === 0
-){
-
-badges.push(
-"🙂 New Member"
-);
-
-}
-
-alert(
-
-"Achievements\n\n" +
-
-badges.join("\n")
-
-);
-
-}
-
-function giveBonusPoints(){
-
-for(
-let account
-in
-bankData.accounts
-){
-
-bankData.accounts[
-account
-].points += 10;
-
-}
-
-saveBank();
-
-alert(
-"Everyone Got 10 Bonus Points"
-);
-
-}
-// PART 7 QR CARDS HERE
-function showMemberCard(){
-
-if(!currentUser){
-
-alert("Not Logged In");
-return;
-
-}
-
-let member =
-getMember(currentUser);
-
-let card =
-
-"🏦 ALL CLUB CREDIT UNION\n\n" +
-
-"Name: " +
-member.name +
-
-"\n\nAccount: " +
-currentUser +
-
-"\n\nChecking: $" +
-member.checking +
-
-"\nSavings: $" +
-member.savings +
-
-"\nPoints: " +
-member.points +
-
-"\n\n████ ████\n" +
-
-"QR: " +
-currentUser;
-
-alert(card);
-
-}
-
-function printMemberCard(){
-
-if(!currentUser){
-
-alert("Not Logged In");
-return;
-
-}
-
-let member =
-getMember(currentUser);
-
-let card =
-
-"ID CARD\n\n" +
-
-member.name +
-
-"\nAccount: " +
-
-currentUser +
-
-"\nChecking: $" +
-
-member.checking +
-
-"\nPoints: " +
-
-member.points;
-
-let win =
-window.open();
-
-win.document.write(
-
-"<h1>All Club Credit Union</h1>" +
-
-"<h2>" +
-member.name +
-"</h2>" +
-
-"<p>Account: " +
-currentUser +
-"</p>" +
-
-"<p>Checking: $" +
-member.checking +
-"</p>" +
-
-"<p>Points: " +
-member.points +
-"</p>"
-
-);
-
-}
-
-function selectMemberByQR(){
-
-let qr =
-prompt(
-"Enter QR Number"
-);
-
-if(
-!bankData.accounts[qr]
-){
-
-alert("Member Not Found");
-return;
-
-}
-
-let member =
-bankData.accounts[qr];
-
-alert(
-
-member.name +
-
-"\nChecking: $" +
-
-member.checking +
-
-"\nPoints: " +
-
-member.points
-
-);
-
-}
-
-function memberPhoto(){
-
-if(!currentUser){
-
-return;
-
-}
-
-let photo =
-prompt(
-"Photo URL"
-);
-
-let member =
-getMember(currentUser);
-
-member.photo =
-photo;
-
-saveBank();
-
-alert(
-"Photo Saved"
-);
-
-}
-
-function viewPhoto(){
-
-if(!currentUser){
-
-return;
-
-}
-
-let member =
-getMember(currentUser);
-
-if(!member.photo){
-
-alert("No Photo");
-return;
-
-}
-
-window.open(
-member.photo
-);
-
-}
-// PART 8 REPORTS HERE
-function dailyReport(){
-
-let accounts = 0;
-let checking = 0;
-let savings = 0;
-let points = 0;
-
-for(
-let account
-in
-bankData.accounts
-){
-
-accounts++;
-
-checking +=
-bankData.accounts[account]
-.checking;
-
-savings +=
-bankData.accounts[account]
-.savings;
-
-points +=
-bankData.accounts[account]
-.points;
-
-}
-
-alert(
-
-"DAILY REPORT\n\n" +
-
-"Members: " +
-accounts +
-
-"\n\nChecking: $" +
-checking.toFixed(2) +
-
-"\n\nSavings: $" +
-savings.toFixed(2) +
-
-"\n\nPoints: " +
-points
-
-);
-
-}
-
-function memberStatement(){
-
-let account =
-prompt(
-"Account Number"
-);
-
-if(
-!bankData.accounts[account]
-){
-
-alert("Not Found");
-return;
-
-}
-
-let member =
-bankData.accounts[account];
-
-let statement =
-
-"STATEMENT\n\n" +
-
-member.name +
-
-"\n\n";
-
-member.history.forEach(
-item=>{
-
-statement +=
-item + "\n";
-
-});
-
-alert(statement);
-
-}
-
-function mostActiveMembers(){
-
-let members = [];
-
-for(
-let account
-in
-bankData.accounts
-){
-
-members.push({
-
-name:
-bankData.accounts[account]
-.name,
-
-activity:
-bankData.accounts[account]
-.history.length
-
-});
-
-}
-
-members.sort(
-(a,b)=>
-b.activity-a.activity
-);
-
-let text =
-"MOST ACTIVE MEMBERS\n\n";
-
-members.forEach(
-(member,index)=>{
-
-text +=
-
-(index+1) +
-
-". " +
-
-member.name +
-
-" (" +
-
-member.activity +
-
-" activities)\n";
-
-});
-
-alert(text);
-
-}
-
-function savingsLeaderboard(){
-
-let members = [];
-
-for(
-let account
-in
-bankData.accounts
-){
-
-members.push({
-
-name:
-bankData.accounts[account]
-.name,
-
-savings:
-bankData.accounts[account]
-.savings
-
-});
-
-}
-
-members.sort(
-(a,b)=>
-b.savings-a.savings
-);
-
-let text =
-"SAVINGS LEADERBOARD\n\n";
-
-members.forEach(
-(member,index)=>{
-
-text +=
-
-(index+1) +
-
-". " +
-
-member.name +
-
-" - $" +
-
-member.savings +
-
-"\n";
-
-});
-
-alert(text);
-
-}
-
-function bankAnalytics(){
-
-let richest = "";
-let richestAmount = 0;
-
-for(
-let account
-in
-bankData.accounts
-){
-
-let member =
-bankData.accounts[account];
-
-let total =
-member.checking +
-member.savings;
-
-if(total > richestAmount){
-
-richestAmount = total;
-richest = member.name;
-
-}
-
-}
-
-alert(
-
-"BANK ANALYTICS\n\n" +
-
-"Richest Member:\n" +
-
-richest +
-
-"\n\n$" +
-
-richestAmount.toFixed(2)
-
-);
-
-}
-  // PART 9 BACKUP HERE
-function exportBankData(){
-
-let data =
-JSON.stringify(
-bankData,
-null,
-2
-);
-
-let blob =
-new Blob(
-[data],
-{
-type:"application/json"
-}
-);
-
-let link =
-document.createElement(
-"a"
-);
-
-link.href =
-URL.createObjectURL(
-blob
-);
-
-link.download =
-"AllClubBankBackup.json";
-
-link.click();
-
-}
-
-function importBankData(){
-
-let text =
-prompt(
-"Paste Backup Data"
-);
-
-if(!text){
-
-return;
-
-}
-
-try{
-
-bankData =
-JSON.parse(text);
-
-saveBank();
-
-alert(
-"Backup Imported"
-);
-
-}catch(error){
-
-alert(
-"Invalid Backup"
-);
-
-}
-
-}
-
-function showBackupData(){
-
-alert(
-
-JSON.stringify(
-bankData,
-null,
-2
-)
-
-);
-
-}
-
-function resetBank(){
-
-let confirmReset =
-confirm(
-"Reset Entire Bank?"
-);
-
-if(!confirmReset){
-
-return;
-
-}
-
-bankData = {
-
-accounts:{}
-
+const ACH_LABELS = {
+  first_login: 'First Login',
+  goal_complete: 'Goal Crusher',
+  saver_1k: 'Savings $1,000',
+  points_500: '500 Points Club',
+  active_10: '10 Transactions'
 };
 
-saveBank();
+/* ---------- Member UI Refresh ---------- */
+function refreshMemberUI() {
+  if (!currentUser || currentUser.role !== 'member') return;
+  const m = getMember();
+  document.getElementById('m-name-badge').textContent = m.name;
+  document.getElementById('m-checking').textContent = money(m.checking);
+  document.getElementById('m-savings').textContent = money(m.savings);
+  document.getElementById('m-points').textContent = m.points || 0;
+  document.getElementById('m-points2').textContent = m.points || 0;
+  document.getElementById('m-rank').textContent = m.rank || 'Bronze';
+  document.getElementById('m-streak').textContent = m.streak || 0;
 
-alert(
-"Bank Reset Complete"
-);
+  // recent
+  const recent = (m.transactions || []).slice(0, 5);
+  const recEl = document.getElementById('m-recent');
+  if (!recent.length) recEl.innerHTML = '<span class="muted">No recent transactions</span>';
+  else {
+    recEl.innerHTML = '<table><thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead><tbody>' +
+      recent.map(t => `<tr><td>${new Date(t.date).toLocaleDateString()}</td><td>${t.type}</td><td>${money(t.amount)}</td></tr>`).join('') +
+      '</tbody></table>';
+  }
 
+  // full history
+  const body = document.getElementById('m-tx-body');
+  body.innerHTML = (m.transactions || []).map(t =>
+    `<tr><td>${new Date(t.date).toLocaleString()}</td><td>${t.type}</td><td>${t.account}</td><td>${money(t.amount)}</td><td>${t.note || ''}</td></tr>`
+  ).join('') || '<tr><td colspan="5" class="muted">No transactions</td></tr>';
+
+  // rewards store
+  document.getElementById('reward-store').innerHTML = REWARD_ITEMS.map(r =>
+    `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
+      <div><strong>${r.name}</strong><div class="muted">${r.desc} · ${r.cost} pts</div></div>
+      <button style="padding:6px 10px;font-size:0.85rem" onclick="buyReward('${r.id}')">Buy</button>
+    </div>`
+  ).join('');
+
+  // achievements
+  document.getElementById('m-achievements').innerHTML = (m.achievements || []).length
+    ? (m.achievements.map(a => `<span class="rank-badge" style="margin:3px">${ACH_LABELS[a] || a}</span>`).join(' '))
+    : '<span class="muted">None yet</span>';
+
+  // leaderboard
+  const list = Object.values(db.members).sort((a,b) => (b.savings||0) - (a.savings||0)).slice(0, 5);
+  document.getElementById('leaderboard').innerHTML = list.map((x,i) =>
+    `<div style="padding:6px 0;border-bottom:1px solid var(--border)">${i+1}. <strong>${x.name}</strong> — ${money(x.savings)}</div>`
+  ).join('');
+
+  document.getElementById('lottery-info').textContent = `Your tickets: ${m.lotteryTickets || 0} · Pool tickets: ${db.lotteryPool || 0}`;
+
+  // card
+  document.getElementById('card-name').textContent = m.name;
+  document.getElementById('card-acc').textContent = m.accountNumber;
+  document.getElementById('card-rank').textContent = m.rank || 'Bronze';
+  document.getElementById('card-qr').textContent = m.accountNumber + '\n' + m.name.slice(0,12);
+  const photo = document.getElementById('card-photo');
+  const ph = document.getElementById('card-photo-placeholder');
+  if (m.photo) {
+    photo.src = m.photo;
+    photo.style.display = 'block';
+    ph.style.display = 'none';
+  } else {
+    photo.style.display = 'none';
+    ph.style.display = 'flex';
+  }
+
+  // goals
+  const gEl = document.getElementById('goals-list');
+  if (!(m.goals || []).length) gEl.innerHTML = '<p class="muted">No goals yet</p>';
+  else {
+    gEl.innerHTML = m.goals.map(g => {
+      const pct = Math.min(100, Math.round((g.saved / g.target) * 100));
+      return `<div style="margin-bottom:12px">
+        <div style="display:flex;justify-content:space-between"><strong>${g.name}</strong><span>${money(g.saved)} / ${money(g.target)}</span></div>
+        <div class="progress"><div style="width:${pct}%"></div></div>
+        <div class="btn-row" style="margin-top:6px">
+          <button style="padding:5px 10px;font-size:0.8rem" onclick="contributeGoal('${g.id}', prompt('Amount from savings:'))">Add from Savings</button>
+        </div>
+      </div>`;
+    }).join('');
+  }
 }
 
-function emergencyRestore(){
-
-bankData = {
-
-accounts:{
-
-"1001":{
-name:"Demo Member",
-pin:"1234",
-checking:100,
-savings:0,
-points:0,
-history:[]
-},
-
-"1002":{
-name:"Club President",
-pin:"5678",
-checking:250,
-savings:50,
-points:25,
-history:[]
+function uploadMemberPhoto(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    const m = getMember();
+    m.photo = e.target.result;
+    saveDB();
+    refreshMemberUI();
+    toast('Photo updated');
+  };
+  reader.readAsDataURL(file);
 }
 
+function printStatement() {
+  const m = getMember();
+  const w = window.open('', '_blank');
+  w.document.write(`<html><head><title>Statement</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px}</style></head><body>
+    <h2>All Club Credit Union — Statement</h2>
+    <p>${m.name} · ${m.accountNumber}</p>
+    <p>Checking: ${money(m.checking)} · Savings: ${money(m.savings)}</p>
+    <table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead><tbody>
+    ${(m.transactions||[]).map(t=>`<tr><td>${new Date(t.date).toLocaleString()}</td><td>${t.type}</td><td>${t.account}</td><td>${money(t.amount)}</td><td>${t.note||''}</td></tr>`).join('')}
+    </tbody></table></body></html>`);
+  w.document.close();
+  w.print();
 }
 
-};
+/* ---------- Store ---------- */
+function refreshStoreUI() {
+  const sel = document.getElementById('st-member-select');
+  const members = Object.values(db.members);
+  sel.innerHTML = members.map(m => `<option value="${m.accountNumber}">${m.accountNumber} — ${m.name}</option>`).join('');
+  previewMemberBalance();
 
-saveBank();
+  document.getElementById('st-members-body').innerHTML = members.map(m =>
+    `<tr><td>${m.accountNumber}</td><td>${m.name}</td><td>${money(m.checking)}</td><td>${money(m.savings)}</td></tr>`
+  ).join('');
 
-alert(
-"Emergency Restore Complete"
-);
+  document.getElementById('st-sales-body').innerHTML = (db.sales || []).slice().reverse().map(s =>
+    `<tr><td>${new Date(s.date).toLocaleString()}</td><td>${s.memberName} (${s.account})</td><td>${money(s.amount)}</td><td>${s.desc}</td></tr>`
+  ).join('') || '<tr><td colspan="4" class="muted">No sales yet</td></tr>';
 
+  const total = (db.sales || []).reduce((a,s) => a + s.amount, 0);
+  const todaySales = (db.sales || []).filter(s => s.date.slice(0,10) === todayKey());
+  document.getElementById('st-report').innerHTML = `
+    <p><strong>Total sales (all time):</strong> ${money(total)}</p>
+    <p><strong>Sales today:</strong> ${todaySales.length} · ${money(todaySales.reduce((a,s)=>a+s.amount,0))}</p>
+    <p><strong>Transactions recorded:</strong> ${(db.sales||[]).length}</p>`;
 }
 
-function countMembers(){
-
-let total =
-
-Object.keys(
-bankData.accounts
-).length;
-
-alert(
-
-"Members: " +
-total
-
-);
-
-}
-// PART 10 EXTRAS HERE
-  function dailyReward(){
-
-if(!currentUser){
-
-alert("Login First");
-return;
-
+function previewMemberBalance() {
+  const acc = document.getElementById('st-member-select').value;
+  const m = db.members[acc];
+  if (!m) { document.getElementById('st-balance-preview').textContent = ''; return; }
+  document.getElementById('st-balance-preview').innerHTML =
+    `Checking: <strong>${money(m.checking)}</strong> · Savings: <strong>${money(m.savings)}</strong>`;
 }
 
-let member =
-getMember(currentUser);
-
-member.points += 5;
-
-member.history.unshift(
-"Daily Reward +5 Points"
-);
-
-saveBank();
-
-alert(
-"You earned 5 points!"
-);
-
+function storeCharge() {
+  const acc = document.getElementById('st-member-select').value;
+  const m = db.members[acc];
+  if (!m) return toast('Select a member', true);
+  const amt = parseFloat(document.getElementById('st-amount').value);
+  const desc = document.getElementById('st-desc').value.trim() || 'Store purchase';
+  const from = document.getElementById('st-from').value;
+  if (!amt || amt <= 0) return toast('Enter amount', true);
+  if ((m[from] || 0) < amt) return toast('Insufficient funds in ' + from, true);
+  m[from] -= amt;
+  addTx(m, 'Purchase', from, -amt, 'Store: ' + desc);
+  db.sales = db.sales || [];
+  db.sales.push({
+    id: uid(),
+    date: new Date().toISOString(),
+    account: acc,
+    memberName: m.name,
+    amount: amt,
+    desc,
+    from
+  });
+  m.points = (m.points || 0) + Math.floor(amt / 5);
+  m.rank = calcRank(m.points);
+  saveDB();
+  document.getElementById('st-amount').value = '';
+  document.getElementById('st-desc').value = '';
+  refreshStoreUI();
+  toast('Charged ' + money(amt) + ' to ' + m.name);
 }
 
-function lotteryDrawing(){
+/* ---------- Admin ---------- */
+function refreshAdminUI() {
+  const members = Object.values(db.members);
+  const totalC = members.reduce((a,m) => a + (m.checking||0), 0);
+  const totalS = members.reduce((a,m) => a + (m.savings||0), 0);
+  document.getElementById('ad-count').textContent = members.length;
+  document.getElementById('ad-total-check').textContent = money(totalC);
+  document.getElementById('ad-total-sav').textContent = money(totalS);
+  document.getElementById('vault-total').textContent = money(totalC + totalS);
+  document.getElementById('vault-check').textContent = money(totalC);
+  document.getElementById('vault-sav').textContent = money(totalS);
 
-let members =
-Object.keys(
-bankData.accounts
-);
+  const avgPoints = members.length ? Math.round(members.reduce((a,m)=>a+(m.points||0),0)/members.length) : 0;
+  document.getElementById('ad-analytics').innerHTML = `
+    <p>Average points: <strong>${avgPoints}</strong></p>
+    <p>Locked accounts: <strong>${members.filter(m=>m.locked).length}</strong></p>
+    <p>Store sales volume: <strong>${money((db.sales||[]).reduce((a,s)=>a+s.amount,0))}</strong></p>`;
 
-if(
-members.length === 0
-){
-
-alert("No Members");
-return;
-
+  renderAdminMembers();
 }
 
-let winner =
-
-members[
-Math.floor(
-Math.random() *
-members.length
-)
-];
-
-bankData.accounts[winner]
-.points += 50;
-
-saveBank();
-
-alert(
-
-"Lottery Winner!\n\n" +
-
-bankData.accounts[winner]
-.name +
-
-"\n+50 Points"
-
-);
-
+function renderAdminMembers() {
+  const q = (document.getElementById('ad-search').value || '').toLowerCase();
+  const members = Object.values(db.members).filter(m =>
+    !q || m.name.toLowerCase().includes(q) || m.accountNumber.toLowerCase().includes(q)
+  );
+  document.getElementById('ad-members-body').innerHTML = members.map(m =>
+    `<tr>
+      <td>${m.accountNumber}${m.locked?' 🔒':''}</td>
+      <td>${m.name}</td>
+      <td>${money(m.checking)}</td>
+      <td>${money(m.savings)}</td>
+      <td>${m.points||0}</td>
+      <td>
+        <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="unlockMember('${m.accountNumber}')">Unlock</button>
+        <button style="padding:4px 8px;font-size:0.75rem" class="danger" onclick="deleteMember('${m.accountNumber}')">Delete</button>
+      </td>
+    </tr>`
+  ).join('') || '<tr><td colspan="6" class="muted">No members</td></tr>';
 }
 
-function payAllMembers(){
-
-for(
-let account
-in
-bankData.accounts
-){
-
-bankData.accounts[
-account
-].checking += 10;
-
-bankData.accounts[
-account
-].history.unshift(
-"Paycheck +$10"
-);
-
+function createMember() {
+  const name = document.getElementById('new-name').value.trim();
+  const checking = parseFloat(document.getElementById('new-checking').value) || 0;
+  const savings = parseFloat(document.getElementById('new-savings').value) || 0;
+  const pin = document.getElementById('new-pin').value.trim();
+  if (!name) return toast('Name required', true);
+  if (!/^\d{4,6}$/.test(pin)) return toast('PIN must be 4-6 digits', true);
+  const acc = 'ACC' + (db.nextAcc++);
+  db.members[acc] = {
+    accountNumber: acc,
+    name,
+    pin,
+    checking,
+    savings,
+    points: 0,
+    rank: 'Bronze',
+    failedAttempts: 0,
+    locked: false,
+    photo: null,
+    streak: 0,
+    lastDaily: null,
+    transactions: [{
+      id: uid(), date: new Date().toISOString(), type: 'Deposit', account: 'checking', amount: checking, note: 'Opening balance'
+    }],
+    goals: [],
+    achievements: [],
+    lotteryTickets: 0
+  };
+  if (checking > 0) { /* already added */ }
+  if (savings > 0) {
+    db.members[acc].transactions.push({
+      id: uid(), date: new Date().toISOString(), type: 'Deposit', account: 'savings', amount: savings, note: 'Opening balance'
+    });
+  }
+  saveDB();
+  document.getElementById('new-name').value = '';
+  refreshAdminUI();
+  toast('Created ' + acc + ' for ' + name);
 }
 
-saveBank();
-
-alert(
-"Everyone Paid $10"
-);
-
+function editBalances() {
+  const acc = document.getElementById('edit-acc').value.trim().toUpperCase();
+  const m = db.members[acc];
+  if (!m) return toast('Account not found', true);
+  const c = parseFloat(document.getElementById('edit-checking').value);
+  const s = parseFloat(document.getElementById('edit-savings').value);
+  if (!isNaN(c)) m.checking = c;
+  if (!isNaN(s)) m.savings = s;
+  addTx(m, 'Adjustment', 'admin', 0, 'Admin balance edit');
+  saveDB();
+  refreshAdminUI();
+  toast('Balances updated for ' + acc);
 }
 
-function vaultMode(){
-
-alert(
-
-"🏦 BANK VAULT 🏦\n\n" +
-
-"Total Assets\n\n$" +
-
-calculateAssets()
-
-);
-
+function deleteMember(acc) {
+  if (!confirm('Delete member ' + acc + '?')) return;
+  delete db.members[acc];
+  saveDB();
+  refreshAdminUI();
+  toast('Member deleted');
 }
 
-function calculateAssets(){
-
-let total = 0;
-
-for(
-let account
-in
-bankData.accounts
-){
-
-total +=
-
-bankData.accounts[account]
-.checking +
-
-bankData.accounts[account]
-.savings;
-
+function unlockMember(acc) {
+  const m = db.members[acc];
+  if (!m) return;
+  m.locked = false;
+  m.failedAttempts = 0;
+  saveDB();
+  refreshAdminUI();
+  toast(acc + ' unlocked');
 }
 
-return total.toFixed(2);
-
+function runReport(type) {
+  const members = Object.values(db.members);
+  const out = document.getElementById('ad-report-out');
+  if (type === 'daily') {
+    const today = todayKey();
+    let txCount = 0;
+    members.forEach(m => {
+      (m.transactions || []).forEach(t => { if (t.date.slice(0,10) === today) txCount++; });
+    });
+    const salesToday = (db.sales || []).filter(s => s.date.slice(0,10) === today);
+    out.innerHTML = `<p><strong>Daily Report — ${today}</strong></p>
+      <p>Member transactions today: ${txCount}</p>
+      <p>Store sales today: ${salesToday.length} · ${money(salesToday.reduce((a,s)=>a+s.amount,0))}</p>
+      <p>Active members: ${members.length}</p>`;
+  } else if (type === 'topsavers') {
+    const top = members.sort((a,b)=>(b.savings||0)-(a.savings||0)).slice(0,10);
+    out.innerHTML = '<p><strong>Top Savers</strong></p><ol>' +
+      top.map(m => `<li>${m.name} (${m.accountNumber}) — ${money(m.savings)}</li>`).join('') + '</ol>';
+  } else if (type === 'active') {
+    const top = members.sort((a,b)=>(b.transactions||[]).length - (a.transactions||[]).length).slice(0,10);
+    out.innerHTML = '<p><strong>Most Active</strong></p><ol>' +
+      top.map(m => `<li>${m.name} — ${(m.transactions||[]).length} transactions</li>`).join('') + '</ol>';
+  } else if (type === 'richest') {
+    const top = members.sort((a,b)=>((b.checking||0)+(b.savings||0)) - ((a.checking||0)+(a.savings||0))).slice(0,10);
+    out.innerHTML = '<p><strong>Richest Members</strong></p><ol>' +
+      top.map(m => `<li>${m.name} — ${money((m.checking||0)+(m.savings||0))}</li>`).join('') + '</ol>';
+  }
 }
 
-function memberRank(){
-
-if(!currentUser){
-
-return;
-
+function applyInterest() {
+  let total = 0;
+  Object.values(db.members).forEach(m => {
+    const interest = (m.savings || 0) * 0.005;
+    if (interest > 0) {
+      m.savings += interest;
+      addTx(m, 'Interest', 'savings', interest, '0.5% savings interest');
+      total += interest;
+    }
+  });
+  saveDB();
+  refreshAdminUI();
+  toast('Interest paid: ' + money(total));
 }
 
-let member =
-getMember(currentUser);
-
-let rank =
-"Member";
-
-if(member.points >= 50)
-rank = "Bronze";
-
-if(member.points >= 100)
-rank = "Silver";
-
-if(member.points >= 250)
-rank = "Gold";
-
-if(member.points >= 500)
-rank = "Platinum";
-
-alert(
-
-"Rank: " +
-
-rank +
-
-"\nPoints: " +
-
-member.points
-
-);
-
+/* ---------- Backup ---------- */
+function exportData() {
+  const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'allclub_backup_' + todayKey() + '.json';
+  a.click();
+  document.getElementById('backup-msg').textContent = 'Export downloaded.';
 }
 
-<h2>All Club Credit Union</h2>
+function importData(ev) {
+  const file = ev.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!data.members || !data.version) throw new Error('Invalid file');
+      db = data;
+      saveDB();
+      refreshAdminUI();
+      document.getElementById('backup-msg').textContent = 'Import successful.';
+      toast('Data imported');
+    } catch (err) {
+      toast('Import failed: invalid file', true);
+    }
+  };
+  reader.readAsText(file);
+}
 
-<button onclick="memberLogin()">
-Member Login
-</button>
+function emergencyRestore() {
+  if (!confirm('Restore default demo data? Current data will be overwritten.')) return;
+  db = structuredClone(DEFAULT_DATA);
+  saveDB();
+  refreshAdminUI();
+  document.getElementById('backup-msg').textContent = 'Defaults restored.';
+  toast('Defaults restored');
+}
 
-<button onclick="showAdminLogin()">
-Admin Login
-</button>
+function resetBank() {
+  if (!confirm('DELETE ALL DATA and reset the bank? This cannot be undone.')) return;
+  if (!confirm('Are you absolutely sure?')) return;
+  localStorage.removeItem(STORAGE_KEY);
+  db = structuredClone(DEFAULT_DATA);
+  saveDB();
+  refreshAdminUI();
+  document.getElementById('backup-msg').textContent = 'Bank has been fully reset.';
+  toast('Bank reset');
+}
 
-<button onclick="showStoreLogin()">
-Store Login
-</button>
-  <button onclick="memberLogin()">
-Login
-</button>
-
-<button onclick="showBalance()">
-Show Balance
-</button>
-
-<button onclick="alert(transferMoney('1001','1002',10))">
-Test Transfer
-</button>
-  <button onclick="storeLogin()">
-Store Login
-</button>
-
-<button onclick="showStoreMembers()">
-Store Members
-</button>
-
-<button onclick="storePurchase()">
-Make Purchase
-</button>
-
-<button onclick="storeReport()">
-Store Report
-</button>
-  <button onclick="alert(moveToSavings('1001',10))">
-Test Savings
-</button>
-
-<button onclick="alert(moveToChecking('1001',10))">
-Test Checking
-</button>
-
-<button onclick="giveInterest()">
-Add Interest
-</button>
-
-<button onclick="showTopSavers()">
-Top Savers
-</button>
-
-<button onclick="savingsGoal()">
-Savings Goal
-</button>
-  <button onclick="showPoints()">
-My Points
-</button>
-
-<button onclick="rewardStoreMenu()">
-Reward Store
-</button>
-
-<button onclick="buyReward()">
-Buy Reward
-</button>
-
-<button onclick="showAchievements()">
-Achievements
-</button>
-
-<button onclick="giveBonusPoints()">
-Bonus Points
-</button>
-  <button onclick="showMemberCard()">
-Member Card
-</button>
-
-<button onclick="printMemberCard()">
-Print Card
-</button>
-
-<button onclick="selectMemberByQR()">
-Scan QR
-</button>
-
-<button onclick="memberPhoto()">
-Set Photo
-</button>
-
-<button onclick="viewPhoto()">
-View Photo
-</button>
-  <button onclick="dailyReport()">
-Daily Report
-</button>
-
-<button onclick="memberStatement()">
-Member Statement
-</button>
-
-<button onclick="mostActiveMembers()">
-Most Active
-</button>
-
-<button onclick="savingsLeaderboard()">
-Savings Board
-</button>
-
-<button onclick="bankAnalytics()">
-Bank Analytics
-</button>
-  <button onclick="dailyReward()">
-Daily Reward
-</button>
-
-<button onclick="lotteryDrawing()">
-Lottery Draw
-</button>
-
-<button onclick="payAllMembers()">
-Pay Members
-</button>
-
-<button onclick="vaultMode()">
-Bank Vault
-</button>
-
-<button onclick="memberRank()">
-My Rank
-</button>
+/* ---------- Boot ---------- */
+loadDB();
+showScreen('screen-role');
 </script>
-
 </body>
 </html>
