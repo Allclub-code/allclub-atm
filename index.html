@@ -425,13 +425,6 @@
         <input id="pin-confirm" type="password" maxlength="6">
         <button onclick="changeMemberPin()">Update PIN</button>
       </div>
-      <div class="card">
-        <h3>Paycheck Simulator</h3>
-        <p class="muted">Receive a direct-deposit paycheck into Checking.</p>
-        <label>Amount</label>
-        <input id="paycheck-amt" type="number" min="1" step="0.01" value="500">
-        <button class="blue" onclick="simulatePaycheck()">Receive Paycheck</button>
-      </div>
     </div>
   </div>
 
@@ -444,6 +437,7 @@
 
     <div class="tabs">
       <div class="tab active" data-tab="bk-teller" onclick="switchTab('banker',this)">Teller</div>
+      <div class="tab" data-tab="bk-bulk" onclick="switchTab('banker',this)">Bulk Deposit</div>
       <div class="tab" data-tab="bk-members" onclick="switchTab('banker',this)">Members</div>
       <div class="tab" data-tab="bk-activity" onclick="switchTab('banker',this)">Activity</div>
     </div>
@@ -489,6 +483,29 @@
           <input id="bk-wd-note" placeholder="Cash withdrawal">
           <button class="secondary" onclick="bankerWithdraw()">Process Withdrawal</button>
         </div>
+      </div>
+    </div>
+
+    <div id="bk-bulk" class="tab-panel hidden">
+      <div class="card">
+        <h3>Bulk Deposit</h3>
+        <p class="muted" style="margin-bottom:12px">Add the same amount to multiple member accounts at once.</p>
+        <label>Account Type</label>
+        <select id="bk-bulk-account">
+          <option value="checking">Checking</option>
+          <option value="savings">Savings</option>
+        </select>
+        <label>Amount (per member)</label>
+        <input id="bk-bulk-amount" type="number" min="0.01" step="0.01" placeholder="0.00">
+        <label>Note (optional)</label>
+        <input id="bk-bulk-note" placeholder="Bulk deposit, bonus, allowance...">
+        <div style="display:flex;gap:8px;margin:10px 0 6px">
+          <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="bulkSelectAll(true)">Select All</button>
+          <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="bulkSelectAll(false)">Deselect All</button>
+        </div>
+        <div id="bk-bulk-list" style="max-height:260px;overflow-y:auto;border:1px solid var(--border);border-radius:8px;padding:8px;margin-bottom:12px;background:var(--panel2)"></div>
+        <button class="teal" onclick="bankerBulkDeposit()">Process Bulk Deposit</button>
+        <p id="bk-bulk-result" class="muted" style="margin-top:10px"></p>
       </div>
     </div>
 
@@ -796,7 +813,7 @@ function showScreen(id) {
 function switchTab(area, el) {
   const panels = {
     member: ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-notifs','m-settings'],
-    banker: ['bk-teller','bk-members','bk-activity'],
+    banker: ['bk-teller','bk-bulk','bk-members','bk-activity'],
     store: ['st-charge','st-members','st-sales','st-reports'],
     admin: ['ad-dash','ad-members','ad-create','ad-reports','ad-backup','ad-vault']
   };
@@ -942,7 +959,7 @@ function bankerLogin() {
   document.getElementById('b-pin').value = '';
   showScreen('screen-banker');
   document.querySelectorAll('#screen-banker .tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  ['bk-teller','bk-members','bk-activity'].forEach((id,i) => {
+  ['bk-teller','bk-bulk','bk-members','bk-activity'].forEach((id,i) => {
     document.getElementById(id).classList.toggle('hidden', i!==0);
   });
   refreshBankerUI();
@@ -1083,19 +1100,6 @@ function prevDay(iso) {
   return d.toISOString().slice(0, 10);
 }
 
-function simulatePaycheck() {
-  const m = getMember();
-  const amt = parseFloat(document.getElementById('paycheck-amt').value) || 0;
-  if (amt <= 0) return toast('Invalid amount', true);
-  m.checking = (m.checking || 0) + amt;
-  addTx(m, 'Paycheck', 'checking', amt, 'Direct deposit');
-  m.points = (m.points || 0) + Math.floor(amt / 20);
-  m.rank = calcRank(m.points);
-  saveDB();
-  refreshMemberUI();
-  toast('Paycheck of ' + money(amt) + ' deposited');
-}
-
 /* ---------- Banker Functions ---------- */
 function refreshBankerUI() {
   const members = Object.values(db.members);
@@ -1114,6 +1118,21 @@ function refreshBankerUI() {
       <td>${m.locked ? '🔒 Locked' : 'Active'}</td>
     </tr>`
   ).join('');
+
+  // Bulk deposit checklist
+  const bulkList = document.getElementById('bk-bulk-list');
+  if (bulkList) {
+    bulkList.innerHTML = members.length
+      ? members.map(m => `
+          <label style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-bottom:1px solid var(--border)">
+            <input type="checkbox" class="bk-bulk-check" value="${m.accountNumber}" ${m.locked ? 'disabled' : ''}>
+            <span style="flex:1">${m.accountNumber} — ${m.name}${m.locked ? ' <span class="error">(Locked)</span>' : ''}</span>
+            <span class="muted" style="font-size:0.8rem">${money(m.checking)} / ${money(m.savings)}</span>
+          </label>`).join('')
+      : '<p class="muted">No members</p>';
+  }
+  const res = document.getElementById('bk-bulk-result');
+  if (res) res.textContent = '';
 
   const log = (db.tellerLog || []).slice().reverse().slice(0, 50);
   document.getElementById('bk-activity-body').innerHTML = log.length
@@ -1217,6 +1236,65 @@ function bankerWithdraw() {
   document.getElementById('bk-wd-note').value = '';
   refreshBankerUI();
   toast('Withdrew ' + money(amt) + ' from ' + m.name);
+}
+
+function bulkSelectAll(checked) {
+  document.querySelectorAll('.bk-bulk-check:not(:disabled)').forEach(cb => {
+    cb.checked = checked;
+  });
+}
+
+function bankerBulkDeposit() {
+  const acctType = document.getElementById('bk-bulk-account').value;
+  const amt = parseFloat(document.getElementById('bk-bulk-amount').value);
+  const note = document.getElementById('bk-bulk-note').value.trim() || 'Bulk deposit';
+  const checks = Array.from(document.querySelectorAll('.bk-bulk-check:checked'));
+
+  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if (!checks.length) return toast('Select at least one member', true);
+
+  let success = 0;
+  let skipped = 0;
+  db.tellerLog = db.tellerLog || [];
+
+  checks.forEach(cb => {
+    const acc = cb.value;
+    const m = db.members[acc];
+    if (!m || m.locked) {
+      skipped++;
+      return;
+    }
+    m[acctType] = (m[acctType] || 0) + amt;
+    addTx(m, 'Deposit', acctType, amt, 'Banker bulk: ' + note);
+    const oldRank = m.rank;
+    m.points = (m.points || 0) + Math.floor(amt / 10);
+    m.rank = calcRank(m.points);
+    checkAchievements(m);
+    pushNotification(m, 'Bulk deposit of ' + money(amt) + ' received in ' + acctType + (note ? ' (' + note + ')' : ''), 'deposit');
+    if (m.rank !== oldRank) pushNotification(m, 'Rank up! You are now ' + m.rank + '.', 'reward');
+
+    db.tellerLog.push({
+      id: uid(),
+      date: new Date().toISOString(),
+      account: acc,
+      memberName: m.name,
+      type: 'Bulk Deposit',
+      acctType,
+      amount: amt,
+      note
+    });
+    success++;
+  });
+
+  if (db.tellerLog.length > 300) db.tellerLog = db.tellerLog.slice(-300);
+  saveDB();
+  document.getElementById('bk-bulk-amount').value = '';
+  document.getElementById('bk-bulk-note').value = '';
+  refreshBankerUI();
+
+  const msg = `Deposited ${money(amt)} to ${success} member(s)` + (skipped ? ` · ${skipped} skipped (locked)` : '');
+  document.getElementById('bk-bulk-result').textContent = msg;
+  toast(msg);
 }
 
 /* ---------- Goals ---------- */
