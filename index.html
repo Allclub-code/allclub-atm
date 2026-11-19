@@ -610,6 +610,7 @@
       <div class="tab active" data-tab="ad-dash" onclick="switchTab('admin',this)">Dashboard</div>
       <div class="tab" data-tab="ad-members" onclick="switchTab('admin',this)">Members</div>
       <div class="tab" data-tab="ad-create" onclick="switchTab('admin',this)">Create</div>
+      <div class="tab" data-tab="ad-payroll" onclick="switchTab('admin',this)">Payroll</div>
       <div class="tab" data-tab="ad-reports" onclick="switchTab('admin',this)">Reports</div>
       <div class="tab" data-tab="ad-backup" onclick="switchTab('admin',this)">Backup</div>
       <div class="tab" data-tab="ad-vault" onclick="switchTab('admin',this)">Vault</div>
@@ -665,6 +666,48 @@
       </div>
     </div>
 
+    <div id="ad-payroll" class="tab-panel hidden">
+      <div class="card">
+        <h3>Daily Shift Schedule</h3>
+        <p class="muted" style="margin-bottom:12px">30-minute slots from 3:00–6:00. Assign members, what they did, and pay — then process payment for the day.</p>
+        <label>Schedule Date</label>
+        <input id="sched-date" type="date" onchange="loadDaySchedule()">
+        <label>Default pay per slot ($)</label>
+        <input id="sched-default-pay" type="number" min="0" step="0.01" value="10" placeholder="10.00">
+        <label>Pay into</label>
+        <select id="sched-pay-account">
+          <option value="checking">Checking</option>
+          <option value="savings">Savings</option>
+        </select>
+      </div>
+      <div class="card">
+        <h3>Time Slots</h3>
+        <div style="overflow-x:auto">
+          <table>
+            <thead>
+              <tr>
+                <th>Time</th>
+                <th>Member (Account)</th>
+                <th>What they did / Job</th>
+                <th>Pay ($)</th>
+              </tr>
+            </thead>
+            <tbody id="sched-slots-body"></tbody>
+          </table>
+        </div>
+        <div class="btn-row" style="margin-top:14px">
+          <button class="secondary" onclick="saveDaySchedule()">Save Schedule</button>
+          <button class="teal" onclick="payDaySchedule()">Pay This Day’s Schedule</button>
+          <button class="secondary" onclick="clearDaySchedule()">Clear Day</button>
+        </div>
+        <p id="sched-result" class="muted" style="margin-top:10px"></p>
+      </div>
+      <div class="card">
+        <h3>Past Paid Schedules</h3>
+        <div id="sched-history" class="muted">No paid schedules yet</div>
+      </div>
+    </div>
+
     <div id="ad-reports" class="tab-panel hidden">
       <div class="card">
         <h3>Bank Reports</h3>
@@ -677,9 +720,22 @@
         <div id="ad-report-out" style="margin-top:14px"></div>
       </div>
       <div class="card">
-        <h3>Interest Payment</h3>
-        <p class="muted">Apply 0.5% interest to all savings balances.</p>
+        <h3>Interest Rate & Payment</h3>
+        <p class="muted">Current rate: <strong id="ad-interest-display">0.5%</strong></p>
+        <label>Set Interest Rate (%)</label>
+        <input id="ad-interest-rate" type="number" min="0" max="20" step="0.1" value="0.5" placeholder="0.5">
+        <button class="secondary" onclick="setInterestRate()">Update Rate</button>
+        <hr style="border-color:var(--border);margin:14px 0">
+        <p class="muted">Apply the current rate to all savings balances.</p>
         <button class="blue" onclick="applyInterest()">Pay Interest</button>
+      </div>
+      <div class="card">
+        <h3>System Announcement</h3>
+        <p class="muted">Send a notification to every member.</p>
+        <label>Message</label>
+        <textarea id="ad-announce-msg" rows="3" placeholder="e.g. Branch closed Friday, double points this weekend..." style="width:100%;padding:10px 12px;border-radius:8px;border:1px solid var(--border);background:var(--panel2);color:var(--text);font-size:1rem;margin-bottom:10px;resize:vertical"></textarea>
+        <button class="purple" onclick="postAnnouncement()">Post to All Members</button>
+        <p id="ad-announce-result" class="muted" style="margin-top:10px"></p>
       </div>
     </div>
 
@@ -731,6 +787,8 @@ const DEFAULT_DATA = {
   storePin: '0000',
   adminPin: '050409',
   bankerPin: '0000',
+  interestRate: 0.005,
+  schedules: {},
   nextAcc: 1002,
   members: {
     'ACC1001': {
@@ -776,6 +834,8 @@ function loadDB() {
       if (!db.members) db = structuredClone(DEFAULT_DATA);
       if (!db.bankerPin) db.bankerPin = '4321';
       if (!db.tellerLog) db.tellerLog = [];
+      if (db.interestRate == null) db.interestRate = 0.005;
+      if (!db.schedules) db.schedules = {};
       // Migrate older members
       Object.values(db.members || {}).forEach(m => {
         if (!m.notifications) m.notifications = [];
@@ -815,7 +875,7 @@ function switchTab(area, el) {
     member: ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-notifs','m-settings'],
     banker: ['bk-teller','bk-bulk','bk-members','bk-activity'],
     store: ['st-charge','st-members','st-sales','st-reports'],
-    admin: ['ad-dash','ad-members','ad-create','ad-reports','ad-backup','ad-vault']
+    admin: ['ad-dash','ad-members','ad-create','ad-payroll','ad-reports','ad-backup','ad-vault']
   };
   panels[area].forEach(id => {
     const p = document.getElementById(id);
@@ -995,7 +1055,7 @@ function adminLogin() {
   document.getElementById('a-pin').value = '';
   showScreen('screen-admin');
   document.querySelectorAll('#screen-admin .tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  ['ad-dash','ad-members','ad-create','ad-reports','ad-backup','ad-vault'].forEach((id,i) => {
+  ['ad-dash','ad-members','ad-create','ad-payroll','ad-reports','ad-backup','ad-vault'].forEach((id,i) => {
     document.getElementById(id).classList.toggle('hidden', i!==0);
   });
   refreshAdminUI();
@@ -1621,6 +1681,22 @@ function refreshAdminUI() {
     <p>Store sales volume: <strong>${money((db.sales||[]).reduce((a,s)=>a+s.amount,0))}</strong></p>
     <p>Teller transactions: <strong>${(db.tellerLog||[]).length}</strong></p>`;
 
+  // Interest rate display
+  const rate = db.interestRate != null ? db.interestRate : 0.005;
+  const pct = (rate * 100).toFixed(2).replace(/\.?0+$/, '');
+  const rateEl = document.getElementById('ad-interest-display');
+  if (rateEl) rateEl.textContent = pct + '%';
+  const rateInput = document.getElementById('ad-interest-rate');
+  if (rateInput && document.activeElement !== rateInput) rateInput.value = pct;
+
+  // Daily schedule
+  const dateInput = document.getElementById('sched-date');
+  if (dateInput && !dateInput.value) {
+    dateInput.value = todayKey();
+  }
+  loadDaySchedule();
+  renderScheduleHistory();
+
   renderAdminMembers();
 }
 
@@ -1637,6 +1713,7 @@ function renderAdminMembers() {
       <td>${money(m.savings)}</td>
       <td>${m.points||0}</td>
       <td>
+        <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="printMemberInfo('${m.accountNumber}')">Print</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="unlockMember('${m.accountNumber}')">Unlock</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="danger" onclick="deleteMember('${m.accountNumber}')">Delete</button>
       </td>
@@ -1718,6 +1795,64 @@ function unlockMember(acc) {
   toast(acc + ' unlocked');
 }
 
+function printMemberInfo(acc) {
+  const m = db.members[acc];
+  if (!m) return toast('Member not found', true);
+
+  let expDate = '—';
+  if (m.createdAt) {
+    const d = new Date(m.createdAt);
+    d.setFullYear(d.getFullYear() + 1);
+    expDate = d.toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' });
+  }
+
+  const w = window.open('', '_blank');
+  w.document.write(`<!DOCTYPE html>
+<html><head>
+<title>Member Account — ${m.accountNumber}</title>
+<style>
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 32px; color: #111; max-width: 480px; margin: 0 auto; }
+  h1 { font-size: 1.25rem; margin: 0 0 4px; }
+  .sub { color: #555; font-size: 0.9rem; margin-bottom: 20px; }
+  .box { border: 2px solid #111; border-radius: 10px; padding: 18px; margin-bottom: 16px; }
+  .row { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px solid #eee; }
+  .row:last-child { border-bottom: none; }
+  .label { color: #555; font-size: 0.85rem; }
+  .value { font-weight: 600; font-size: 1rem; }
+  .pin { font-size: 1.4rem; letter-spacing: 3px; font-family: monospace; }
+  .warn { background: #fff3cd; border: 1px solid #ffc107; padding: 10px 12px; border-radius: 6px; font-size: 0.8rem; margin-top: 16px; }
+  @media print { body { padding: 12px; } button { display: none; } }
+</style>
+</head><body>
+  <h1>All Club Credit Union</h1>
+  <div class="sub">Member Account Information</div>
+
+  <div class="box">
+    <div class="row"><span class="label">Name</span><span class="value">${m.name}</span></div>
+    <div class="row"><span class="label">Account Number</span><span class="value">${m.accountNumber}</span></div>
+    <div class="row"><span class="label">PIN / Password</span><span class="value pin">${m.pin}</span></div>
+    <div class="row"><span class="label">Status</span><span class="value">${m.locked ? 'Locked' : 'Active'}</span></div>
+    <div class="row"><span class="label">Rank</span><span class="value">${m.rank || 'Bronze'}</span></div>
+    <div class="row"><span class="label">Points</span><span class="value">${m.points || 0}</span></div>
+  </div>
+
+  <div class="box">
+    <div class="row"><span class="label">Checking</span><span class="value">${money(m.checking)}</span></div>
+    <div class="row"><span class="label">Savings</span><span class="value">${money(m.savings)}</span></div>
+    <div class="row"><span class="label">Card Expires</span><span class="value">${expDate}</span></div>
+  </div>
+
+  <div class="warn">
+    Keep this document secure. It contains the member’s login credentials.
+  </div>
+
+  <p style="margin-top:20px">
+    <button onclick="window.print()" style="padding:10px 16px;font-size:1rem;cursor:pointer">Print this page</button>
+  </p>
+</body></html>`);
+  w.document.close();
+}
+
 function runReport(type) {
   const members = Object.values(db.members);
   const out = document.getElementById('ad-report-out');
@@ -1749,21 +1884,249 @@ function runReport(type) {
   }
 }
 
+function setInterestRate() {
+  const pct = parseFloat(document.getElementById('ad-interest-rate').value);
+  if (isNaN(pct) || pct < 0 || pct > 20) return toast('Enter a rate between 0 and 20', true);
+  db.interestRate = pct / 100;
+  saveDB();
+  refreshAdminUI();
+  toast('Interest rate set to ' + pct + '%');
+}
+
 function applyInterest() {
+  const rate = db.interestRate != null ? db.interestRate : 0.005;
+  const pctLabel = (rate * 100).toFixed(2).replace(/\.?0+$/, '') + '%';
   let total = 0;
   Object.values(db.members).forEach(m => {
-    const interest = (m.savings || 0) * 0.005;
+    const interest = (m.savings || 0) * rate;
     if (interest > 0) {
       m.savings += interest;
-      addTx(m, 'Interest', 'savings', interest, '0.5% savings interest');
+      addTx(m, 'Interest', 'savings', interest, pctLabel + ' savings interest');
+      pushNotification(m, 'Interest of ' + money(interest) + ' added to your savings (' + pctLabel + ')', 'deposit');
       total += interest;
     }
   });
   saveDB();
   refreshAdminUI();
-  toast('Interest paid: ' + money(total));
+  toast('Interest paid: ' + money(total) + ' at ' + pctLabel);
 }
 
+function postAnnouncement() {
+  const msg = (document.getElementById('ad-announce-msg').value || '').trim();
+  if (!msg) return toast('Enter a message', true);
+  const members = Object.values(db.members);
+  members.forEach(m => {
+    pushNotification(m, '📢 Announcement: ' + msg, 'alert');
+  });
+  saveDB();
+  document.getElementById('ad-announce-msg').value = '';
+  document.getElementById('ad-announce-result').textContent = 'Sent to ' + members.length + ' member(s).';
+  toast('Announcement sent to all members');
+}
+
+/* ---------- Daily Schedule (3:00–6:00, 30-min slots) ---------- */
+const SCHEDULE_SLOTS = ['15:00', '15:30', '16:00', '16:30', '17:00', '17:30', '18:00'];
+
+function slotLabel(t) {
+  const [h, m] = t.split(':').map(Number);
+  const ampm = h >= 12 ? 'PM' : 'AM';
+  const h12 = h % 12 || 12;
+  return h12 + ':' + String(m).padStart(2, '0') + ' ' + ampm;
+}
+
+function loadDaySchedule() {
+  const dateEl = document.getElementById('sched-date');
+  if (!dateEl) return;
+  if (!dateEl.value) dateEl.value = todayKey();
+  const date = dateEl.value;
+  const day = (db.schedules && db.schedules[date]) || { slots: {}, paid: false };
+  const members = Object.values(db.members || {});
+  const memberOpts = '<option value="">— empty —</option>' + members.map(m =>
+    `<option value="${m.accountNumber}">${m.accountNumber} — ${m.name}</option>`
+  ).join('');
+  const defaultPay = document.getElementById('sched-default-pay')?.value || '10';
+
+  const body = document.getElementById('sched-slots-body');
+  if (!body) return;
+
+  body.innerHTML = SCHEDULE_SLOTS.map(slot => {
+    const s = day.slots[slot] || {};
+    const selected = s.account || '';
+    const job = s.job || '';
+    const pay = s.pay != null ? s.pay : defaultPay;
+    const disabled = day.paid ? 'disabled' : '';
+    return `<tr data-slot="${slot}">
+      <td style="font-weight:600;white-space:nowrap">${slotLabel(slot)}</td>
+      <td>
+        <select class="sched-member" data-slot="${slot}" ${disabled} style="margin-bottom:0">
+          ${memberOpts.replace(`value="${selected}"`, `value="${selected}" selected`)}
+        </select>
+      </td>
+      <td>
+        <input class="sched-job" data-slot="${slot}" value="${job.replace(/"/g, '&quot;')}" placeholder="What they did..." ${disabled} style="margin-bottom:0">
+      </td>
+      <td style="width:100px">
+        <input class="sched-pay" data-slot="${slot}" type="number" min="0" step="0.01" value="${pay}" ${disabled} style="margin-bottom:0">
+      </td>
+    </tr>`;
+  }).join('');
+
+  // Fix selected options properly
+  SCHEDULE_SLOTS.forEach(slot => {
+    const s = day.slots[slot] || {};
+    const sel = body.querySelector(`select.sched-member[data-slot="${slot}"]`);
+    if (sel && s.account) sel.value = s.account;
+  });
+
+  const res = document.getElementById('sched-result');
+  if (res) {
+    res.textContent = day.paid
+      ? 'This day has already been paid' + (day.paidAt ? ' on ' + new Date(day.paidAt).toLocaleString() : '') + '.'
+      : '';
+  }
+}
+
+function collectDaySlots() {
+  const slots = {};
+  SCHEDULE_SLOTS.forEach(slot => {
+    const acc = document.querySelector(`select.sched-member[data-slot="${slot}"]`)?.value || '';
+    const job = (document.querySelector(`input.sched-job[data-slot="${slot}"]`)?.value || '').trim();
+    const pay = parseFloat(document.querySelector(`input.sched-pay[data-slot="${slot}"]`)?.value) || 0;
+    if (acc || job || pay) {
+      slots[slot] = { account: acc, job, pay };
+    }
+  });
+  return slots;
+}
+
+function saveDaySchedule() {
+  const date = document.getElementById('sched-date').value || todayKey();
+  if (!db.schedules) db.schedules = {};
+  const existing = db.schedules[date] || {};
+  if (existing.paid) return toast('This day is already paid and locked', true);
+
+  db.schedules[date] = {
+    date,
+    slots: collectDaySlots(),
+    paid: false,
+    paidAt: null
+  };
+  saveDB();
+  loadDaySchedule();
+  renderScheduleHistory();
+  toast('Schedule saved for ' + date);
+}
+
+function payDaySchedule() {
+  const date = document.getElementById('sched-date').value || todayKey();
+  if (!db.schedules) db.schedules = {};
+  // Always collect latest form values
+  const slots = collectDaySlots();
+  const filled = Object.entries(slots).filter(([, s]) => s.account && s.pay > 0);
+  if (!filled.length) return toast('Fill at least one slot with a member and pay amount', true);
+
+  const existing = db.schedules[date];
+  if (existing && existing.paid) return toast('This day was already paid', true);
+
+  const acctType = document.getElementById('sched-pay-account').value || 'checking';
+  let paidCount = 0;
+  let total = 0;
+  const logLines = [];
+
+  filled.forEach(([slot, s]) => {
+    const m = db.members[s.account];
+    if (!m || m.locked) return;
+    m[acctType] = (m[acctType] || 0) + s.pay;
+    const jobNote = s.job || 'Shift work';
+    addTx(m, 'Payroll', acctType, s.pay, slotLabel(slot) + ' — ' + jobNote);
+    m.points = (m.points || 0) + Math.floor(s.pay / 10);
+    m.rank = calcRank(m.points);
+    checkAchievements(m);
+    pushNotification(m, 'Paid ' + money(s.pay) + ' for ' + slotLabel(slot) + ': ' + jobNote, 'deposit');
+
+    db.tellerLog = db.tellerLog || [];
+    db.tellerLog.push({
+      id: uid(),
+      date: new Date().toISOString(),
+      account: s.account,
+      memberName: m.name,
+      type: 'Payroll',
+      acctType,
+      amount: s.pay,
+      note: slotLabel(slot) + ' — ' + jobNote
+    });
+    paidCount++;
+    total += s.pay;
+    logLines.push(slotLabel(slot) + ': ' + m.name + ' — ' + jobNote + ' (' + money(s.pay) + ')');
+  });
+
+  if (db.tellerLog && db.tellerLog.length > 300) db.tellerLog = db.tellerLog.slice(-300);
+
+  db.schedules[date] = {
+    date,
+    slots,
+    paid: true,
+    paidAt: new Date().toISOString(),
+    payAccount: acctType,
+    totalPaid: total,
+    log: logLines
+  };
+  saveDB();
+  loadDaySchedule();
+  renderScheduleHistory();
+  refreshAdminUI();
+
+  const res = document.getElementById('sched-result');
+  if (res) res.textContent = 'Paid ' + paidCount + ' slot(s) totaling ' + money(total);
+  toast('Schedule paid: ' + paidCount + ' people · ' + money(total));
+}
+
+function clearDaySchedule() {
+  const date = document.getElementById('sched-date').value || todayKey();
+  if (!db.schedules || !db.schedules[date]) {
+    // just clear the form
+    SCHEDULE_SLOTS.forEach(slot => {
+      const sel = document.querySelector(`select.sched-member[data-slot="${slot}"]`);
+      const job = document.querySelector(`input.sched-job[data-slot="${slot}"]`);
+      const pay = document.querySelector(`input.sched-pay[data-slot="${slot}"]`);
+      if (sel) sel.value = '';
+      if (job) job.value = '';
+      if (pay) pay.value = document.getElementById('sched-default-pay')?.value || '10';
+    });
+    toast('Form cleared');
+    return;
+  }
+  if (db.schedules[date].paid) {
+    if (!confirm('This day is already paid. Clear the saved schedule record anyway?')) return;
+  } else if (!confirm('Clear the schedule for ' + date + '?')) return;
+  delete db.schedules[date];
+  saveDB();
+  loadDaySchedule();
+  renderScheduleHistory();
+  toast('Day cleared');
+}
+
+function renderScheduleHistory() {
+  const el = document.getElementById('sched-history');
+  if (!el) return;
+  const days = Object.values(db.schedules || {})
+    .filter(d => d.paid)
+    .sort((a, b) => (b.date || '').localeCompare(a.date || ''));
+  if (!days.length) {
+    el.innerHTML = '<p class="muted">No paid schedules yet</p>';
+    return;
+  }
+  el.innerHTML = days.map(d => {
+    const lines = (d.log || []).map(l => `<div style="padding:2px 0">${l}</div>`).join('');
+    return `<div style="margin-bottom:14px;padding-bottom:12px;border-bottom:1px solid var(--border)">
+      <strong>${d.date}</strong> · Total ${money(d.totalPaid || 0)}
+      <span class="muted" style="font-size:0.8rem"> · paid ${d.paidAt ? new Date(d.paidAt).toLocaleString() : ''}</span>
+      <div style="margin-top:6px;font-size:0.9rem">${lines || '<span class="muted">No details</span>'}</div>
+    </div>`;
+  }).join('');
+}
+
+/* ---------- Backup ---------- */
 /* ---------- Backup ---------- */
 function exportData() {
   const blob = new Blob([JSON.stringify(db, null, 2)], { type: 'application/json' });
