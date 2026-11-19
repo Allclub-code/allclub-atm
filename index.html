@@ -9,8 +9,36 @@
 
 <script>
 
-// PART 1 LOGIN HERE
+const ADMIN_PIN = "9999";
+const STORE_PIN = "5555";
 
+let currentUser = null;
+
+function memberLogin(){
+
+alert("Member login system loaded.");
+
+}
+
+function showAdminLogin(){
+
+alert("Admin login selected.");
+
+}
+
+function showStoreLogin(){
+
+alert("Store login selected.");
+
+}
+
+function logout(){
+
+currentUser = null;
+
+alert("Logged Out");
+
+}
 // PART 2 BANK ENGINE HERE
 
 // PART 3 TRANSFERS HERE
@@ -28,7 +56,19 @@
 // PART 9 BACKUP HERE
 
 // PART 10 EXTRAS HERE
+<h2>All Club Credit Union</h2>
 
+<button onclick="memberLogin()">
+Member Login
+</button>
+
+<button onclick="showAdminLogin()">
+Admin Login
+</button>
+
+<button onclick="showStoreLogin()">
+Store Login
+</button>
 </script>
 
 </body>
