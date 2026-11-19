@@ -39,23 +39,1665 @@ currentUser = null;
 alert("Logged Out");
 
 }
-// PART 2 BANK ENGINE HERE
+let bankData =
+JSON.parse(
+localStorage.getItem("allClubBank")
+) || {
 
+accounts:{
+
+"1001":{
+name:"Demo Member",
+pin:"1234",
+checking:100,
+savings:0,
+points:0,
+history:[]
+},
+
+"1002":{
+name:"Club President",
+pin:"5678",
+checking:250,
+savings:50,
+points:25,
+history:[]
+}
+
+}
+
+};
+
+saveBank();
+
+function saveBank(){
+
+localStorage.setItem(
+"allClubBank",
+JSON.stringify(bankData)
+);
+
+}
+
+function getMember(account){
+
+return bankData.accounts[account];
+
+}
+
+function createMember(
+account,
+name,
+pin,
+startingBalance
+){
+
+bankData.accounts[account] = {
+
+name:name,
+pin:pin,
+checking:startingBalance,
+savings:0,
+points:0,
+history:[
+"Account Created"
+]
+
+};
+
+saveBank();
+
+}
+
+function depositMoney(
+account,
+amount
+){
+
+let member =
+getMember(account);
+
+member.checking += amount;
+
+member.points += amount;
+
+member.history.unshift(
+
+"Deposit $" +
+amount
+
+);
+
+saveBank();
+
+}
+
+function withdrawMoney(
+account,
+amount
+){
+
+let member =
+getMember(account);
+
+if(
+member.checking < amount
+){
+
+return false;
+
+}
+
+member.checking -= amount;
+
+member.history.unshift(
+
+"Withdraw $" +
+amount
+
+);
+
+saveBank();
+
+return true;
+
+}
+
+function getBalance(
+account
+){
+
+let member =
+getMember(account);
+
+return member.checking;
+
+}
 // PART 3 TRANSFERS HERE
+function loginMember(account,pin){
 
+let member =
+getMember(account);
+
+if(!member){
+
+return false;
+
+}
+
+if(member.pin !== pin){
+
+return false;
+
+}
+
+currentUser = account;
+
+return true;
+
+}
+
+function memberLogin(){
+
+let account =
+prompt(
+"Account Number"
+);
+
+let pin =
+prompt(
+"PIN"
+);
+
+if(
+loginMember(
+account,
+pin
+)
+){
+
+let member =
+getMember(account);
+
+alert(
+
+"Welcome " +
+
+member.name +
+
+"\n\nChecking: $" +
+
+member.checking +
+
+"\nSavings: $" +
+
+member.savings +
+
+"\nPoints: " +
+
+member.points
+
+);
+
+}else{
+
+alert(
+"Login Failed"
+);
+
+}
+
+}
+
+function transferMoney(
+fromAccount,
+toAccount,
+amount
+){
+
+if(
+!bankData.accounts[toAccount]
+){
+
+return false;
+
+}
+
+if(
+bankData.accounts[fromAccount]
+.checking < amount
+){
+
+return false;
+
+}
+
+bankData.accounts[fromAccount]
+.checking -= amount;
+
+bankData.accounts[toAccount]
+.checking += amount;
+
+bankData.accounts[fromAccount]
+.history.unshift(
+
+"Sent $" +
+amount +
+" to " +
+toAccount
+
+);
+
+bankData.accounts[toAccount]
+.history.unshift(
+
+"Received $" +
+amount +
+" from " +
+fromAccount
+
+);
+
+saveBank();
+
+return true;
+
+}
+
+function showBalance(){
+
+if(!currentUser){
+
+alert("Not Logged In");
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+alert(
+
+"Checking: $" +
+
+member.checking +
+
+"\nSavings: $" +
+
+member.savings +
+
+"\nPoints: " +
+
+member.points
+
+);
+
+}
 // PART 4 STORE HERE
+let storeSales = [];
 
+function storeLogin(){
+
+let pin =
+prompt("Store PIN");
+
+if(pin !== STORE_PIN){
+
+alert("Wrong Store PIN");
+return;
+
+}
+
+alert("Store Logged In");
+
+}
+
+function chargeMember(
+account,
+amount,
+storeName
+){
+
+let member =
+getMember(account);
+
+if(!member){
+
+return false;
+
+}
+
+if(
+member.checking < amount
+){
+
+return false;
+
+}
+
+member.checking -= amount;
+
+member.history.unshift(
+
+"Purchase $" +
+amount +
+" at " +
+storeName
+
+);
+
+storeSales.push({
+
+account:account,
+store:storeName,
+amount:amount,
+date:new Date()
+.toLocaleString()
+
+});
+
+saveBank();
+
+return true;
+
+}
+
+function storePurchase(){
+
+let account =
+prompt(
+"Account Number"
+);
+
+let amount =
+Number(
+prompt(
+"Amount"
+)
+);
+
+let store =
+prompt(
+"Store Name"
+);
+
+let result =
+chargeMember(
+account,
+amount,
+store
+);
+
+if(result){
+
+alert(
+"Purchase Complete"
+);
+
+}else{
+
+alert(
+"Purchase Failed"
+);
+
+}
+
+}
+
+function showStoreMembers(){
+
+let text =
+"MEMBERS\n\n";
+
+for(
+let account
+in
+bankData.accounts
+){
+
+let member =
+bankData.accounts[account];
+
+text +=
+
+member.name +
+
+" (" +
+
+account +
+
+") - $" +
+
+member.checking +
+
+"\n";
+
+}
+
+alert(text);
+
+}
+
+function storeReport(){
+
+let total = 0;
+
+storeSales.forEach(
+sale=>{
+
+total += sale.amount;
+
+});
+
+alert(
+
+"STORE REPORT\n\n" +
+
+"Sales: " +
+
+storeSales.length +
+
+"\n\nTotal: $" +
+
+total
+
+);
+
+}
 // PART 5 SAVINGS HERE
+function moveToSavings(
+account,
+amount
+){
 
+let member =
+getMember(account);
+
+if(
+member.checking < amount
+){
+
+return false;
+
+}
+
+member.checking -= amount;
+
+member.savings += amount;
+
+member.history.unshift(
+
+"Moved $" +
+amount +
+" To Savings"
+
+);
+
+saveBank();
+
+return true;
+
+}
+
+function moveToChecking(
+account,
+amount
+){
+
+let member =
+getMember(account);
+
+if(
+member.savings < amount
+){
+
+return false;
+
+}
+
+member.savings -= amount;
+
+member.checking += amount;
+
+member.history.unshift(
+
+"Moved $" +
+amount +
+" To Checking"
+
+);
+
+saveBank();
+
+return true;
+
+}
+
+function giveInterest(){
+
+for(
+let account
+in
+bankData.accounts
+){
+
+let member =
+bankData.accounts[account];
+
+let interest =
+
+Math.floor(
+member.savings * 0.01 * 100
+)/100;
+
+member.savings += interest;
+
+member.history.unshift(
+
+"Interest Earned $" +
+interest
+
+);
+
+}
+
+saveBank();
+
+alert(
+"Interest Applied"
+);
+
+}
+
+function savingsGoal(){
+
+if(!currentUser){
+
+return;
+
+}
+
+let goal =
+Number(
+prompt(
+"Savings Goal"
+)
+);
+
+let member =
+getMember(currentUser);
+
+let percent =
+
+Math.floor(
+
+(member.savings / goal)
+
+* 100
+
+);
+
+alert(
+
+"Savings: $" +
+
+member.savings +
+
+"\nGoal: $" +
+
+goal +
+
+"\nComplete: " +
+
+percent +
+
+"%"
+
+);
+
+}
+
+function showTopSavers(){
+
+let members = [];
+
+for(
+let account
+in
+bankData.accounts
+){
+
+members.push({
+
+name:
+bankData.accounts[account]
+.name,
+
+savings:
+bankData.accounts[account]
+.savings
+
+});
+
+}
+
+members.sort(
+(a,b)=>
+b.savings-a.savings
+);
+
+let text =
+"TOP SAVERS\n\n";
+
+members.forEach(
+(member,index)=>{
+
+text +=
+
+(index+1) +
+
+". " +
+
+member.name +
+
+" - $" +
+
+member.savings +
+
+"\n";
+
+});
+
+alert(text);
+
+}
 // PART 6 REWARDS HERE
+let rewardStore = [
 
+{
+name:"Candy Bar",
+cost:25
+},
+
+{
+name:"Soda",
+cost:50
+},
+
+{
+name:"Chips",
+cost:75
+},
+
+{
+name:"Free Snack",
+cost:100
+},
+
+{
+name:"VIP Pass",
+cost:250
+}
+
+];
+
+function showPoints(){
+
+if(!currentUser){
+
+alert("Not Logged In");
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+alert(
+
+"Reward Points: " +
+
+member.points
+
+);
+
+}
+
+function rewardStoreMenu(){
+
+let text =
+"REWARD STORE\n\n";
+
+rewardStore.forEach(
+(item,index)=>{
+
+text +=
+
+(index + 1) +
+
+". " +
+
+item.name +
+
+" - " +
+
+item.cost +
+
+" Points\n";
+
+});
+
+alert(text);
+
+}
+
+function buyReward(){
+
+if(!currentUser){
+
+alert("Not Logged In");
+return;
+
+}
+
+let itemNumber =
+Number(
+prompt(
+"Reward Number"
+)
+);
+
+let item =
+rewardStore[
+itemNumber - 1
+];
+
+if(!item){
+
+alert("Invalid Item");
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+if(
+member.points <
+item.cost
+){
+
+alert(
+"Not Enough Points"
+);
+
+return;
+
+}
+
+member.points -=
+item.cost;
+
+member.history.unshift(
+
+"Purchased Reward: " +
+
+item.name
+
+);
+
+saveBank();
+
+alert(
+
+"You bought: " +
+
+item.name
+
+);
+
+}
+
+function showAchievements(){
+
+if(!currentUser){
+
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+let badges = [];
+
+if(
+member.checking >= 100
+){
+badges.push(
+"💵 Saver"
+);
+}
+
+if(
+member.savings >= 500
+){
+badges.push(
+"🏦 Super Saver"
+);
+}
+
+if(
+member.points >= 250
+){
+badges.push(
+"⭐ Rewards Master"
+);
+}
+
+if(
+badges.length === 0
+){
+
+badges.push(
+"🙂 New Member"
+);
+
+}
+
+alert(
+
+"Achievements\n\n" +
+
+badges.join("\n")
+
+);
+
+}
+
+function giveBonusPoints(){
+
+for(
+let account
+in
+bankData.accounts
+){
+
+bankData.accounts[
+account
+].points += 10;
+
+}
+
+saveBank();
+
+alert(
+"Everyone Got 10 Bonus Points"
+);
+
+}
 // PART 7 QR CARDS HERE
+function showMemberCard(){
 
+if(!currentUser){
+
+alert("Not Logged In");
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+let card =
+
+"🏦 ALL CLUB CREDIT UNION\n\n" +
+
+"Name: " +
+member.name +
+
+"\n\nAccount: " +
+currentUser +
+
+"\n\nChecking: $" +
+member.checking +
+
+"\nSavings: $" +
+member.savings +
+
+"\nPoints: " +
+member.points +
+
+"\n\n████ ████\n" +
+
+"QR: " +
+currentUser;
+
+alert(card);
+
+}
+
+function printMemberCard(){
+
+if(!currentUser){
+
+alert("Not Logged In");
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+let card =
+
+"ID CARD\n\n" +
+
+member.name +
+
+"\nAccount: " +
+
+currentUser +
+
+"\nChecking: $" +
+
+member.checking +
+
+"\nPoints: " +
+
+member.points;
+
+let win =
+window.open();
+
+win.document.write(
+
+"<h1>All Club Credit Union</h1>" +
+
+"<h2>" +
+member.name +
+"</h2>" +
+
+"<p>Account: " +
+currentUser +
+"</p>" +
+
+"<p>Checking: $" +
+member.checking +
+"</p>" +
+
+"<p>Points: " +
+member.points +
+"</p>"
+
+);
+
+}
+
+function selectMemberByQR(){
+
+let qr =
+prompt(
+"Enter QR Number"
+);
+
+if(
+!bankData.accounts[qr]
+){
+
+alert("Member Not Found");
+return;
+
+}
+
+let member =
+bankData.accounts[qr];
+
+alert(
+
+member.name +
+
+"\nChecking: $" +
+
+member.checking +
+
+"\nPoints: " +
+
+member.points
+
+);
+
+}
+
+function memberPhoto(){
+
+if(!currentUser){
+
+return;
+
+}
+
+let photo =
+prompt(
+"Photo URL"
+);
+
+let member =
+getMember(currentUser);
+
+member.photo =
+photo;
+
+saveBank();
+
+alert(
+"Photo Saved"
+);
+
+}
+
+function viewPhoto(){
+
+if(!currentUser){
+
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+if(!member.photo){
+
+alert("No Photo");
+return;
+
+}
+
+window.open(
+member.photo
+);
+
+}
 // PART 8 REPORTS HERE
+function dailyReport(){
 
-// PART 9 BACKUP HERE
+let accounts = 0;
+let checking = 0;
+let savings = 0;
+let points = 0;
 
+for(
+let account
+in
+bankData.accounts
+){
+
+accounts++;
+
+checking +=
+bankData.accounts[account]
+.checking;
+
+savings +=
+bankData.accounts[account]
+.savings;
+
+points +=
+bankData.accounts[account]
+.points;
+
+}
+
+alert(
+
+"DAILY REPORT\n\n" +
+
+"Members: " +
+accounts +
+
+"\n\nChecking: $" +
+checking.toFixed(2) +
+
+"\n\nSavings: $" +
+savings.toFixed(2) +
+
+"\n\nPoints: " +
+points
+
+);
+
+}
+
+function memberStatement(){
+
+let account =
+prompt(
+"Account Number"
+);
+
+if(
+!bankData.accounts[account]
+){
+
+alert("Not Found");
+return;
+
+}
+
+let member =
+bankData.accounts[account];
+
+let statement =
+
+"STATEMENT\n\n" +
+
+member.name +
+
+"\n\n";
+
+member.history.forEach(
+item=>{
+
+statement +=
+item + "\n";
+
+});
+
+alert(statement);
+
+}
+
+function mostActiveMembers(){
+
+let members = [];
+
+for(
+let account
+in
+bankData.accounts
+){
+
+members.push({
+
+name:
+bankData.accounts[account]
+.name,
+
+activity:
+bankData.accounts[account]
+.history.length
+
+});
+
+}
+
+members.sort(
+(a,b)=>
+b.activity-a.activity
+);
+
+let text =
+"MOST ACTIVE MEMBERS\n\n";
+
+members.forEach(
+(member,index)=>{
+
+text +=
+
+(index+1) +
+
+". " +
+
+member.name +
+
+" (" +
+
+member.activity +
+
+" activities)\n";
+
+});
+
+alert(text);
+
+}
+
+function savingsLeaderboard(){
+
+let members = [];
+
+for(
+let account
+in
+bankData.accounts
+){
+
+members.push({
+
+name:
+bankData.accounts[account]
+.name,
+
+savings:
+bankData.accounts[account]
+.savings
+
+});
+
+}
+
+members.sort(
+(a,b)=>
+b.savings-a.savings
+);
+
+let text =
+"SAVINGS LEADERBOARD\n\n";
+
+members.forEach(
+(member,index)=>{
+
+text +=
+
+(index+1) +
+
+". " +
+
+member.name +
+
+" - $" +
+
+member.savings +
+
+"\n";
+
+});
+
+alert(text);
+
+}
+
+function bankAnalytics(){
+
+let richest = "";
+let richestAmount = 0;
+
+for(
+let account
+in
+bankData.accounts
+){
+
+let member =
+bankData.accounts[account];
+
+let total =
+member.checking +
+member.savings;
+
+if(total > richestAmount){
+
+richestAmount = total;
+richest = member.name;
+
+}
+
+}
+
+alert(
+
+"BANK ANALYTICS\n\n" +
+
+"Richest Member:\n" +
+
+richest +
+
+"\n\n$" +
+
+richestAmount.toFixed(2)
+
+);
+
+}
+  // PART 9 BACKUP HERE
+function exportBankData(){
+
+let data =
+JSON.stringify(
+bankData,
+null,
+2
+);
+
+let blob =
+new Blob(
+[data],
+{
+type:"application/json"
+}
+);
+
+let link =
+document.createElement(
+"a"
+);
+
+link.href =
+URL.createObjectURL(
+blob
+);
+
+link.download =
+"AllClubBankBackup.json";
+
+link.click();
+
+}
+
+function importBankData(){
+
+let text =
+prompt(
+"Paste Backup Data"
+);
+
+if(!text){
+
+return;
+
+}
+
+try{
+
+bankData =
+JSON.parse(text);
+
+saveBank();
+
+alert(
+"Backup Imported"
+);
+
+}catch(error){
+
+alert(
+"Invalid Backup"
+);
+
+}
+
+}
+
+function showBackupData(){
+
+alert(
+
+JSON.stringify(
+bankData,
+null,
+2
+)
+
+);
+
+}
+
+function resetBank(){
+
+let confirmReset =
+confirm(
+"Reset Entire Bank?"
+);
+
+if(!confirmReset){
+
+return;
+
+}
+
+bankData = {
+
+accounts:{}
+
+};
+
+saveBank();
+
+alert(
+"Bank Reset Complete"
+);
+
+}
+
+function emergencyRestore(){
+
+bankData = {
+
+accounts:{
+
+"1001":{
+name:"Demo Member",
+pin:"1234",
+checking:100,
+savings:0,
+points:0,
+history:[]
+},
+
+"1002":{
+name:"Club President",
+pin:"5678",
+checking:250,
+savings:50,
+points:25,
+history:[]
+}
+
+}
+
+};
+
+saveBank();
+
+alert(
+"Emergency Restore Complete"
+);
+
+}
+
+function countMembers(){
+
+let total =
+
+Object.keys(
+bankData.accounts
+).length;
+
+alert(
+
+"Members: " +
+total
+
+);
+
+}
 // PART 10 EXTRAS HERE
+  function dailyReward(){
+
+if(!currentUser){
+
+alert("Login First");
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+member.points += 5;
+
+member.history.unshift(
+"Daily Reward +5 Points"
+);
+
+saveBank();
+
+alert(
+"You earned 5 points!"
+);
+
+}
+
+function lotteryDrawing(){
+
+let members =
+Object.keys(
+bankData.accounts
+);
+
+if(
+members.length === 0
+){
+
+alert("No Members");
+return;
+
+}
+
+let winner =
+
+members[
+Math.floor(
+Math.random() *
+members.length
+)
+];
+
+bankData.accounts[winner]
+.points += 50;
+
+saveBank();
+
+alert(
+
+"Lottery Winner!\n\n" +
+
+bankData.accounts[winner]
+.name +
+
+"\n+50 Points"
+
+);
+
+}
+
+function payAllMembers(){
+
+for(
+let account
+in
+bankData.accounts
+){
+
+bankData.accounts[
+account
+].checking += 10;
+
+bankData.accounts[
+account
+].history.unshift(
+"Paycheck +$10"
+);
+
+}
+
+saveBank();
+
+alert(
+"Everyone Paid $10"
+);
+
+}
+
+function vaultMode(){
+
+alert(
+
+"🏦 BANK VAULT 🏦\n\n" +
+
+"Total Assets\n\n$" +
+
+calculateAssets()
+
+);
+
+}
+
+function calculateAssets(){
+
+let total = 0;
+
+for(
+let account
+in
+bankData.accounts
+){
+
+total +=
+
+bankData.accounts[account]
+.checking +
+
+bankData.accounts[account]
+.savings;
+
+}
+
+return total.toFixed(2);
+
+}
+
+function memberRank(){
+
+if(!currentUser){
+
+return;
+
+}
+
+let member =
+getMember(currentUser);
+
+let rank =
+"Member";
+
+if(member.points >= 50)
+rank = "Bronze";
+
+if(member.points >= 100)
+rank = "Silver";
+
+if(member.points >= 250)
+rank = "Gold";
+
+if(member.points >= 500)
+rank = "Platinum";
+
+alert(
+
+"Rank: " +
+
+rank +
+
+"\nPoints: " +
+
+member.points
+
+);
+
+}
+
 <h2>All Club Credit Union</h2>
 
 <button onclick="memberLogin()">
@@ -68,6 +1710,127 @@ Admin Login
 
 <button onclick="showStoreLogin()">
 Store Login
+</button>
+  <button onclick="memberLogin()">
+Login
+</button>
+
+<button onclick="showBalance()">
+Show Balance
+</button>
+
+<button onclick="alert(transferMoney('1001','1002',10))">
+Test Transfer
+</button>
+  <button onclick="storeLogin()">
+Store Login
+</button>
+
+<button onclick="showStoreMembers()">
+Store Members
+</button>
+
+<button onclick="storePurchase()">
+Make Purchase
+</button>
+
+<button onclick="storeReport()">
+Store Report
+</button>
+  <button onclick="alert(moveToSavings('1001',10))">
+Test Savings
+</button>
+
+<button onclick="alert(moveToChecking('1001',10))">
+Test Checking
+</button>
+
+<button onclick="giveInterest()">
+Add Interest
+</button>
+
+<button onclick="showTopSavers()">
+Top Savers
+</button>
+
+<button onclick="savingsGoal()">
+Savings Goal
+</button>
+  <button onclick="showPoints()">
+My Points
+</button>
+
+<button onclick="rewardStoreMenu()">
+Reward Store
+</button>
+
+<button onclick="buyReward()">
+Buy Reward
+</button>
+
+<button onclick="showAchievements()">
+Achievements
+</button>
+
+<button onclick="giveBonusPoints()">
+Bonus Points
+</button>
+  <button onclick="showMemberCard()">
+Member Card
+</button>
+
+<button onclick="printMemberCard()">
+Print Card
+</button>
+
+<button onclick="selectMemberByQR()">
+Scan QR
+</button>
+
+<button onclick="memberPhoto()">
+Set Photo
+</button>
+
+<button onclick="viewPhoto()">
+View Photo
+</button>
+  <button onclick="dailyReport()">
+Daily Report
+</button>
+
+<button onclick="memberStatement()">
+Member Statement
+</button>
+
+<button onclick="mostActiveMembers()">
+Most Active
+</button>
+
+<button onclick="savingsLeaderboard()">
+Savings Board
+</button>
+
+<button onclick="bankAnalytics()">
+Bank Analytics
+</button>
+  <button onclick="dailyReward()">
+Daily Reward
+</button>
+
+<button onclick="lotteryDrawing()">
+Lottery Draw
+</button>
+
+<button onclick="payAllMembers()">
+Pay Members
+</button>
+
+<button onclick="vaultMode()">
+Bank Vault
+</button>
+
+<button onclick="memberRank()">
+My Rank
 </button>
 </script>
 
