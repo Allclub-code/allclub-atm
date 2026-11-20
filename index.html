@@ -3,7 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>All Club Credit Union</title>
+<title>All Club Credit Union | Digital Banking Simulator</title>
+<meta name="theme-color" content="#112b51">
+<meta name="description" content="All Club Credit Union: a fictional digital banking portal for club play. No real funds or real financial accounts.">
 <style>
   :root {
     --bg: #0b0f14;
@@ -299,6 +301,234 @@
   .scan-overlay .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; margin-top: 12px; }
   .scan-status { color: var(--accent2); font-size: 0.9rem; min-height: 1.2em; text-align: center; }
 
+
+  /* All Club CU / Aurora Edition — premium simulator interface */
+  :root { --bg:#080e19; --panel:#101b2d; --panel2:#1c2940; --border:#2a3c53;
+    --accent:#24e69b; --accent2:#6ffcc6; --text:#ecf5ff; --muted:#a1b0c9;
+    --blue:#67baff; --purple:#b9a1ff; --teal:#3bdbc3; --danger:#ff777b; }
+  body {background:radial-gradient(ellipse 85vw 58vw at 85% -12%,rgba(28,139,113,.20),transparent 70%),
+    radial-gradient(ellipse 64vw 52vw at -20% 65%,rgba(60,84,170,.16),transparent 76%),var(--bg);}
+  #app {max-width:1270px; padding:clamp(12px,2.4vw,30px);}
+  header.app-header {background:linear-gradient(135deg,rgba(27,49,68,.96),rgba(11,22,38,.95));
+    border-color:rgba(107,180,175,.20);padding:17px 22px; box-shadow:0 16px 36px rgba(0,0,0,.14);}
+  .logo,.logo-glow {letter-spacing:-.5px;}
+  header.app-header .logo:before {content:'◆'; color:var(--accent);margin-right:9px;font-size:.82em}
+  .card,.rank-hero,.mini-board {background:linear-gradient(150deg,rgba(20,36,57,.98),rgba(11,23,39,.98));
+    border:1px solid rgba(132,169,202,.17);border-radius:16px;box-shadow:0 9px 30px rgba(0,0,0,.08);}
+  .card {padding:clamp(16px,2vw,23px);}
+  .greet-card {background:linear-gradient(110deg,rgba(22,77,70,.82),rgba(13,37,65,.90));border-color:rgba(65,234,176,.26);padding:23px;border-radius:18px;}
+  .tabs {background:rgba(16,27,45,.62);padding:7px;border:1px solid rgba(133,171,214,.13);border-radius:14px;gap:6px;}
+  .tab {border:1px solid transparent;background:transparent;white-space:nowrap;}
+  .tab:hover {background:rgba(111,252,198,.09);color:var(--text);}
+  .tab.active {background:rgba(36,230,155,.13);color:var(--accent2);border-color:rgba(36,230,155,.33);}
+  .landing,.login-wrap {background:linear-gradient(155deg,rgba(27,43,62,.98),rgba(11,24,40,.98));border-color:rgba(104,191,160,.32);box-shadow:0 26px 90px rgba(0,0,0,.22);}
+  button,.btn {transition:transform .18s ease,filter .18s ease,box-shadow .18s ease;}
+  button:not(:disabled):hover,.btn:hover {transform:translateY(-1px);box-shadow:0 6px 18px rgba(0,0,0,.16);}
+  input,select,textarea {border-radius:10px;}
+  input:focus-visible,select:focus-visible,textarea:focus-visible,button:focus-visible,.tab:focus-visible {
+    outline:2px solid var(--accent);outline-offset:2px;}
+  .balance-box {background:linear-gradient(130deg,#103b34,#134d4d);border-color:rgba(44,241,168,.31);padding:21px;}
+  .balance-box .amount {font-size:clamp(1.5rem,3.5vw,2.05rem);letter-spacing:-.8px;}
+  .hero-account {padding:24px;background:linear-gradient(113deg,#134b47 0%,#142d4b 64%,#2a2350 100%);
+    border:1px solid rgba(74,232,176,.34);border-radius:20px;margin-bottom:14px;overflow:hidden;position:relative;}
+  .hero-account:after {content:'◉';position:absolute;right:-28px;top:-78px;font-size:215px;line-height:1;opacity:.055;pointer-events:none;}
+  .hero-account .hero-amount {font-size:clamp(2rem,6vw,3.4rem);font-weight:800;letter-spacing:-1.7px;line-height:1.18;margin:7px 0;}
+  .hero-account .hero-foot {display:flex;flex-wrap:wrap;gap:14px;margin-top:18px;color:#c4f5df;font-size:.86rem;}
+  .mini-kpis {display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;margin-bottom:12px;}
+  .mini-kpis .tile {background:rgba(27,45,68,.76);border:1px solid var(--border);padding:16px;border-radius:14px;}
+  .mini-kpis .tile .value {font-size:clamp(1.1rem,2.5vw,1.6rem);font-weight:750;margin-top:4px;word-break:break-word;}
+  .mini-kpis .tile .caption {font-size:.79rem;color:var(--muted);}
+  .section-eyebrow {font-size:.72rem;font-weight:750;text-transform:uppercase;letter-spacing:1.9px;color:var(--accent2);}
+  .responsive-table {overflow-x:auto;}
+  .chart-card {border:1px solid var(--border);border-radius:12px;background:rgba(9,22,37,.57);padding:12px;}
+  .chart-card svg {display:block;max-width:100%;height:auto;}
+  .chart-bars {display:flex;align-items:end;gap:5px;height:115px;border-bottom:1px solid var(--border);padding-top:8px;}
+  .chart-bars .bar {flex:1;min-width:0;border-radius:4px 4px 0 0;background:linear-gradient(0deg,#137d70,var(--accent));}
+  .chart-bars .bar.outflow {background:linear-gradient(0deg,#57507a,var(--purple));}
+  .chart-legend {display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;color:var(--muted);font-size:.75rem;margin-top:9px;}
+  .ops-feed {display:grid;gap:9px;max-height:480px;overflow-y:auto;}
+  .ops-feed-item {border:1px solid rgba(138,169,198,.12);border-radius:11px;background:rgba(14,30,47,.8);padding:12px;display:flex;align-items:flex-start;gap:11px;}
+  .ops-feed-item .dot {width:9px;height:9px;flex:none;background:var(--accent);border-radius:50%;margin-top:6px;box-shadow:0 0 0 4px rgba(36,230,155,.12);}
+  .ops-feed-item .dot.warn {background:var(--warn);box-shadow:0 0 0 4px rgba(255,171,64,.12);}
+  .ops-feed-item time {display:block;color:var(--muted);font-size:.75rem;margin-top:4px;}
+  .form-row {display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;}
+  .modal-backdrop {position:fixed;inset:0;background:rgba(3,9,20,.79);backdrop-filter:blur(8px);z-index:10001;display:none;align-items:center;justify-content:center;padding:15px;}
+  .modal-backdrop.open {display:flex;}
+  .modal-panel {width:min(100%,520px);max-height:90vh;overflow-y:auto;padding:24px;background:#12233a;border:1px solid #416279;border-radius:20px;box-shadow:0 35px 110px rgba(0,0,0,.5);}
+  .modal-panel h2 {margin-bottom:8px;font-size:1.35rem;}
+  .simulation-label {color:#b9d0de;font-size:.73rem;letter-spacing:1.2px;text-transform:uppercase;font-weight:700;}
+  .pill-state {font-size:.74rem;font-weight:700;color:var(--accent2);background:rgba(36,230,155,.12);border:1px solid rgba(36,230,155,.2);padding:3px 8px;border-radius:99px;display:inline-block;}
+  .pill-state.frozen {color:var(--danger);background:rgba(255,119,123,.12);border-color:rgba(255,119,123,.3);}
+  @media(max-width:760px) {.mini-kpis {grid-template-columns:1fr 1fr;} .form-row {grid-template-columns:1fr;}.modal-panel{padding:18px;}}
+  @media(max-width:400px) {.mini-kpis {grid-template-columns:1fr;} .tabs{overflow-x:auto;flex-wrap:nowrap;} .hero-account {padding:17px;}}
+  @media(prefers-reduced-motion:reduce) {*,*:before,*:after {animation-duration:.01ms!important;transition-duration:.01ms!important;}}
+
+
+/* =======================================================
+   ALL CLUB / BANK PORTAL — CLASSIC FINANCIAL INSTITUTION UI
+   All new styling is intentionally visual only. All balances,
+   login, role operations, and Supabase persistence are retained.
+   ======================================================= */
+:root { --bg:#f3f6fb;--panel:#fff;--panel2:#f7f9fd;--border:#e0e7f1;--accent:#1858bd;--accent2:#2164ca;--danger:#d13d54;--warn:#f0a24b;--text:#1e2e48;--muted:#6c7e97;--blue:#286bd8;--purple:#6259b5;--teal:#168478; }
+html{scroll-behavior:smooth}
+body{background:#f3f6fb;color:#1e2e48;font-family:Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial,sans-serif;line-height:1.48;}
+#app{max-width:1600px;margin:0 auto;padding:16px 22px 38px;}
+button,.btn{font-family:inherit;font-weight:650;}
+button:not(.secondary):not(.role-btn):not(.demo-btn):not(.preview-button):not(.action-tile),.btn:not(.secondary){background:#1858bd;color:#fff;box-shadow:0 4px 12px rgba(24,88,189,.11)}
+button:not(:disabled):hover,.btn:hover{filter:brightness(1.05);box-shadow:0 8px 17px rgba(27,73,151,.13)}
+button.secondary,.btn.secondary{background:#fff;color:#234b8a;border:1px solid #d7e2f1;}
+button.danger{background:#d13d54!important;color:white!important;}
+button.warn{background:#f3ad50!important;color:#513509!important;}
+input,select,textarea{background:#fff;color:#1e2e48;border:1px solid #d6e1ed;border-radius:10px;min-height:43px;padding:10px 13px;}
+input::placeholder,textarea::placeholder{color:#a0acc0;}
+input:focus,select:focus,textarea:focus{border-color:#3579d7;box-shadow:0 0 0 4px rgba(44,111,202,.11);outline:none;}
+label{color:#526781;font-size:.79rem;font-weight:650;margin-bottom:7px;}
+.card,.mini-board,.rank-hero{background:white;border:1px solid #e2e9f3;box-shadow:0 7px 25px rgba(19,55,104,.035);border-radius:16px;padding:22px;margin-bottom:16px;}
+.card h2,.card h3{color:#1d3254;font-size:1.02rem;font-weight:750;}
+.muted{color:#6d7d95;}
+hr{border-color:#e4eaf3!important}
+.stat{background:#fff;border:1px solid #e2e9f3;border-radius:14px;text-align:left;padding:21px;}
+.stat .num{color:#153a71;font-size:1.55rem;letter-spacing:-.5px;}.stat .lbl{color:#7b8ba0;margin-top:5px;text-transform:uppercase;letter-spacing:.6px;font-weight:650;font-size:.71rem;}
+.grid2,.grid3{gap:17px;}
+.section-eyebrow{color:#3c69a6;font-size:.66rem;letter-spacing:1.6px;}
+.simulation-label{color:#59718e;}
+table{width:100%;border-collapse:collapse;font-size:.85rem;}
+thead th{background:#f7f9fd;color:#62758c;text-transform:uppercase;font-size:.65rem;letter-spacing:.75px;font-weight:750;white-space:nowrap;border-bottom:1px solid #e1e9f3;}
+th,td{padding:14px 12px;border-bottom:1px solid #edf1f7;vertical-align:middle;}
+tbody tr:hover{background:#f9fbfe;}
+.tab-panel{min-width:0;}
+/* Actual portal layout: all screens share a consistent sticky bank sidebar. */
+#screen-member.active,#screen-banker.active,#screen-store.active,#screen-admin.active{
+  display:grid;grid-template-columns:247px minmax(0,1fr);grid-template-rows:84px minmax(0,1fr);gap:22px;align-items:start;
+}
+#screen-member>.app-header,#screen-banker>.app-header,#screen-store>.app-header,#screen-admin>.app-header{grid-column:1/-1;grid-row:1;}
+#screen-member>.tabs,#screen-banker>.tabs,#screen-store>.tabs,#screen-admin>.tabs{grid-column:1;grid-row:2;}
+#screen-member>.tab-panel,#screen-banker>.tab-panel,#screen-store>.tab-panel,#screen-admin>.tab-panel{grid-column:2;grid-row:2;}
+header.app-header{display:flex;align-items:center;justify-content:space-between;padding:17px 24px;min-height:84px;background:white!important;border:1px solid #e4eaf2!important;border-radius:15px;margin:0;box-shadow:0 3px 20px rgba(18,50,98,.03)!important;}
+header.app-header .logo::before{display:none;}
+.header-brand,.brand-lockup{display:flex;align-items:center;gap:12px;}
+.brand-emblem{width:46px;height:46px;border-radius:13px;display:grid;place-items:center;flex:none;background:#123d78;color:white;box-shadow:0 5px 12px rgba(15,59,125,.15);}
+.brand-emblem svg{width:28px;height:28px;}
+.logo{font-size:1.17rem;font-weight:780;letter-spacing:-.55px;color:#173867;}
+.logo span,.brand-name span{color:#1d58a8;}
+.header-sub{font-size:.62rem;letter-spacing:1.65px;color:#8492a5;font-weight:750;display:block;margin-top:1px;}
+.header-actions{display:flex;gap:18px;align-items:center;}
+.header-env{font-size:.65rem;font-weight:800;letter-spacing:.55px;color:#54806d;display:flex;align-items:center;gap:7px;white-space:nowrap;}
+.pulse-dot{width:7px;height:7px;background:#24b57c;border-radius:50%;box-shadow:0 0 0 4px rgba(36,181,124,.13);display:inline-block;flex:none;}
+.header-person{display:flex;align-items:center;gap:10px;padding-left:16px;border-left:1px solid #e6ebf2;}
+.header-person strong{display:block;font-size:.83rem;color:#203650;max-width:180px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.avatar-mini{border:1px solid #dbe8f7;background:#ebf3ff;color:#2d5ea8;height:37px;width:37px;border-radius:50%;display:grid;place-items:center;font-size:.75rem;}
+.role-badge{background:#edf4fc;border-color:#d9e6f5;color:#2b5c93;font-size:.73rem;font-weight:700;padding:7px 12px;}
+.sign-out{padding:9px 13px!important;font-size:.79rem!important;white-space:nowrap;}
+.tabs{display:flex;flex-direction:column;gap:4px;position:sticky;top:16px;margin:0;background:#112b51!important;border:1px solid #163c70!important;border-radius:17px;box-shadow:0 14px 35px rgba(14,40,76,.09);padding:19px 12px;min-height:min(730px,calc(100vh - 36px));overflow:visible;}
+.sidebar-heading{padding:12px 13px 15px;font-size:.63rem;font-weight:800;letter-spacing:1.4px;color:#8faacc;}
+.tab{display:flex;align-items:center;gap:12px;text-align:left;padding:12px 13px;font-size:.83rem;line-height:1.3;font-weight:630;min-height:44px;border-radius:9px;border:1px solid transparent;color:#b9cae0!important;background:transparent!important;white-space:nowrap;}
+.tab:hover{background:rgba(255,255,255,.065)!important;color:#fff!important;}
+.tab.active{background:#1e4e91!important;color:#fff!important;border-color:#2d61a6!important;box-shadow:inset 3px 0 0 #70b2ff;}
+.nav-icon{width:19px;height:19px;flex:none;opacity:.9;}
+.tab .notif-badge{margin-left:auto;}
+.sidebar-bottom{margin-top:auto;padding:18px 12px 3px;border-top:1px solid rgba(255,255,255,.14);display:flex;align-items:center;gap:10px;color:white;}
+.sidebar-bottom strong{font-size:.75rem;display:block;}.sidebar-bottom small{display:block;color:#9fb3ce;font-size:.63rem;}
+.sidebar-help-icon{width:32px;height:32px;border-radius:10px;background:#214a84;display:grid;place-items:center;flex:none;color:#89c5ff;}
+.page-heading{display:flex;justify-content:space-between;align-items:center;gap:15px;flex-wrap:wrap;margin:0 0 18px;}
+.page-heading h1{font-size:clamp(1.55rem,2.6vw,2rem);color:#17335c;letter-spacing:-.95px;font-weight:780;margin:5px 0 4px;line-height:1.2;}
+.page-heading p{font-size:.87rem;color:#75859d;}
+.interior-page-heading{padding:7px 0 5px;}
+.interior-heading{margin-bottom:14px;}
+.page-date{white-space:nowrap;padding:9px 13px;border:1px solid #dce6f1;background:white;border-radius:50px;color:#63768e;display:flex;align-items:center;gap:9px;font-weight:700;font-size:.72rem;}
+.bank-notice{display:flex;align-items:center;gap:10px;border:1px solid #d8e6f6;background:#eaf3ff;color:#385b87;padding:11px 15px;border-radius:11px;margin:0 0 17px;font-size:.79rem;}
+.notice-icon{width:20px;height:20px;border:1.5px solid #7095c3;border-radius:50%;display:grid;place-items:center;font-weight:900;font-style:normal;font-size:.72rem;flex:none;}
+.hero-account{background:linear-gradient(110deg,#12396d 5%,#194b86 65%,#255b9f 100%)!important;border:1px solid #345f98!important;box-shadow:0 14px 33px rgba(13,56,112,.18);min-height:232px;border-radius:18px;padding:26px 30px;}
+.hero-account::before{content:'ALL CLUB';position:absolute;right:52px;top:48px;color:rgba(255,255,255,.035);font-weight:900;font-size:clamp(34px,5.8vw,84px);letter-spacing:-3px;pointer-events:none;}
+.hero-account::after{content:'';right:-90px;top:-100px;position:absolute;width:310px;height:310px;border:55px solid rgba(255,255,255,.04);border-radius:50%;}
+.hero-account .section-eyebrow{color:#bfdafb;letter-spacing:1.9px;position:relative;z-index:2;}
+.hero-account .hero-amount{font-size:clamp(2.25rem,5vw,3.4rem);letter-spacing:-2px;color:white;margin-top:10px;position:relative;z-index:2;}
+.hero-account .simulation-label{color:#b7cff0;font-weight:500;position:relative;z-index:2;}
+.hero-account .hero-foot{color:#dae9ff;position:relative;z-index:2;margin-top:28px;padding-top:17px;border-top:1px solid rgba(255,255,255,.18);font-size:.75rem;font-weight:600;gap:20px;}
+.hero-account .hero-foot strong{color:white;}
+.greet-card{background:#fff!important;border:1px solid #e0e9f2!important;border-radius:14px;padding:15px 20px;box-shadow:none;margin-bottom:17px;}
+.greet-card h2{font-size:1rem;color:#223d63;}.greet-card .muted{font-size:.8rem;}
+#screen-member #m-home>.grid2{margin-bottom:17px;}
+.balance-box{background:#fff!important;border:1px solid #e0e7f2!important;border-radius:15px;padding:20px 22px;box-shadow:0 6px 20px rgba(15,51,96,.035);min-height:171px;}
+.balance-box .label,.balance-box .label[style]{color:#677b95!important;font-size:.77rem;font-weight:730;}
+.balance-box .amount,.balance-box .amount[style]{color:#183a66!important;letter-spacing:-1.15px;font-weight:780;font-size:clamp(1.55rem,2.5vw,2.12rem);margin:8px 0 17px;}
+.account-card-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.account-product-icon{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;background:#e9f1fd;color:#1c64ba;font-size:1.5rem;font-weight:650;}
+.account-product-icon.savings-symbol{background:#ecf9f6;color:#147e79;}
+.account-state{display:inline-flex;align-items:center;gap:6px;color:#42937b;font-size:.62rem;font-weight:800;letter-spacing:.55px;}
+.account-state-dot{width:6px;height:6px;background:#26b891;border-radius:50%;}
+.account-card-foot{display:flex;justify-content:space-between;gap:10px;padding-top:12px;border-top:1px solid #eaf0f7;font-size:.69rem;color:#8290a5;font-weight:650;}
+.quick-actions-bank{margin-bottom:19px;}
+.quick-actions-heading{display:flex;justify-content:space-between;align-items:center;margin:0 0 10px;}.quick-actions-heading h3{font-size:1rem;color:#233b5e;margin-top:4px;}
+.quick-action-grid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;}
+.action-tile{display:flex;flex-direction:column;align-items:flex-start;gap:4px;border:1px solid #e1e8f3;border-radius:14px;padding:17px 15px;background:white!important;color:#263957!important;box-shadow:0 4px 16px rgba(17,52,110,.04)!important;min-height:144px;text-align:left;}
+.action-tile:hover{border-color:#9ac4ec!important;background:#f9fcff!important;transform:translateY(-3px);}
+.action-symbol{display:grid;place-items:center;width:38px;height:38px;background:#eaf2ff;color:#2167bc;border-radius:11px;font-size:1.45rem;margin-bottom:8px;}
+.action-tile strong{font-size:.85rem;}.action-tile small{font-weight:500;color:#8492a8;font-size:.71rem;line-height:1.2;}
+.rank-hero{background:white!important;border-color:#e1e9f3!important;}.rank-hero .pts{color:#1d63bb;}.rank-hero .progress{background:#e9eff7;}.rank-hero .progress>div{background:#3176c4;}
+.mission-strip{background:#eef6ff;border:1px solid #d6e6fa;border-radius:13px;color:#223e68;padding:15px;}.mission-strip .badge{background:#2461b2;color:white;}.mission-strip .muted{color:#6c809e;}
+.mini-board{background:white;}.mini-board .row{border-color:#edf1f7;}
+.activity-card-title{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:7px;}.activity-card-title h3{margin-bottom:0;margin-top:4px!important;}.activity-link{font-size:.76rem!important;padding:8px 11px!important;}
+.bank-transaction{display:flex;align-items:center;gap:13px;padding:14px 2px;border-bottom:1px solid #edf1f7;}
+.bank-transaction:last-child{border-bottom:0;}.tx-glyph{width:39px;height:39px;border-radius:12px;display:grid;place-items:center;flex:none;font-size:1.4rem;}.tx-glyph.in{background:#e7f8f0;color:#21885d;}.tx-glyph.out{background:#f0f3ff;color:#345fc6;}.tx-copy{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1;}.tx-copy strong{font-size:.82rem;}.tx-copy span{white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#7b8a9f;font-size:.72rem;}.tx-right{text-align:right;display:flex;flex-direction:column;gap:4px;white-space:nowrap;}.tx-right strong{font-size:.86rem;}.tx-right small{font-size:.67rem;color:#8494a8;}.tx-in{color:#158464;font-weight:750;}.tx-out{color:#293e60;font-weight:750;}.empty-state{padding:22px;text-align:center;color:#7b8da5;background:#f8fbff;border:1px dashed #d9e4f0;border-radius:10px;font-size:.85rem;}
+.history-filters{display:grid;grid-template-columns:2fr 1fr 1fr;gap:13px;margin-bottom:14px;}.history-filters input,.history-filters select{margin:0;}.history-results{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;padding:12px 0;color:#8390a4;font-size:.74rem;}.history-results strong{color:#354f76;}.memo-cell{min-width:140px;max-width:330px;overflow-wrap:anywhere;}
+#screen-member .card,#screen-admin .card,#screen-banker .card,#screen-store .card{max-width:100%;}
+#screen-member .tab-panel> .page-heading + .card{margin-top:10px;}
+#screen-admin #ad-dash>.grid3{margin-bottom:15px;}
+.ops-feed-item{background:#f8fbff;border-color:#e2eaf3;}.ops-feed-item .dot{background:#3679c6;box-shadow:0 0 0 4px #e3f1fc;}.ops-feed-item time{color:#7b90a9;}
+.mini-kpis .tile{background:#fff;border:1px solid #e1e8f1;}.mini-kpis .tile .value{color:#1e4c85;}
+.chart-card{background:#f9fbff;border-color:#e3eaf3;}.chart-bars .bar{background:linear-gradient(0deg,#2556a3,#65b8f0);}.chart-bars .bar.outflow{background:linear-gradient(0deg,#45786e,#63bfaa);}
+.vault-screen{background:#f7faff;border-color:#cfe0f2;color:#244265;}.vault-screen>div[id],.vault-screen #vault-total{color:#164885!important;}
+.member-card{background:linear-gradient(135deg,#12345f,#18508e)!important;border:1px solid #4c7ca9!important;color:white;box-shadow:0 14px 38px rgba(18,56,105,.18);}.member-card #card-name,.member-card #card-acc,.member-card .muted{color:#d8e6f6;}.member-card #card-name{color:white;}.member-card .barcode-acc{color:#fff;}.member-card .rank-badge{color:white;background:rgba(255,255,255,.21);}.member-card .photo{border-color:rgba(255,255,255,.4);}
+.modal-panel{background:white;border-color:#dce5f3;box-shadow:0 30px 95px rgba(11,40,78,.3);}.modal-panel h2{color:#183962;}.modal-backdrop{background:rgba(8,28,53,.57);}
+.toast{background:#163c70;color:white;border-color:#5ca6f4;box-shadow:0 9px 28px rgba(11,40,70,.22);}
+.login-wrap{background:#fff!important;border:1px solid #e0e8f2!important;box-shadow:0 25px 70px rgba(17,59,114,.08)!important;margin:80px auto;max-width:430px;padding:36px 32px;border-radius:20px;}
+.login-wrap::before{content:'ALL CLUB CREDIT UNION';display:block;text-align:center;color:#285a9c;font-size:.66rem;letter-spacing:2px;font-weight:800;padding-bottom:20px;}
+.login-wrap h1{color:#1b3a65;font-size:1.6rem;}.login-wrap .sub{margin-bottom:25px;}.login-wrap button{min-height:44px;}
+#screen-member-login,#screen-banker-login,#screen-store-login,#screen-admin-login{min-height:calc(100vh - 40px);padding:1px 10px;background:radial-gradient(ellipse at 50% 0%,#e1edfd,#f3f6fb 70%);border-radius:15px;}
+/* Welcome / marketing portal */
+#app:has(#screen-role.active){max-width:none;padding:0;}
+.public-topbar{background:#0e2b52;color:#bed3ef;min-height:35px;display:flex;align-items:center;}
+.public-topbar-inner{width:min(1280px,calc(100% - 42px));margin:auto;display:flex;justify-content:space-between;gap:10px;font-size:.59rem;letter-spacing:1.15px;font-weight:760;}
+.public-topbar-note{color:#91accd;}
+.public-header{width:min(1280px,calc(100% - 42px));margin:auto;min-height:94px;display:flex;justify-content:space-between;align-items:center;gap:20px;border-bottom:1px solid #e0e9f3;}
+.brand-name{font-size:1.16rem;font-weight:830;color:#173b70;letter-spacing:-.7px;}.brand-subline{font-size:.59rem;font-weight:770;letter-spacing:1.35px;color:#8192a9;margin-top:3px;}
+.public-nav{display:flex;align-items:center;gap:26px;font-size:.75rem;font-weight:690;color:#586d89;}.public-nav span{white-space:nowrap;}.public-nav .nav-secure{color:#24805f;display:flex;gap:9px;align-items:center;}
+.public-main{width:min(1280px,calc(100% - 42px));margin:50px auto 48px;display:grid;grid-template-columns:minmax(0,1.1fr) minmax(350px,.79fr);gap:clamp(22px,6vw,100px);align-items:start;}
+.marketing-hero{padding:34px 0 5px;}.marketing-hero .eyebrow{display:flex;align-items:center;gap:9px;font-size:.63rem;letter-spacing:1.75px;font-weight:800;color:#225ea9;}.mini-rail{width:21px;height:2px;background:#2d7ac7;}
+.marketing-hero h1{font-size:clamp(2.7rem,4.25vw,4.6rem);color:#18365d;line-height:1.1;letter-spacing:-2.8px;margin:16px 0 20px;font-weight:850;}.marketing-hero h1 span{color:#2776c5;}.hero-description{font-size:.99rem;color:#687e9c;max-width:580px;line-height:1.83;}.marketing-chips{display:flex;flex-wrap:wrap;gap:8px;margin:22px 0 38px;}.marketing-chips span{color:#376a9f;background:#eaf3ff;border:1px solid #d6e7fa;border-radius:999px;padding:7px 10px;font-size:.7rem;font-weight:750;}
+.bank-visual{position:relative;max-width:635px;margin-top:26px;}.visual-window{border-radius:18px;box-shadow:0 28px 52px rgba(24,59,116,.14);background:#143c72;color:white;padding:0;overflow:hidden;transform:rotate(-1deg);border:5px solid #fff;}
+.visual-top{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;background:#0c2b55;font-size:.68rem;font-weight:750;color:#d3e5fa;}.visual-dots{color:#80aeeb;font-size:.55rem;}.visual-period{font-size:.53rem;letter-spacing:1.2px;color:#8db7eb;}
+.visual-inside{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(150px,1fr);gap:19px;padding:25px 22px;min-height:217px;}.visual-micro{font-size:.58rem;letter-spacing:1.2px;font-weight:800;color:#aac9eb;}.visual-money{font-size:clamp(1.7rem,3vw,2.6rem);font-weight:840;letter-spacing:-1.8px;margin:7px 0;}.visual-money span{opacity:.65;font-size:.6em;}.visual-small{color:#b6cee9;font-size:.67rem;}.visual-wave{margin-top:17px;height:70px;}.visual-wave svg{width:100%;height:90px;}.visual-account-card{padding:17px 15px;background:rgba(255,255,255,.1);border-radius:13px;display:flex;flex-direction:column;gap:5px;border:1px solid rgba(255,255,255,.14);}.visual-account-card strong{font-size:1.35rem;letter-spacing:-.6px;}.visual-account-card span{color:#b5cce5;font-size:.62rem;}.visual-acct-line{border-bottom:1px solid rgba(255,255,255,.2);margin:7px 0 8px;}
+.visual-float{position:absolute;bottom:-24px;right:-15px;background:white;border:1px solid #e0e8f1;box-shadow:0 12px 27px rgba(31,61,101,.12);padding:12px 20px;border-radius:15px;display:flex;align-items:center;gap:12px;transform:rotate(2deg);}.visual-float>span{font-size:1.5rem;background:#e5f7f1;color:#209974;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;}.visual-float strong{font-size:.78rem;color:#274d7a;display:block;}.visual-float small{font-size:.65rem;color:#8292a7;}
+.public-proof{display:flex;flex-wrap:wrap;gap:32px;margin-top:65px;}.public-proof>div{display:flex;flex-direction:column;gap:4px;}.public-proof strong{color:#235485;font-size:1rem;}.public-proof span{font-size:.7rem;color:#8292a7;}
+.access-column{padding-top:15px;}.access-card{border:1px solid #dfe7f1;border-radius:21px;background:white;padding:clamp(22px,3.2vw,37px);box-shadow:0 24px 60px rgba(17,56,103,.075);}
+.access-kicker{font-size:.66rem;font-weight:790;letter-spacing:1.25px;color:#2e8e72;display:flex;align-items:center;gap:9px;}.access-card h2{font-size:2rem;letter-spacing:-1.3px;color:#173760;margin:14px 0 4px;}.access-subtitle{font-size:.83rem;color:#7e8da2;margin-bottom:24px;min-height:20px;}.portal-options{display:grid;gap:9px;}
+.role-btn{background:#fff!important;border:1px solid #e3e9f2;color:#1e3658!important;padding:12px 13px;width:100%;border-radius:12px;display:flex;align-items:center;gap:12px;min-height:69px;margin:0;text-align:left;box-shadow:none!important;}
+.role-btn:hover{background:#f7faff!important;border-color:#a8cbee;transform:translateY(-2px);}
+.portal-ico{background:#ecf3fe;color:#2565b2;width:41px;height:41px;border-radius:10px;display:grid;place-items:center;flex:none;}.portal-ico svg,.access-foot svg{width:23px;height:23px;stroke:currentColor;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;}.role-btn .txt{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}.role-btn .txt strong{font-size:.85rem;}.role-btn .txt small{font-size:.67rem;color:#8794a7;opacity:1;}.role-chevron{font-size:1.6rem;font-weight:400;color:#9baec9;}
+.access-divider{position:relative;text-align:center;margin:22px 0 13px;}.access-divider:before{content:'';position:absolute;inset:50% 0 auto;border-top:1px solid #e5eaf3;}.access-divider span{position:relative;background:white;padding:0 11px;color:#9bacc0;font-size:.57rem;letter-spacing:1.1px;font-weight:800;}
+.preview-button{width:100%;background:#eaf3ff!important;border:1px solid #d0e2f8;color:#245da2!important;font-size:.8rem;font-weight:750;padding:14px;display:flex;align-items:center;justify-content:space-between;box-shadow:none!important;}.preview-button:hover{background:#deedfe!important;}.access-foot{display:flex;align-items:flex-start;gap:9px;margin:23px 0 0;color:#8b99aa;font-size:.64rem;line-height:1.65;}.access-foot svg{flex:none;width:15px;height:15px;color:#6d91b6;}.help-strip{display:flex;justify-content:center;gap:8px;color:#8291a7;font-size:.72rem;padding:18px;}.help-strip span{color:#3572bb;}.public-footer{border-top:1px solid #dde5f0;padding:19px 24px 25px;display:flex;justify-content:space-between;gap:15px;max-width:1320px;margin:auto;color:#8797aa;font-size:.64rem;}
+@media(max-width:1190px){.header-env{display:none;}.quick-action-grid{grid-template-columns:repeat(2,minmax(0,1fr));}.public-nav{gap:12px;}.public-nav span:nth-child(2){display:none;}}
+@media(max-width:940px){
+  #app{padding:10px 12px 28px;}
+  #screen-member.active,#screen-banker.active,#screen-store.active,#screen-admin.active{display:flex;flex-direction:column;gap:13px;}
+  #screen-member>.app-header,#screen-banker>.app-header,#screen-store>.app-header,#screen-admin>.app-header{width:100%;}
+  #screen-member>.tabs,#screen-banker>.tabs,#screen-store>.tabs,#screen-admin>.tabs{width:100%;min-height:auto;position:sticky;top:0;z-index:80;flex-direction:row;gap:6px;overflow-x:auto;flex-wrap:nowrap;padding:9px;white-space:nowrap;border-radius:11px;scrollbar-width:thin;}
+  #screen-member>.tab-panel,#screen-banker>.tab-panel,#screen-store>.tab-panel,#screen-admin>.tab-panel{width:100%;}
+  .sidebar-heading,.sidebar-bottom{display:none;}
+  .tab{min-width:max-content;padding:10px 12px;}
+  .public-main{grid-template-columns:1fr;gap:25px;margin-top:20px;}.marketing-hero{padding:20px 0;}.bank-visual{max-width:680px;}.access-column{max-width:620px;width:100%;margin:auto;padding:0;}.marketing-hero h1{font-size:3.25rem;}
+}
+@media(max-width:680px){
+  #app{padding:8px 9px 24px;}.grid2,.grid3{grid-template-columns:1fr;}
+  header.app-header{padding:13px 12px;min-height:70px;}.brand-emblem{width:39px;height:39px;border-radius:11px;}.brand-emblem svg{width:23px;height:23px;}.logo{font-size:.94rem;}.header-sub{font-size:.54rem;letter-spacing:1.1px;}.header-actions{gap:7px;}.header-person{display:none;}.sign-out{padding:8px!important;font-size:.71rem!important;}
+  .hero-account{min-height:200px;padding:22px 18px;}.hero-account .hero-foot{gap:9px;}.hero-account .hero-foot>span:last-child{display:none;}
+  .page-heading h1{font-size:1.6rem;}.page-date{margin:0 0 3px;}.quick-action-grid{grid-template-columns:repeat(2,minmax(0,1fr));gap:9px;}.action-tile{min-height:133px;padding:14px 11px;}.history-filters{grid-template-columns:1fr;}.history-filters>div{min-width:0;}.public-topbar-inner,.public-header,.public-main{width:min(100% - 28px,1280px);}.public-topbar-note{display:none;}.public-header{min-height:77px;}.public-nav{display:none;}.marketing-hero h1{font-size:clamp(2.35rem,10vw,3.2rem);letter-spacing:-1.8px;}.marketing-chips{margin-bottom:22px;}.visual-inside{padding:13px;gap:9px;}.visual-account-card{padding:10px;}.visual-account-card strong{font-size:1.08rem;}.visual-money{font-size:1.7rem;}.visual-float{right:0;}.public-proof{gap:17px;margin-top:51px;}.access-card{padding:22px 16px;}.public-footer{flex-direction:column;text-align:center;}
+}
+@media(max-width:410px){.brand-name{font-size:.97rem}.visual-inside{grid-template-columns:1.2fr 1fr;}.visual-small{font-size:.53rem;}.visual-micro{font-size:.5rem;}.tab .nav-icon{height:16px;width:16px;}.tab{font-size:.76rem;}.hero-account .hero-foot{font-size:.67rem;}}
+@media(prefers-reduced-motion:reduce){*,*:before,*:after{animation-duration:.01ms!important;transition-duration:.01ms!important;scroll-behavior:auto!important;}}
+
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
@@ -309,48 +539,58 @@
 
   <!-- ========== ROLE SELECT ========== -->
   <div id="screen-role" class="screen active">
-    <div class="landing">
-      <div class="landing-bg" id="landing-coins"></div>
-      <svg class="mascot" viewBox="0 0 72 72" aria-hidden="true">
-        <circle cx="36" cy="36" r="34" fill="#1c2430" stroke="#00c853" stroke-width="2"/>
-        <ellipse cx="36" cy="40" rx="18" ry="16" fill="#00c853" opacity="0.9"/>
-        <circle cx="28" cy="36" r="3" fill="#0b0f14"/>
-        <circle cx="44" cy="36" r="3" fill="#0b0f14"/>
-        <path d="M28 46 Q36 52 44 46" stroke="#0b0f14" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-        <text x="36" y="22" text-anchor="middle" font-size="12" fill="#00e676">$</text>
-      </svg>
-      <div class="logo-glow">All Club <span>Credit Union</span></div>
-      <p class="tagline" id="landing-tagline">Where points beat paperwork</p>
-      <div class="club-stats" id="landing-stats">
-        <span id="stat-members">— members</span>
-        <span id="stat-vault">$— in vault</span>
-        <span id="stat-streaks">— active streaks</span>
-      </div>
-      <button class="role-btn" onclick="showScreen('screen-member-login')">
-        <span class="icon">👤</span>
-        <span class="txt"><strong>Member</strong><small>Check your stash &amp; flex your rank</small></span>
-      </button>
-      <button class="role-btn teal" onclick="showScreen('screen-banker-login')">
-        <span class="icon">🏦</span>
-        <span class="txt"><strong>Banker</strong><small>Hand out the cash</small></span>
-      </button>
-      <button class="role-btn blue" onclick="showScreen('screen-store-login')">
-        <span class="icon">🛒</span>
-        <span class="txt"><strong>Store</strong><small>Ring up the club</small></span>
-      </button>
-      <button class="role-btn purple" onclick="showScreen('screen-admin-login')">
-        <span class="icon">⚙️</span>
-        <span class="txt"><strong>Admin</strong><small>Run the whole show</small></span>
-      </button>
-      <button class="demo-btn" onclick="demoLogin()">⚡ Try as Alex (demo)</button>
-      <p class="muted" style="text-align:center;margin-top:12px;font-size:0.75rem">Secure · Local · Offline-first</p>
+    <div class="public-topbar">
+      <div class="public-topbar-inner"><span>ALL CLUB CREDIT UNION</span><span class="public-topbar-note">DEMONSTRATION BANKING PLATFORM &nbsp;·&nbsp; FICTIONAL FUNDS</span></div>
     </div>
+    <div class="public-header">
+      <div class="brand-lockup">
+        <div class="brand-emblem" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><path d="M5 13.5 18 5l13 8.5M8 15h20M10 18v11M18 18v11M26 18v11M6 31h24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+        <div><div class="brand-name">All Club <span>Credit Union</span></div><div class="brand-subline">DIGITAL BANKING · SIMULATION</div></div>
+      </div>
+      <div class="public-nav"><span>Personal Banking</span><span>Everyday Accounts</span><span>Member Services</span><span class="nav-secure"><span class="pulse-dot"></span> Demo portal</span></div>
+    </div>
+    <main class="public-main">
+      <section class="marketing-hero">
+        <div class="eyebrow"><span class="mini-rail"></span> A BETTER WAY TO BANK, REIMAGINED</div>
+        <h1>More than banking.<br><span>Built for your club.</span></h1>
+        <p class="hero-description">A complete fictional credit-union experience. Manage everyday accounts, move digital dollars, explore savings, and stay on top of every transaction—all in one beautiful dashboard.</p>
+        <div class="marketing-chips"><span>✓ Checking &amp; Savings</span><span>✓ Real-time club activity</span><span>✓ Member rewards</span></div>
+        <div class="bank-visual" aria-label="Decorative preview of a fictional banking dashboard">
+          <div class="visual-window">
+            <div class="visual-top"><span><span class="visual-dots">● &nbsp; ● &nbsp; ●</span> &nbsp; Account Snapshot</span><span class="visual-period">SIMULATION</span></div>
+            <div class="visual-inside"><div><div class="visual-micro">TOTAL AVAILABLE BALANCE</div><div class="visual-money">$24,850<span>.70</span></div><div class="visual-small">Checking + Savings · Demo preview</div><div class="visual-wave"><svg viewBox="0 0 390 96" preserveAspectRatio="none" aria-hidden="true"><defs><linearGradient id="wavefill" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4db9ff" stop-opacity=".31"/><stop offset="1" stop-color="#4db9ff" stop-opacity="0"/></linearGradient></defs><path d="M0 80 C55 74 69 26 114 44 S172 76 219 46 S296 62 335 21 S375 27 390 8 L390 96 L0 96Z" fill="url(#wavefill)"/><path d="M0 80 C55 74 69 26 114 44 S172 76 219 46 S296 62 335 21 S375 27 390 8" fill="none" stroke="#5dc6f8" stroke-width="3" stroke-linecap="round"/></svg></div></div>
+            <div class="visual-account-card"><div class="visual-micro">EVERYDAY CHECKING</div><strong>$8,630.25</strong><span>•••• 1001</span><div class="visual-acct-line"></div><div class="visual-micro">CLUB SAVINGS</div><strong>$16,220.45</strong><span>•••• 1001</span></div></div>
+          </div>
+          <div class="visual-float"><span>↗</span><div><strong>All your accounts</strong><small>One clear picture</small></div></div>
+        </div>
+        <div class="public-proof"><div><strong id="stat-members">— members</strong><span>Club members</span></div><div><strong id="stat-vault">$— in vault</strong><span>Fictional funds</span></div><div><strong id="stat-streaks">— active streaks</strong><span>Reward streaks</span></div></div>
+      </section>
+      <section class="access-column">
+        <div class="access-card">
+          <div class="access-kicker"><span class="pulse-dot"></span> ALL CLUB DIGITAL ACCESS</div>
+          <h2>Welcome back.</h2>
+          <p id="landing-tagline" class="access-subtitle">Choose your portal to get started.</p>
+          <div id="landing-coins" hidden></div>
+          <div class="portal-options">
+            <button class="role-btn" onclick="showScreen('screen-member-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.5-4.3 3.2-6.5 7.5-6.5s7 2.2 7.5 6.5"/></svg></span><span class="txt"><strong>Personal Banking</strong><small>View accounts, transfers &amp; cards</small></span><span class="role-chevron">›</span></button>
+            <button class="role-btn" onclick="showScreen('screen-banker-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="m3 9 9-6 9 6M4 10h16M6 12v7m6-7v7m6-7v7M3 21h18"/></svg></span><span class="txt"><strong>Banker Terminal</strong><small>Deposits, withdrawals &amp; members</small></span><span class="role-chevron">›</span></button>
+            <button class="role-btn" onclick="showScreen('screen-store-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M3 5h2l2 11h11l3-8H6M8 20h.01M18 20h.01"/></svg></span><span class="txt"><strong>Merchant Portal</strong><small>Simulated card charges &amp; sales</small></span><span class="role-chevron">›</span></button>
+            <button class="role-btn" onclick="showScreen('screen-admin-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 6v5c0 5.2 3 8.6 8 10 5-1.4 8-4.8 8-10V6zM9 12l2 2 4-4"/></svg></span><span class="txt"><strong>Administration</strong><small>Members, controls &amp; reports</small></span><span class="role-chevron">›</span></button>
+          </div>
+          <div class="access-divider"><span>EXPLORING?</span></div>
+          <button class="preview-button" onclick="demoLogin()"><span>◎</span> Launch demo member account <span>→</span></button>
+          <div class="access-foot"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5z"/></svg><span>This is a simulated banking environment. Never enter real bank credentials or real financial information.</span></div>
+        </div>
+        <div class="help-strip"><span>✦</span> Your club. Your accounts. Your digital dollars.</div>
+      </section>
+    </main>
+    <footer class="public-footer"><span>© All Club Credit Union · Fictional banking simulator</span><span>No real deposits · No real money · Not an insured financial institution</span></footer>
   </div>
 
   <!-- ========== MEMBER LOGIN ========== -->
   <div id="screen-member-login" class="screen">
     <div class="login-wrap">
-      <h1>Member Login</h1>
+      <h1>Member Login</h1><p class="simulation-label" style="text-align:center;margin-bottom:8px">SIMULATED BANKING</p>
       <p class="sub">Enter account number and PIN</p>
       <label>Account Number</label>
       <input id="m-acc" type="text" placeholder="e.g. 1001" autocomplete="off">
@@ -401,27 +641,33 @@
 
   <!-- ========== MEMBER DASHBOARD ========== -->
   <div id="screen-member" class="screen">
-    <header class="app-header">
-      <div class="logo">All Club <span>CU</span></div>
-      <div style="display:flex;align-items:center;gap:10px">
-        <span class="role-badge" id="m-name-badge">Member</span>
-        <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="logout()">Logout</button>
-      </div>
-    </header>
+    <header class="app-header"><div class="header-brand"><div class="brand-emblem" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><path d="M5 13.5 18 5l13 8.5M8 15h20M10 18v11M18 18v11M26 18v11M6 31h24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="header-brand-text"><div class="logo">All Club <span>Credit Union</span></div><div class="header-sub">PERSONAL BANKING · SIMULATION</div></div></div><div class="header-actions"><span class="header-env"><span class="pulse-dot"></span> DEMO ENVIRONMENT</span><div class="header-person"><span class="avatar-mini" aria-hidden="true">●</span><div><span class="header-sub" id="m-header-label">MEMBER ACCOUNT</span><strong id="m-name-badge">Member</strong></div></div><button class="secondary sign-out" onclick="logout()">Sign out <span aria-hidden="true">↗</span></button></div></header>
 
     <div class="tabs" id="member-tabs">
-      <div class="tab active" data-tab="m-home" onclick="switchTab('member',this)">Home</div>
-      <div class="tab" data-tab="m-transact" onclick="switchTab('member',this)">Banking</div>
-      <div class="tab" data-tab="m-history" onclick="switchTab('member',this)">History</div>
-      <div class="tab" data-tab="m-rewards" onclick="switchTab('member',this)">Rewards</div>
-      <div class="tab" data-tab="m-card" onclick="switchTab('member',this)">My Card</div>
-      <div class="tab" data-tab="m-goals" onclick="switchTab('member',this)">Goals</div>
-      <div class="tab" data-tab="m-notifs" onclick="switchTab('member',this)">Alerts <span id="notif-badge" class="notif-badge hidden">0</span></div>
-      <div class="tab" data-tab="m-settings" onclick="switchTab('member',this)">Settings</div>
+      <div class="sidebar-heading">PERSONAL BANKING</div>
+      <div class="tab active" data-tab="m-home" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 13l4-4 4 4M12 9v8"/></svg>Home</div>
+      <div class="tab" data-tab="m-transact" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 7h16m-4-3 4 3-4 3M20 17H4m4-3-4 3 4 3"/></svg>Banking</div>
+      <div class="tab" data-tab="m-history" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 4v5h5M5 9a8 8 0 1 1-1 5M12 8v5l3 2"/></svg>History</div>
+      <div class="tab" data-tab="m-payments" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 8h14m-4-4 4 4-4 4M19 16H5m4-4-4 4 4 4"/></svg>Pay Members</div>
+      <div class="tab" data-tab="m-insights" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M7 16v-4m5 4V8m5 8v-6"/></svg>Insights</div>
+      <div class="tab" data-tab="m-rewards" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="1"/><path d="M3 10h18M12 10v11M12 10c-7-1-8-7-4-7 2 0 4 3 4 7Zm0 0c7-1 8-7 4-7-2 0-4 3-4 7Z"/></svg>Rewards</div>
+      <div class="tab" data-tab="m-card" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg>My Card</div>
+      <div class="tab" data-tab="m-goals" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Goals</div>
+      <div class="tab" data-tab="m-notifs" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-2 7-2 9h16c0-2-2-2-2-9M10 21h4"/></svg>Alerts <span id="notif-badge" class="notif-badge hidden">0</span></div>
+      <div class="tab" data-tab="m-settings" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M11 2h2l1 3 2 1 3-1 2 2-2 3 1 2 3 1v2l-3 1-1 2 1 3-2 2-3-2-2 1-1 3h-2l-1-3-2-1-3 1-2-2 2-3-1-2-3-1v-2l3-1 1-2-1-3 2-2 3 2 2-1z"/></svg>Settings</div>
+      <div class="sidebar-bottom"><div class="sidebar-help-icon">✦</div><div><strong>All Club Digital</strong><small>Fictional banking environment</small></div></div>
     </div>
 
     <!-- Home -->
     <div id="m-home" class="tab-panel">
+      <div class="page-heading"><div><div class="section-eyebrow">PERSONAL BANKING / OVERVIEW</div><h1 id="bank-home-title">Your financial overview</h1><p>Everything important about your digital accounts, all in one place.</p></div><div class="page-date"><span class="pulse-dot"></span><span id="bank-session-date">Current session</span></div></div>
+      <div class="bank-notice"><span class="notice-icon">ℹ</span><span>This is a <strong>banking simulation</strong>. Balances and transactions are fictional; no real money is held or transferred.</span></div>
+      <div class="hero-account">
+        <div class="section-eyebrow">All Club · Total Portfolio</div>
+        <div class="hero-amount" id="m-total-balance">$0.00</div>
+        <div class="simulation-label">Digital dollars · For club play only</div>
+        <div class="hero-foot"><span>◈ Account <strong id="m-hero-account">1001</strong></span><span>◉ <span id="m-hero-status">Active</span></span><span>↗ <span id="m-hero-growth">Growing your future</span></span></div>
+      </div>
       <div class="event-banner" id="event-banner"></div>
       <div class="greet-card">
         <h2 id="m-greeting">Hey there 👋</h2>
@@ -429,14 +675,20 @@
       </div>
       <div class="grid2">
         <div class="balance-box">
-          <div class="label">Checking</div>
-          <div class="amount" id="m-checking">$0.00</div>
+          <div class="account-card-top"><span class="account-product-icon checking-symbol">⇄</span><span class="account-state"><span class="account-state-dot"></span> OPEN</span></div><div class="label">Everyday Checking</div>
+          <div class="amount" id="m-checking">$0.00</div><div class="account-card-foot"><span>Available balance</span><span id="home-checking-number">•••• 1001</span></div>
         </div>
         <div class="balance-box" style="background:linear-gradient(135deg,#0d1a28,#142a3d);border-color:#1565c0">
-          <div class="label" style="color:#90caf9">Savings</div>
-          <div class="amount" style="color:var(--blue)" id="m-savings">$0.00</div>
+          <div class="account-card-top"><span class="account-product-icon savings-symbol">↗</span><span class="account-state"><span class="account-state-dot"></span> OPEN</span></div><div class="label">Club Savings</div>
+          <div class="amount" style="color:var(--blue)" id="m-savings">$0.00</div><div class="account-card-foot"><span>Current balance</span><span id="home-savings-number">•••• 1001</span></div>
         </div>
       </div>
+      <div class="quick-actions-bank"><div class="quick-actions-heading"><div><span class="section-eyebrow">EVERYDAY BANKING</span><h3>What would you like to do?</h3></div></div><div class="quick-action-grid">
+        <button class="action-tile" onclick="document.querySelector('#screen-member [data-tab=m-payments]').click()"><span class="action-symbol">↗</span><strong>Send money</strong><small>Pay another club member</small></button>
+        <button class="action-tile" onclick="document.querySelector('#screen-member [data-tab=m-transact]').click()"><span class="action-symbol">⇄</span><strong>Transfer funds</strong><small>Between your accounts</small></button>
+        <button class="action-tile" onclick="document.querySelector('#screen-member [data-tab=m-history]').click()"><span class="action-symbol">▤</span><strong>Statements</strong><small>View &amp; export activity</small></button>
+        <button class="action-tile" onclick="document.querySelector('#screen-member [data-tab=m-card]').click()"><span class="action-symbol">▭</span><strong>Manage card</strong><small>Freeze or unfreeze</small></button>
+      </div></div>
       <div class="rank-hero" style="margin-top:12px">
         <div class="top">
           <div>
@@ -480,13 +732,14 @@
         <div id="m-home-achievements" class="ach-pills muted">None yet — go make moves</div>
       </div>
       <div class="card">
-        <h3>Recent Activity</h3>
+        <div class="activity-card-title"><div><div class="section-eyebrow">ACCOUNT ACTIVITY</div><h3>Recent transactions</h3></div><button class="secondary activity-link" onclick="document.querySelector('#screen-member [data-tab=m-history]').click()">View all →</button></div>
         <div id="m-recent" class="muted">Quiet day… go make some money moves.</div>
       </div>
     </div>
 
     <!-- Banking (no self-deposit) -->
     <div id="m-transact" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Transfers & withdrawals</h1><p>Move digital dollars between your accounts, or request an ATM-style withdrawal.</p></div></div>
       <div class="card">
         <h3>Withdraw (ATM-style)</h3>
         <label>Account</label>
@@ -513,7 +766,9 @@
     <!-- History -->
     <div id="m-history" class="tab-panel hidden">
       <div class="card">
-        <h3>Transaction History</h3>
+        <div class="page-heading interior-heading"><div><div class="section-eyebrow">YOUR MONEY / ACTIVITY</div><h1>Transaction history</h1><p>Search, filter and export your simulated account activity.</p></div></div>
+        <div class="history-filters"><div><label for="tx-search">Search transactions</label><input id="tx-search" placeholder="Description, merchant, type..." oninput="renderDetailedTransactions()"></div><div><label for="tx-range">Time period</label><select id="tx-range" onchange="renderDetailedTransactions()"><option value="all">All time</option><option value="7">Last 7 days</option><option value="30">Last 30 days</option><option value="90">Last 90 days</option></select></div><div><label for="tx-account-filter">Account</label><select id="tx-account-filter" onchange="renderDetailedTransactions()"><option value="all">All accounts</option><option value="checking">Checking</option><option value="savings">Savings</option></select></div></div>
+        <div class="history-results"><strong id="tx-result-count">0 transactions</strong><span>All amounts in fictional digital dollars</span></div>
         <div style="overflow-x:auto">
           <table>
             <thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead>
@@ -521,13 +776,51 @@
           </table>
         </div>
         <div class="btn-row" style="margin-top:12px">
-          <button class="secondary" onclick="printStatement()">Print Statement</button>
+          <button class="secondary" onclick="printStatement()">Print statement</button><button class="secondary" onclick="exportMemberTransactions()">Export activity (CSV)</button>
+          <button class="blue" onclick="exportMyTransactions()">Export CSV</button>
         </div>
       </div>
     </div>
 
+
+    <!-- Member-to-member digital transfers -->
+    <div id="m-payments" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Pay a member</h1><p>Send fictional funds to another All Club member.</p></div></div>
+      <div class="card">
+        <div class="section-eyebrow">All Club P2P</div><h2>Send digital dollars</h2>
+        <p class="muted" style="margin-bottom:16px">Instant simulated transfers between club members. No real money is moved.</p>
+        <div class="form-row">
+          <div><label>Pay to</label><select id="pay-member"></select></div>
+          <div><label>From your account</label><select id="pay-from"><option value="checking">Checking</option><option value="savings">Savings</option></select></div>
+          <div><label>Amount (digital $)</label><input id="pay-amount" type="number" min="0.01" max="1000000" step="0.01" placeholder="25.00"></div>
+          <div><label>Memo (optional)</label><input id="pay-note" maxlength="100" placeholder="Pizza night, group supplies..."></div>
+        </div>
+        <button class="blue" onclick="sendMemberPayment()">Confirm Transfer</button>
+      </div>
+      <div class="card"><h3>Recent sent payments</h3><div id="pay-recent" class="muted">No payments yet</div></div>
+    </div>
+
+    <!-- Member cashflow intelligence -->
+    <div id="m-insights" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Spending insights</h1><p>Explore activity trends and your account cash flow.</p></div></div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;margin-bottom:16px">
+          <div><div class="section-eyebrow">Member analytics</div><h2 style="margin:5px 0 0">Money Insights</h2></div>
+          <div><label for="insight-period">View period</label><select id="insight-period" onchange="renderInsights()" style="margin:0"><option value="7">7 days</option><option value="30" selected>30 days</option><option value="90">90 days</option></select></div>
+        </div>
+        <div class="mini-kpis">
+          <div class="tile"><div class="caption">Incoming</div><div class="value success" id="insight-in">$0</div></div>
+          <div class="tile"><div class="caption">Outgoing</div><div class="value" id="insight-out">$0</div></div>
+          <div class="tile"><div class="caption">Net cash flow</div><div class="value" id="insight-net">$0</div></div>
+        </div>
+        <div class="chart-card"><h3>Daily money flow</h3><div id="insight-chart"></div><div class="chart-legend"><span>Green: incoming</span><span>Purple: outgoing</span><span>Transfers between your own accounts excluded</span></div></div>
+      </div>
+      <div class="grid2"><div class="card"><h3>Where it went</h3><div id="insight-breakdown"></div></div><div class="card"><h3>What came in</h3><div id="insight-sources"></div></div></div>
+    </div>
+
     <!-- Rewards -->
     <div id="m-rewards" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Rewards center</h1><p>Your points, club perks and achievements.</p></div></div>
       <div class="card">
         <h3>Your Points: <span id="m-points2">0</span></h3>
         <p class="muted">Earn points with deposits (via banker), daily login, and savings goals.</p>
@@ -554,6 +847,7 @@
 
     <!-- Card -->
     <div id="m-card" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Cards & controls</h1><p>Review your member card and adjust its status.</p></div></div>
       <div class="card">
         <h3>Member Card</h3>
         <div class="member-card printable" id="member-card-print">
@@ -587,10 +881,20 @@
           </label>
         </div>
       </div>
+      <div class="card">
+        <div class="section-eyebrow">Self-service protection</div>
+        <h3>Card Controls</h3>
+        <p class="muted" style="margin-bottom:10px">Freeze your simulated member card to block store charges. Bank transfers and teller withdrawals remain available.</p>
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap">
+          <span id="m-card-control-state" class="pill-state">Card active</span>
+          <button id="m-card-freeze-button" class="secondary" onclick="toggleOwnCard()">Freeze Card</button>
+        </div>
+      </div>
     </div>
 
     <!-- Goals -->
     <div id="m-goals" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Savings goals</h1><p>Track the things you are saving for.</p></div></div>
       <div class="card">
         <h3>Savings Goals</h3>
         <div id="goals-list"></div>
@@ -605,6 +909,7 @@
 
     <!-- Notifications / Alerts -->
     <div id="m-notifs" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Notifications</h1><p>Important account messages and activity.</p></div></div>
       <div class="card">
         <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:12px">
           <h3 style="margin:0">Notifications</h3>
@@ -619,6 +924,7 @@
 
     <!-- Settings -->
     <div id="m-settings" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Profile & security</h1><p>Update your account access PIN.</p></div></div>
       <div class="card">
         <h3>Change PIN</h3>
         <label>Current PIN</label>
@@ -634,19 +940,19 @@
 
   <!-- ========== BANKER DASHBOARD ========== -->
   <div id="screen-banker" class="screen">
-    <header class="app-header">
-      <div class="logo">Banker <span>Terminal</span></div>
-      <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="logout()">Logout</button>
-    </header>
+    <header class="app-header"><div class="header-brand"><div class="brand-emblem" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><path d="M5 13.5 18 5l13 8.5M8 15h20M10 18v11M18 18v11M26 18v11M6 31h24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="header-brand-text"><div class="logo">All Club <span>Credit Union</span></div><div class="header-sub">TELLER WORKSPACE · SIMULATION</div></div></div><div class="header-actions"><span class="header-env"><span class="pulse-dot"></span> DEMO ENVIRONMENT</span><span class="role-badge">Teller</span><button class="secondary sign-out" onclick="logout()">Sign out <span aria-hidden="true">↗</span></button></div></header>
 
     <div class="tabs">
-      <div class="tab active" data-tab="bk-teller" onclick="switchTab('banker',this)">Teller</div>
-      <div class="tab" data-tab="bk-bulk" onclick="switchTab('banker',this)">Bulk Deposit</div>
-      <div class="tab" data-tab="bk-members" onclick="switchTab('banker',this)">Members</div>
-      <div class="tab" data-tab="bk-activity" onclick="switchTab('banker',this)">Activity</div>
+      <div class="sidebar-heading">BRANCH OPERATIONS</div>
+      <div class="tab active" data-tab="bk-teller" onclick="switchTab('banker',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m3 9 9-6 9 6M4 10h16M6 12v7m6-7v7m6-7v7M3 21h18"/></svg>Teller</div>
+      <div class="tab" data-tab="bk-bulk" onclick="switchTab('banker',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v16M6 12h12M3 7h3M18 17h3"/></svg>Bulk Deposit</div>
+      <div class="tab" data-tab="bk-members" onclick="switchTab('banker',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"/></svg>Members</div>
+      <div class="tab" data-tab="bk-activity" onclick="switchTab('banker',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 12h4l3-6 4 12 3-6h4"/></svg>Activity</div>
+      <div class="sidebar-bottom"><div class="sidebar-help-icon">✦</div><div><strong>All Club Digital</strong><small>Fictional banking environment</small></div></div>
     </div>
 
     <div id="bk-teller" class="tab-panel">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / WORKSPACE</div><h1>Teller desk</h1><p>Process assisted account deposits and withdrawals.</p></div></div>
       <div class="card">
         <h3>Select Member</h3>
         <label>Scan / Enter Member Card</label>
@@ -741,18 +1047,18 @@
 
   <!-- ========== STORE DASHBOARD ========== -->
   <div id="screen-store" class="screen">
-    <header class="app-header">
-      <div class="logo">Store <span>Terminal</span></div>
-      <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="logout()">Logout</button>
-    </header>
+    <header class="app-header"><div class="header-brand"><div class="brand-emblem" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><path d="M5 13.5 18 5l13 8.5M8 15h20M10 18v11M18 18v11M26 18v11M6 31h24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="header-brand-text"><div class="logo">All Club <span>Credit Union</span></div><div class="header-sub">MERCHANT SERVICES · SIMULATION</div></div></div><div class="header-actions"><span class="header-env"><span class="pulse-dot"></span> DEMO ENVIRONMENT</span><span class="role-badge">Merchant</span><button class="secondary sign-out" onclick="logout()">Sign out <span aria-hidden="true">↗</span></button></div></header>
     <div class="tabs">
-      <div class="tab active" data-tab="st-charge" onclick="switchTab('store',this)">Charge</div>
-      <div class="tab" data-tab="st-members" onclick="switchTab('store',this)">Members</div>
-      <div class="tab" data-tab="st-sales" onclick="switchTab('store',this)">Sales</div>
-      <div class="tab" data-tab="st-reports" onclick="switchTab('store',this)">Reports</div>
+      <div class="sidebar-heading">MERCHANT SERVICES</div>
+      <div class="tab active" data-tab="st-charge" onclick="switchTab('store',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2"/><path d="M3 10h18M7 15h4"/></svg>Charge</div>
+      <div class="tab" data-tab="st-members" onclick="switchTab('store',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"/></svg>Members</div>
+      <div class="tab" data-tab="st-sales" onclick="switchTab('store',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 5h2l2 11h11l3-8H6M8 20h.01M18 20h.01"/></svg>Sales</div>
+      <div class="tab" data-tab="st-reports" onclick="switchTab('store',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M7 16v-4m5 4V8m5 8v-6"/></svg>Reports</div>
+      <div class="sidebar-bottom"><div class="sidebar-help-icon">✦</div><div><strong>All Club Digital</strong><small>Fictional banking environment</small></div></div>
     </div>
 
     <div id="st-charge" class="tab-panel">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / WORKSPACE</div><h1>Point of sale</h1><p>Record fictional club card purchases.</p></div></div>
       <div class="card">
         <h3>Charge Member</h3>
         <label>Scan / Enter Member Card</label>
@@ -808,21 +1114,22 @@
 
   <!-- ========== ADMIN DASHBOARD ========== -->
   <div id="screen-admin" class="screen">
-    <header class="app-header">
-      <div class="logo">Admin <span>Console</span></div>
-      <button class="secondary" style="padding:6px 10px;font-size:0.85rem" onclick="logout()">Logout</button>
-    </header>
+    <header class="app-header"><div class="header-brand"><div class="brand-emblem" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><path d="M5 13.5 18 5l13 8.5M8 15h20M10 18v11M18 18v11M26 18v11M6 31h24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="header-brand-text"><div class="logo">All Club <span>Credit Union</span></div><div class="header-sub">ADMINISTRATION · SIMULATION</div></div></div><div class="header-actions"><span class="header-env"><span class="pulse-dot"></span> DEMO ENVIRONMENT</span><span class="role-badge">Administrator</span><button class="secondary sign-out" onclick="logout()">Sign out <span aria-hidden="true">↗</span></button></div></header>
     <div class="tabs">
-      <div class="tab active" data-tab="ad-dash" onclick="switchTab('admin',this)">Dashboard</div>
-      <div class="tab" data-tab="ad-members" onclick="switchTab('admin',this)">Members</div>
-      <div class="tab" data-tab="ad-create" onclick="switchTab('admin',this)">Create</div>
-      <div class="tab" data-tab="ad-payroll" onclick="switchTab('admin',this)">Payroll</div>
-      <div class="tab" data-tab="ad-reports" onclick="switchTab('admin',this)">Reports</div>
-      <div class="tab" data-tab="ad-backup" onclick="switchTab('admin',this)">Backup</div>
-      <div class="tab" data-tab="ad-vault" onclick="switchTab('admin',this)">Vault</div>
+      <div class="sidebar-heading">BACK OFFICE</div>
+      <div class="tab active" data-tab="ad-dash" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
+      <div class="tab" data-tab="ad-members" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"/></svg>Members</div>
+      <div class="tab" data-tab="ad-ops" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v5c0 5.2 3 8.6 8 10 5-1.4 8-4.8 8-10V6zM9 12l2 2 4-4"/></svg>Control Center</div>
+      <div class="tab" data-tab="ad-create" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3"/><path d="M3 21v-2a7 7 0 0 1 14 0M19 10v8m-4-4h8"/></svg>Create</div>
+      <div class="tab" data-tab="ad-payroll" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M7 2v4M17 2v4M3 9h18M8 14h3m-3 4h8"/></svg>Payroll</div>
+      <div class="tab" data-tab="ad-reports" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM15 3v4h4M8 12h8M8 16h8"/></svg>Reports</div>
+      <div class="tab" data-tab="ad-backup" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17a5 5 0 1 1 2-9 6 6 0 0 1 11 4 4 4 0 0 1-1 8H8M12 19V11m-3 3 3-3 3 3"/></svg>Backup</div>
+      <div class="tab" data-tab="ad-vault" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="12" cy="12" r="4"/><path d="M12 10v4M10 12h4"/></svg>Vault</div>
+      <div class="sidebar-bottom"><div class="sidebar-help-icon">✦</div><div><strong>All Club Digital</strong><small>Fictional banking environment</small></div></div>
     </div>
 
     <div id="ad-dash" class="tab-panel">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / ADMINISTRATION</div><h1>Bank overview</h1><p>A consolidated view of your club credit union.</p></div></div>
       <div class="grid3">
         <div class="stat"><div class="num" id="ad-count">0</div><div class="lbl">Members</div></div>
         <div class="stat"><div class="num" id="ad-total-check">$0</div><div class="lbl">Total Checking</div></div>
@@ -831,10 +1138,12 @@
       <div class="card" style="margin-top:12px">
         <h3>Quick Analytics</h3>
         <div id="ad-analytics"></div>
+        <div class="chart-card" style="margin-top:15px"><div class="section-eyebrow">14-day activity</div><h3>Digital deposits & spending</h3><div id="ad-main-chart"></div></div>
       </div>
     </div>
 
     <div id="ad-members" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / ADMINISTRATION</div><h1>Member directory</h1><p>Manage account holders and edit member profiles.</p></div></div>
       <div class="card">
         <h3>Search & Manage Members</h3>
         <input id="ad-search" placeholder="Search name or account..." oninput="renderAdminMembers()">
@@ -843,6 +1152,37 @@
             <thead><tr><th>Account</th><th>Name</th><th>Checking</th><th>Savings</th><th>Points</th><th>Actions</th></tr></thead>
             <tbody id="ad-members-body"></tbody>
           </table>
+        </div>
+      </div>
+    </div>
+
+
+    <div id="ad-ops" class="tab-panel hidden">
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / ADMINISTRATION</div><h1>Operations center</h1><p>Review simulator activity and administer terminal settings.</p></div></div>
+      <div class="card"><div class="section-eyebrow">Mission control</div><h2>Bank Operations Center</h2><p class="muted">Track activity across the club, review administrative edits, and customize staff terminal PINs. The log is informational, not tamper-proof.</p></div>
+      <div class="mini-kpis">
+        <div class="tile"><div class="caption">Digital funds on record</div><div class="value" id="ops-total">$0</div></div>
+        <div class="tile"><div class="caption">Frozen cards</div><div class="value" id="ops-frozen">0</div></div>
+        <div class="tile"><div class="caption">Recorded audit events</div><div class="value" id="ops-events">0</div></div>
+      </div>
+      <div class="grid2">
+        <div class="card">
+          <h3>Activity &amp; Audit Trail</h3>
+          <input id="ops-search" placeholder="Search members, amounts, account numbers, activity..." oninput="renderOperations()">
+          <div class="btn-row" style="margin:0 0 12px"><button class="secondary" onclick="exportAuditLog()">Export Audit CSV</button><button class="blue" onclick="exportAllTransactions()">Export All Transactions</button></div>
+          <div id="ops-feed" class="ops-feed"></div>
+        </div>
+        <div class="card">
+          <h3>Staff Terminal Access Codes</h3>
+          <p class="muted" style="margin-bottom:14px">Change demo PINs for the Admin, Banker, or Store terminal. This is not production-grade authentication.</p>
+          <label>Terminal</label><select id="ops-role"><option value="admin">Admin</option><option value="banker">Banker</option><option value="store">Store</option></select>
+          <label>New 4–6 digit PIN</label><input type="password" id="ops-new-pin" inputmode="numeric" minlength="4" maxlength="6" placeholder="••••••" autocomplete="off">
+          <button class="purple" onclick="changeStaffPin()">Update Terminal PIN</button>
+          <hr style="margin:22px 0;border:none;border-top:1px solid var(--border)">
+          <h3>Operator shortcuts</h3>
+          <div class="btn-row"><button class="secondary" onclick="document.querySelector('#screen-admin [data-tab=ad-members]').click()">Manage Members</button>
+          <button class="secondary" onclick="document.querySelector('#screen-admin [data-tab=ad-payroll]').click()">Process Payroll</button>
+          <button class="secondary" onclick="document.querySelector('#screen-admin [data-tab=ad-backup]').click()">Backup & Sync</button></div>
         </div>
       </div>
     </div>
@@ -857,7 +1197,7 @@
         <label>Starting Savings</label>
         <input id="new-savings" type="number" value="50" min="0" step="0.01">
         <label>Initial PIN (4-6 digits)</label>
-        <input id="new-pin" type="text" value="1234" maxlength="6">
+        <input id="new-pin" type="password" placeholder="Choose a PIN" maxlength="6" inputmode="numeric" autocomplete="new-password">
         <button onclick="createMember()">Create Member</button>
       </div>
       <div class="card">
@@ -960,8 +1300,8 @@
 
     <div id="ad-vault" class="tab-panel hidden">
       <div class="vault-screen">
-        <h2 style="margin-bottom:8px">🏦 Bank Vault</h2>
-        <p class="muted">Total assets under management</p>
+        <h2 style="margin-bottom:8px">🏦 Club Vault</h2>
+        <p class="muted">Simulated digital funds across club accounts</p>
         <div style="font-size:2.2rem;font-weight:700;color:var(--accent2);margin:16px 0" id="vault-total">$0.00</div>
         <div class="grid2" style="max-width:400px;margin:0 auto">
           <div class="stat"><div class="num" id="vault-check">$0</div><div class="lbl">Checking</div></div>
@@ -973,6 +1313,19 @@
 
 </div>
 
+<!-- Admin member editor; edit without exposing PIN in a prompt -->
+<div id="profile-modal" class="modal-backdrop" role="dialog" aria-modal="true" aria-labelledby="profile-title" onclick="if(event.target===this)closeProfileModal()">
+  <div class="modal-panel">
+    <div class="section-eyebrow">Account Management</div>
+    <h2 id="profile-title">Edit member</h2>
+    <p class="muted" style="margin-bottom:18px">Manage account holder details. Leave the new PIN empty to keep the current one.</p>
+    <input id="profile-account" type="hidden">
+    <label for="profile-name">Account holder name</label><input id="profile-name" maxlength="100" autocomplete="off">
+    <label for="profile-pin">Reset PIN (optional)</label><input id="profile-pin" type="password" maxlength="6" inputmode="numeric" autocomplete="off" placeholder="Leave empty to keep existing PIN">
+    <label for="profile-card">Member card</label><select id="profile-card"><option value="active">Active</option><option value="frozen">Frozen</option></select>
+    <div class="btn-row" style="justify-content:flex-end"><button class="secondary" onclick="closeProfileModal()">Cancel</button><button onclick="saveMemberProfile()">Save Changes</button></div>
+  </div>
+</div>
 
 <!-- Barcode Scanner Overlay (iPad camera) -->
 <div id="scan-overlay" class="scan-overlay">
@@ -991,7 +1344,7 @@
 <script>
 /* ============================================================
    All Club Credit Union - Single-file banking app
-   localStorage only • No server required
+   GitHub Pages + Supabase shared simulation, local cache
    Banker role handles deposits (members cannot self-deposit)
    ============================================================ */
 const SUPABASE_URL =
@@ -1005,7 +1358,7 @@ const STORAGE_KEY = 'allclub_cu_v2';
 const MAX_PIN_ATTEMPTS = 5;
 
 const DEFAULT_DATA = {
-  version: 2,
+  version: 3,
   storePin: '0000',
   adminPin: '050409',
   bankerPin: '0000',
@@ -1020,7 +1373,7 @@ const DEFAULT_DATA = {
       checking: 1250.50,
       savings: 3400.00,
       points: 120,
-      rank: 'Silver',
+      rank: 'Bronze',
       failedAttempts: 0,
       locked: false,
       photo: null,
@@ -1041,7 +1394,9 @@ const DEFAULT_DATA = {
   sales: [],
   tellerLog: [],
   lotteryPool: 0,
-  lastLottery: null
+  lastLottery: null,
+  auditLog: [],
+  payments: []
 };
 
 let db = null;
@@ -1054,8 +1409,12 @@ function migrateDb(data) {
   if (!data.tellerLog) data.tellerLog = [];
   if (data.interestRate == null) data.interestRate = 0.005;
   if (!data.schedules) data.schedules = {};
+  if (!Array.isArray(data.auditLog)) data.auditLog = [];
+  if (!Array.isArray(data.payments)) data.payments = [];
   Object.values(data.members || {}).forEach(m => {
     if (!m.notifications) m.notifications = [];
+    if (!Array.isArray(m.transactions)) m.transactions = [];
+    if (typeof m.cardFrozen !== 'boolean') m.cardFrozen = false;
     if (!m.createdAt) m.createdAt = new Date().toISOString();
   });
   return data;
@@ -1243,7 +1602,7 @@ function refreshOpenUI() {
 }
 
 function money(n) {
-  return '$' + (Number(n) || 0).toFixed(2);
+  return (Number(n) || 0).toLocaleString('en-US', {style:'currency', currency:'USD', minimumFractionDigits:2, maximumFractionDigits:2});
 }
 function toast(msg, isError) {
   const t = document.getElementById('toast');
@@ -1259,10 +1618,10 @@ function showScreen(id) {
 }
 function switchTab(area, el) {
   const panels = {
-    member: ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-notifs','m-settings'],
+    member: ['m-home','m-transact','m-history','m-payments','m-insights','m-rewards','m-card','m-goals','m-notifs','m-settings'],
     banker: ['bk-teller','bk-bulk','bk-members','bk-activity'],
     store: ['st-charge','st-members','st-sales','st-reports'],
-    admin: ['ad-dash','ad-members','ad-create','ad-payroll','ad-reports','ad-backup','ad-vault']
+    admin: ['ad-dash','ad-members','ad-ops','ad-create','ad-payroll','ad-reports','ad-backup','ad-vault']
   };
   panels[area].forEach(id => {
     const p = document.getElementById(id);
@@ -1289,6 +1648,32 @@ function calcRank(points) {
   if (points >= 500) return 'Gold';
   if (points >= 150) return 'Silver';
   return 'Bronze';
+}
+
+
+function escapeHtml(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g,
+    c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+function validDollars(raw) {
+  const n = typeof raw === 'number' ? raw : Number(String(raw).trim());
+  return Number.isFinite(n) && n > 0 && n <= 1000000000 && Math.abs(n*100-Math.round(n*100)) < 0.00001;
+}
+function cents(n) { return Math.round((Number(n) || 0)*100); }
+function dollars(c) { return c / 100; }
+function auditEvent(action, details, target, severity) {
+  if (!db) return;
+  if (!Array.isArray(db.auditLog)) db.auditLog = [];
+  db.auditLog.unshift({id:uid(), date:new Date().toISOString(), actor:currentUser?.role || 'system',
+    action:String(action||''), details:String(details||''), target:displayAccount(target || ''), severity:severity||'normal'});
+  if (db.auditLog.length > 500) db.auditLog.length = 500;
+}
+function downloadCsv(name, header, rows) {
+  const escape = v => '"' + String(v == null ? '' : v).replace(/"/g,'""') + '"';
+  const csv = [header,...rows].map(r => r.map(escape).join(',')).join('\r\n');
+  const u = URL.createObjectURL(new Blob(['\uFEFF'+csv],{type:'text/csv;charset=utf-8'}));
+  const a = document.createElement('a');a.href=u;a.download=name;a.click();
+  setTimeout(()=>URL.revokeObjectURL(u),1000);
 }
 
 /* ---------- Notifications ---------- */
@@ -1541,7 +1926,7 @@ function memberLogin() {
   document.getElementById('m-pin').value = '';
   showScreen('screen-member');
   document.querySelectorAll('#member-tabs .tab').forEach((t,i) => t.classList.toggle('active', i === 0));
-  ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-notifs','m-settings'].forEach((id,i) => {
+  ['m-home','m-transact','m-history','m-payments','m-insights','m-rewards','m-card','m-goals','m-notifs','m-settings'].forEach((id,i) => {
     document.getElementById(id).classList.toggle('hidden', i !== 0);
   });
   refreshMemberUI();
@@ -1592,10 +1977,11 @@ function adminLogin() {
     return;
   }
   currentUser = { role: 'admin' };
+  auditEvent('Admin session', 'Admin terminal opened');saveDB();
   document.getElementById('a-pin').value = '';
   showScreen('screen-admin');
   document.querySelectorAll('#screen-admin .tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  ['ad-dash','ad-members','ad-create','ad-payroll','ad-reports','ad-backup','ad-vault'].forEach((id,i) => {
+  ['ad-dash','ad-members','ad-ops','ad-create','ad-payroll','ad-reports','ad-backup','ad-vault'].forEach((id,i) => {
     document.getElementById(id).classList.toggle('hidden', i!==0);
   });
   refreshAdminUI();
@@ -1620,15 +2006,16 @@ function addTx(member, type, account, amount, note) {
     type, account, amount: Number(amount), note: note || ''
   });
   if (member.transactions.length > 200) member.transactions.length = 200;
+  auditEvent(type, `${money(amount)} · ${String(account)} · ${String(note||'').slice(0,110)}`, member.accountNumber);
 }
 
 function doWithdraw() {
   const m = getMember();
   const acct = document.getElementById('wd-account').value;
   const amt = parseFloat(document.getElementById('wd-amount').value);
-  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if (!validDollars(amt)) return toast('Enter a valid amount with up to 2 decimal places', true);
   if ((m[acct] || 0) < amt) return toast('Insufficient funds', true);
-  m[acct] -= amt;
+  m[acct] = dollars(cents(m[acct]) - cents(amt));
   addTx(m, 'Withdrawal', acct, -amt, 'ATM / Member withdrawal');
   saveDB();
   document.getElementById('wd-amount').value = '';
@@ -1647,10 +2034,10 @@ function doTransfer() {
   const to = document.getElementById('tr-to').value;
   const amt = parseFloat(document.getElementById('tr-amount').value);
   if (from === to) return toast('Choose different accounts', true);
-  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if (!validDollars(amt)) return toast('Enter a valid amount with up to 2 decimal places', true);
   if ((m[from] || 0) < amt) return toast('Insufficient funds', true);
-  m[from] -= amt;
-  m[to] = (m[to] || 0) + amt;
+  m[from] = dollars(cents(m[from]) - cents(amt));
+  m[to] = dollars(cents(m[to]) + cents(amt));
   addTx(m, 'Transfer', from, -amt, 'To ' + to);
   addTx(m, 'Transfer', to, amt, 'From ' + from);
   saveDB();
@@ -1668,6 +2055,7 @@ function changeMemberPin() {
   if (!/^\d{4,6}$/.test(newP)) return toast('PIN must be 4-6 digits', true);
   if (newP !== conf) return toast('PINs do not match', true);
   m.pin = newP;
+  auditEvent('Member changed PIN', 'PIN updated by account holder (value not logged)', m.accountNumber);
   saveDB();
   document.getElementById('pin-old').value = '';
   document.getElementById('pin-new').value = '';
@@ -1706,14 +2094,14 @@ function refreshBankerUI() {
   const members = Object.values(db.members);
   const sel = document.getElementById('bk-member-select');
   sel.innerHTML = members.map(m =>
-    `<option value="${m.accountNumber}">${displayAccount(m.accountNumber)} — ${m.name}</option>`
+    `<option value="${m.accountNumber}">${displayAccount(m.accountNumber)} — ${escapeHtml(m.name)}</option>`
   ).join('');
   previewBankerMember();
 
   document.getElementById('bk-members-body').innerHTML = members.map(m =>
     `<tr>
       <td>${displayAccount(m.accountNumber)}</td>
-      <td>${m.name}</td>
+      <td>${escapeHtml(m.name)}</td>
       <td>${money(m.checking)}</td>
       <td>${money(m.savings)}</td>
       <td>${m.locked ? '🔒 Locked' : 'Active'}</td>
@@ -1727,7 +2115,7 @@ function refreshBankerUI() {
       ? members.map(m => `
           <label style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-bottom:1px solid var(--border)">
             <input type="checkbox" class="bk-bulk-check" value="${m.accountNumber}" ${m.locked ? 'disabled' : ''}>
-            <span style="flex:1">${displayAccount(m.accountNumber)} — ${m.name}${m.locked ? ' <span class="error">(Locked)</span>' : ''}</span>
+            <span style="flex:1">${displayAccount(m.accountNumber)} — ${escapeHtml(m.name)}${m.locked ? ' <span class="error">(Locked)</span>' : ''}</span>
             <span class="muted" style="font-size:0.8rem">${money(m.checking)} / ${money(m.savings)}</span>
           </label>`).join('')
       : '<p class="muted">No members</p>';
@@ -1741,10 +2129,10 @@ function refreshBankerUI() {
         `<tr>
           <td>${new Date(t.date).toLocaleString()}</td>
           <td>${t.memberName} (${t.account})</td>
-          <td>${t.type}</td>
+          <td>${escapeHtml(t.type)}</td>
           <td>${t.acctType}</td>
           <td>${money(t.amount)}</td>
-          <td>${t.note || ''}</td>
+          <td>${escapeHtml(t.note || '')}</td>
         </tr>`
       ).join('')
     : '<tr><td colspan="6" class="muted">No teller activity yet</td></tr>';
@@ -1755,7 +2143,7 @@ function previewBankerMember() {
   const m = db.members[acc];
   const el = document.getElementById('bk-balance-preview');
   if (!m) { el.textContent = ''; return; }
-  el.innerHTML = `<strong>${m.name}</strong> · Checking: <strong>${money(m.checking)}</strong> · Savings: <strong>${money(m.savings)}</strong>${m.locked ? ' · <span class="error">LOCKED</span>' : ''}`;
+  el.innerHTML = `<strong>${escapeHtml(m.name)}</strong> · Checking: <strong>${money(m.checking)}</strong> · Savings: <strong>${money(m.savings)}</strong>${m.locked ? ' · <span class="error">LOCKED</span>' : ''}`;
 }
 
 function bankerDeposit() {
@@ -1768,9 +2156,9 @@ function bankerDeposit() {
   const amt = parseFloat(document.getElementById('bk-dep-amount').value);
   const note = document.getElementById('bk-dep-note').value.trim() || 'Cash/Check deposit';
 
-  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if (!validDollars(amt)) return toast('Enter a valid amount with up to 2 decimal places', true);
 
-  m[acctType] = (m[acctType] || 0) + amt;
+  m[acctType] = dollars(cents(m[acctType]) + cents(amt));
   addTx(m, 'Deposit', acctType, amt, 'Banker: ' + note);
 
   // Points for deposits
@@ -1813,10 +2201,10 @@ function bankerWithdraw() {
   const amt = parseFloat(document.getElementById('bk-wd-amount').value);
   const note = document.getElementById('bk-wd-note').value.trim() || 'Cash withdrawal';
 
-  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if (!validDollars(amt)) return toast('Enter a valid amount with up to 2 decimal places', true);
   if ((m[acctType] || 0) < amt) return toast('Insufficient funds', true);
 
-  m[acctType] -= amt;
+  m[acctType] = dollars(cents(m[acctType]) - cents(amt));
   addTx(m, 'Withdrawal', acctType, -amt, 'Banker: ' + note);
 
   db.tellerLog = db.tellerLog || [];
@@ -1851,7 +2239,7 @@ function bankerBulkDeposit() {
   const note = document.getElementById('bk-bulk-note').value.trim() || 'Bulk deposit';
   const checks = Array.from(document.querySelectorAll('.bk-bulk-check:checked'));
 
-  if (!amt || amt <= 0) return toast('Enter a valid amount', true);
+  if (!validDollars(amt)) return toast('Enter a valid amount with up to 2 decimal places', true);
   if (!checks.length) return toast('Select at least one member', true);
 
   let success = 0;
@@ -1865,7 +2253,7 @@ function bankerBulkDeposit() {
       skipped++;
       return;
     }
-    m[acctType] = (m[acctType] || 0) + amt;
+    m[acctType] = dollars(cents(m[acctType]) + cents(amt));
     addTx(m, 'Deposit', acctType, amt, 'Banker bulk: ' + note);
     const oldRank = m.rank;
     m.points = (m.points || 0) + Math.floor(amt / 10);
@@ -2013,14 +2401,28 @@ function refreshMemberUI() {
   const m = getMember();
   document.getElementById('m-name-badge').textContent = m.name;
   document.getElementById('m-checking').textContent = money(m.checking);
+  document.getElementById('m-total-balance').textContent = money((m.checking||0)+(m.savings||0));
+  document.getElementById('m-hero-account').textContent = displayAccount(m.accountNumber);
+  document.getElementById('m-hero-status').textContent = m.cardFrozen ? 'Card Frozen' : m.locked ? 'Account Locked' : 'Card Active';
+  document.getElementById('m-hero-growth').textContent = `${m.points||0} reward points`;
   document.getElementById('m-savings').textContent = money(m.savings);
+  const bankAccount = displayAccount(m.accountNumber);
+  const n1 = document.getElementById('home-checking-number');
+  const n2 = document.getElementById('home-savings-number');
+  if (n1) n1.textContent = '•••• ' + bankAccount.slice(-4);
+  if (n2) n2.textContent = '•••• ' + bankAccount.slice(-4);
+  const bankHomeTitle = document.getElementById('bank-home-title');
+  if (bankHomeTitle) bankHomeTitle.textContent = 'Welcome back, ' + (m.name || 'Member').split(' ')[0];
+  const bankSessionDate = document.getElementById('bank-session-date');
+  if (bankSessionDate) bankSessionDate.textContent = new Date().toLocaleDateString(undefined, {weekday:'short',month:'short',day:'numeric',year:'numeric'});
+
   document.getElementById('m-points').textContent = m.points || 0;
   const pts2 = document.getElementById('m-points2');
   if (pts2) pts2.textContent = m.points || 0;
 
   const rp = rankProgress(m.points);
   const rankEl = document.getElementById('m-rank');
-  rankEl.textContent = m.rank || rp.rank;
+  rankEl.textContent = rp.rank;
   rankEl.className = rp.cls;
   const bar = document.getElementById('m-rank-bar');
   if (bar) {
@@ -2036,11 +2438,11 @@ function refreshMemberUI() {
 
   // Greeting
   const hour = new Date().getHours();
-  const hello = hour < 12 ? 'Good morning' : hour < 17 ? 'Hey' : 'Good evening';
+  const hello = hour < 12 ? 'Good morning' : hour < 17 ? 'Good afternoon' : 'Good evening';
   const greet = document.getElementById('m-greeting');
   if (greet) greet.textContent = hello + ', ' + m.name.split(' ')[0] + ' 👋';
   const sub = document.getElementById('m-greet-sub');
-  if (sub) sub.textContent = (m.rank || 'Bronze') + ' rank looking solid — keep stacking those points.';
+  if (sub) sub.textContent = 'Manage your checking, savings, and club activity from one place.';
 
   // Daily mission
   const today = todayKey();
@@ -2074,7 +2476,7 @@ function refreshMemberUI() {
   if (mini) {
     const top = Object.values(db.members).sort((a,b) => (b.savings||0) - (a.savings||0)).slice(0, 3);
     mini.innerHTML = top.length
-      ? top.map((x,i) => `<div class="row"><span>${i+1}. ${x.name}</span><strong>${money(x.savings)}</strong></div>`).join('')
+      ? top.map((x,i) => `<div class="row"><span>${i+1}. ${escapeHtml(x.name)}</span><strong>${money(x.savings)}</strong></div>`).join('')
       : '<span class="muted">No savers yet</span>';
   }
 
@@ -2086,19 +2488,15 @@ function refreshMemberUI() {
       : '<span class="muted">None yet — go make moves</span>';
   }
 
-  const recent = (m.transactions || []).slice(0, 5);
+  const recent = (m.transactions || []).filter(t => t.account !== 'points').slice(0, 5);
   const recEl = document.getElementById('m-recent');
-  if (!recent.length) recEl.innerHTML = '<span class="muted">Quiet day… go make some money moves.</span>';
-  else {
-    recEl.innerHTML = '<table><thead><tr><th>Date</th><th>Type</th><th>Amount</th></tr></thead><tbody>' +
-      recent.map(t => `<tr><td>${new Date(t.date).toLocaleDateString()}</td><td>${t.type}</td><td>${money(t.amount)}</td></tr>`).join('') +
-      '</tbody></table>';
-  }
-
-  const body = document.getElementById('m-tx-body');
-  body.innerHTML = (m.transactions || []).map(t =>
-    `<tr><td>${new Date(t.date).toLocaleString()}</td><td>${t.type}</td><td>${t.account}</td><td>${money(t.amount)}</td><td>${t.note || ''}</td></tr>`
-  ).join('') || '<tr><td colspan="5" class="muted">No transactions</td></tr>';
+  if (recEl) recEl.innerHTML = recent.length ? recent.map(t => {
+    const amt = Number(t.amount) || 0;
+    const positive = amt >= 0;
+    const glyph = positive ? '↓' : '↑';
+    return `<div class="bank-transaction"><span class="tx-glyph ${positive ? 'in':'out'}" aria-hidden="true">${glyph}</span><div class="tx-copy"><strong>${escapeHtml(t.type || 'Transaction')}</strong><span>${escapeHtml(t.note || t.account || '')}</span></div><div class="tx-right"><strong class="${positive ? 'tx-in' : 'tx-out'}">${positive?'+':'−'}${money(Math.abs(amt))}</strong><small>${new Date(t.date).toLocaleDateString(undefined,{month:'short',day:'numeric',year:'numeric'})}</small></div></div>`;
+  }).join('') : '<div class="empty-state">No activity yet. Transactions will appear here after your first banking action.</div>';
+  renderDetailedTransactions();
 
   document.getElementById('reward-store').innerHTML = REWARD_ITEMS.map(r =>
     `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
@@ -2113,19 +2511,27 @@ function refreshMemberUI() {
 
   const list = Object.values(db.members).sort((a,b) => (b.savings||0) - (a.savings||0)).slice(0, 5);
   document.getElementById('leaderboard').innerHTML = list.map((x,i) =>
-    `<div style="padding:6px 0;border-bottom:1px solid var(--border)">${i+1}. <strong>${x.name}</strong> — ${money(x.savings)}</div>`
+    `<div style="padding:6px 0;border-bottom:1px solid var(--border)">${i+1}. <strong>${escapeHtml(x.name)}</strong> — ${money(x.savings)}</div>`
   ).join('');
 
   document.getElementById('lottery-info').textContent = `Your tickets: ${m.lotteryTickets || 0} · Pool tickets: ${db.lotteryPool || 0}`;
 
   document.getElementById('card-name').textContent = m.name;
   document.getElementById('card-acc').textContent = displayAccount(m.accountNumber);
-  document.getElementById('card-rank').textContent = m.rank || 'Bronze';
+  document.getElementById('card-rank').textContent = calcRank(m.points || 0);
   document.getElementById('card-qr').textContent = displayAccount(m.accountNumber);
-  renderMemberBarcode(m.accountNumber, m.name, m.rank);
+  renderMemberBarcode(m.accountNumber, m.name, calcRank(m.points || 0));
+  const freezeState = document.getElementById('m-card-control-state');
+  const freezeButton = document.getElementById('m-card-freeze-button');
+  if (freezeState) {
+    freezeState.textContent = m.cardFrozen ? 'Frozen · Store charges blocked' : 'Active · Store charges allowed';
+    freezeState.className = 'pill-state' + (m.cardFrozen ? ' frozen' : '');
+  }
+  if (freezeButton) {freezeButton.textContent = m.cardFrozen ? 'Unfreeze Card' : 'Freeze Card';freezeButton.className = m.cardFrozen ? 'blue' : 'secondary';}
+  renderMemberPayments(); renderInsights();
   const statusEl = document.getElementById('card-status');
-  if (m.locked) {
-    statusEl.textContent = 'Locked';
+  if (m.locked || m.cardFrozen) {
+    statusEl.textContent = m.locked ? 'Locked' : 'Frozen';
     statusEl.style.background = 'var(--danger)';
     statusEl.style.color = '#fff';
   } else {
@@ -2168,7 +2574,7 @@ function refreshMemberUI() {
   } else {
     nList.innerHTML = notifs.map(n => `
       <div class="notif-item ${n.read ? '' : 'unread'}">
-        <div class="msg">${n.message}</div>
+        <div class="msg">${escapeHtml(n.message)}</div>
         <div class="time">${new Date(n.date).toLocaleString()}</div>
       </div>`).join('');
   }
@@ -2179,7 +2585,7 @@ function refreshMemberUI() {
     gEl.innerHTML = m.goals.map(g => {
       const pct = Math.min(100, Math.round((g.saved / g.target) * 100));
       return `<div style="margin-bottom:12px">
-        <div style="display:flex;justify-content:space-between"><strong>${g.name}</strong><span>${money(g.saved)} / ${money(g.target)}</span></div>
+        <div style="display:flex;justify-content:space-between"><strong>${escapeHtml(g.name)}</strong><span>${money(g.saved)} / ${money(g.target)}</span></div>
         <div class="progress"><div style="width:${pct}%"></div></div>
         <div class="btn-row" style="margin-top:6px">
           <button style="padding:5px 10px;font-size:0.8rem" onclick="contributeGoal('${g.id}', prompt('Amount from savings:'))">Add from Savings</button>
@@ -2203,33 +2609,71 @@ function uploadMemberPhoto(ev) {
   reader.readAsDataURL(file);
 }
 
+function renderDetailedTransactions() {
+  if (!currentUser || currentUser.role !== 'member') return;
+  const m = getMember();
+  const body = document.getElementById('m-tx-body');
+  if (!body) return;
+  const q = (document.getElementById('tx-search')?.value || '').trim().toLowerCase();
+  const period = document.getElementById('tx-range')?.value || 'all';
+  const acc = document.getElementById('tx-account-filter')?.value || 'all';
+  const cutoff = period === 'all' ? 0 : Date.now() - Number(period) * 86400000;
+  const rows = (m.transactions || []).filter(t => {
+    if (acc !== 'all' && t.account !== acc) return false;
+    if (cutoff && new Date(t.date).getTime() < cutoff) return false;
+    return !q || [t.type,t.account,t.note,t.id].some(x => String(x||'').toLowerCase().includes(q));
+  });
+  const result = document.getElementById('tx-result-count');
+  if (result) result.textContent = rows.length + (rows.length === 1 ? ' transaction' : ' transactions');
+  body.innerHTML = rows.map(t => {
+    const amt=Number(t.amount) || 0;
+    const positive=amt >= 0;
+    return `<tr><td>${new Date(t.date).toLocaleString()}</td><td><strong>${escapeHtml(t.type || '')}</strong></td><td>${escapeHtml(t.account || '')}</td><td><span class="${positive?'tx-in':'tx-out'}">${positive?'+':'−'}${money(Math.abs(amt))}</span></td><td class="memo-cell">${escapeHtml(t.note || '—')}</td></tr>`;
+  }).join('') || '<tr><td colspan="5" class="muted" style="padding:24px">No transactions match these filters.</td></tr>';
+}
+function exportMemberTransactions() {
+  if (currentUser?.role !== 'member') return;
+  const m=getMember();
+  const rows=(m.transactions || []).map(t => [t.date,t.id,t.type,t.account,t.amount,t.note]);
+  downloadCsv('allclub_statement_'+displayAccount(m.accountNumber)+'_'+todayKey()+'.csv',
+    ['Date','Transaction ID','Type','Account','Amount','Description'],rows);
+  toast('Transaction CSV downloaded');
+}
+
 function printStatement() {
+  if (currentUser?.role !== 'member') return;
   const m = getMember();
   const w = window.open('', '_blank');
-  w.document.write('<html><head><title>Statement</title><style>body{font-family:sans-serif;padding:20px}table{width:100%;border-collapse:collapse}td,th{border:1px solid #ccc;padding:6px}</style></head><body>' +
-    '<h2>All Club Credit Union — Statement</h2>' +
-    '<p>' + m.name + ' · ' + m.accountNumber + '</p>' +
-    '<p>Checking: ' + money(m.checking) + ' · Savings: ' + money(m.savings) + '</p>' +
-    '<table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead><tbody>' +
-    (m.transactions||[]).map(t => '<tr><td>' + new Date(t.date).toLocaleString() + '</td><td>' + t.type + '</td><td>' + t.account + '</td><td>' + money(t.amount) + '</td><td>' + (t.note||'') + '</td></tr>').join('') +
-    '</tbody></table></body></html>');
+  if (!w) { toast('Allow pop-ups to print your statement',true); return; }
+  const total = Number(m.checking||0)+Number(m.savings||0);
+  const date = new Date().toLocaleDateString(undefined,{year:'numeric',month:'long',day:'numeric'});
+  const rows=(m.transactions||[]).map(t => `<tr><td>${new Date(t.date).toLocaleDateString()}</td><td>${escapeHtml(t.type||'')}</td><td>${escapeHtml(t.account||'')}</td><td>${Number(t.amount)>=0?'+':'−'}${money(Math.abs(Number(t.amount)||0))}</td><td>${escapeHtml(t.note||'—')}</td></tr>`).join('');
+  w.document.write(`<!doctype html><html lang="en"><head><meta charset="utf-8"><title>All Club · Account Statement</title><style>
+  *{box-sizing:border-box}body{font-family:Arial,Helvetica,sans-serif;color:#1a2944;margin:0;background:white;padding:36px;font-size:12px}
+  .top{display:flex;justify-content:space-between;gap:20px;border-bottom:3px solid #173b77;padding-bottom:20px}.brand{font-size:22px;font-weight:800;color:#173b77}.brand span{font-weight:400}.tag{font-weight:700;color:#777;font-size:10px;letter-spacing:2px;margin-top:8px}
+  h1{font-size:25px;margin:30px 0 4px}h2{font-size:14px;margin:30px 0 12px}.muted{color:#6e7d92}.account-row{display:flex;gap:16px;margin-top:25px}.tile{flex:1;border:1px solid #d7dfed;background:#f7f9fc;padding:17px;border-radius:8px}.tile strong{display:block;font-size:23px;margin-top:9px;color:#173b77}.tile small{display:block;color:#5b6c86}table{width:100%;border-collapse:collapse;font-size:11px}th{text-align:left;background:#eef3fa;color:#263c61}th,td{padding:10px 8px;border-bottom:1px solid #e4eaf2}th:nth-child(4),td:nth-child(4){text-align:right;white-space:nowrap}.disclaimer{margin-top:28px;padding:14px;border:1px solid #bdcce0;background:#f6f9fe;color:#445672;line-height:1.5}@page{size:letter;margin:.55in}@media print{body{padding:0}}
+  </style></head><body><div class="top"><div><div class="brand">ALL CLUB <span>CREDIT UNION</span></div><div class="tag">DIGITAL MEMBER SERVICES · SIMULATION</div></div><div style="text-align:right"><strong>Account activity statement</strong><p class="muted">Generated ${escapeHtml(date)}</p></div></div>
+  <h1>Account statement</h1><p class="muted">Prepared for ${escapeHtml(m.name)} · Account ${escapeHtml(displayAccount(m.accountNumber))}</p><div class="account-row"><div class="tile"><small>Checking balance</small><strong>${money(m.checking)}</strong></div><div class="tile"><small>Savings balance</small><strong>${money(m.savings)}</strong></div><div class="tile"><small>Combined balance</small><strong>${money(total)}</strong></div></div>
+  <h2>Transaction activity</h2><table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Description</th></tr></thead><tbody>${rows || '<tr><td colspan="5">No transactions recorded.</td></tr>'}</tbody></table>
+  <div class="disclaimer"><strong>Fictional statement.</strong> This document is generated by a banking simulator. It is not issued by a licensed or insured financial institution, does not prove assets or creditworthiness, and must not be presented as real financial documentation.</div></body></html>`);
   w.document.close();
-  w.print();
+  w.focus();
+  setTimeout(() => w.print(), 100);
 }
 
 /* ---------- Store ---------- */
 function refreshStoreUI() {
   const sel = document.getElementById('st-member-select');
   const members = Object.values(db.members);
-  sel.innerHTML = members.map(m => `<option value="${m.accountNumber}">${displayAccount(m.accountNumber)} — ${m.name}</option>`).join('');
+  sel.innerHTML = members.map(m => `<option value="${m.accountNumber}">${displayAccount(m.accountNumber)} — ${escapeHtml(m.name)}</option>`).join('');
   previewMemberBalance();
 
   document.getElementById('st-members-body').innerHTML = members.map(m =>
-    `<tr><td>${displayAccount(m.accountNumber)}</td><td>${m.name}</td><td>${money(m.checking)}</td><td>${money(m.savings)}</td></tr>`
+    `<tr><td>${displayAccount(m.accountNumber)}</td><td>${escapeHtml(m.name)}</td><td>${money(m.checking)}</td><td>${money(m.savings)}</td></tr>`
   ).join('');
 
   document.getElementById('st-sales-body').innerHTML = (db.sales || []).slice().reverse().map(s =>
-    `<tr><td>${new Date(s.date).toLocaleString()}</td><td>${s.memberName} (${s.account})</td><td>${money(s.amount)}</td><td>${s.desc}</td></tr>`
+    `<tr><td>${new Date(s.date).toLocaleString()}</td><td>${escapeHtml(s.memberName)} (${displayAccount(s.account)})</td><td>${money(s.amount)}</td><td>${escapeHtml(s.desc)}</td></tr>`
   ).join('') || '<tr><td colspan="4" class="muted">No sales yet</td></tr>';
 
   const total = (db.sales || []).reduce((a,s) => a + s.amount, 0);
@@ -2252,12 +2696,14 @@ function storeCharge() {
   const acc = document.getElementById('st-member-select').value;
   const m = db.members[acc];
   if (!m) return toast('Select a member', true);
+  if (m.cardFrozen) return toast('Member card frozen. Store charge declined.', true);
+  if (m.locked) return toast('Member account locked. Charge declined.', true);
   const amt = parseFloat(document.getElementById('st-amount').value);
   const desc = document.getElementById('st-desc').value.trim() || 'Store purchase';
   const from = document.getElementById('st-from').value;
-  if (!amt || amt <= 0) return toast('Enter amount', true);
+  if (!validDollars(amt)) return toast('Enter a valid amount with up to 2 decimal places', true);
   if ((m[from] || 0) < amt) return toast('Insufficient funds in ' + from, true);
-  m[from] -= amt;
+  m[from] = dollars(cents(m[from]) - cents(amt));
   addTx(m, 'Purchase', from, -amt, 'Store: ' + desc);
   db.sales = db.sales || [];
   db.sales.push({
@@ -2315,6 +2761,8 @@ function refreshAdminUI() {
   renderScheduleHistory();
 
   renderAdminMembers();
+  renderOperations();
+  renderPortfolioChart();
 }
 
 function renderAdminMembers() {
@@ -2325,15 +2773,16 @@ function renderAdminMembers() {
   document.getElementById('ad-members-body').innerHTML = members.map(m =>
     `<tr>
       <td>${displayAccount(m.accountNumber)}${m.locked?' 🔒':''}</td>
-      <td>${m.name}</td>
+      <td>${escapeHtml(m.name)}</td>
       <td>${money(m.checking)}</td>
       <td>${money(m.savings)}</td>
       <td>${m.points||0}</td>
       <td>
-        <button style="padding:4px 8px;font-size:0.75rem" class="blue" onclick="editMemberName('${m.accountNumber}')">Edit Name</button>
+        <button style="padding:4px 8px;font-size:0.75rem" class="blue" onclick="openMemberProfile('${m.accountNumber}')">Edit Profile</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="purple" onclick="editMemberPin('${m.accountNumber}')">Change PIN</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="printMemberInfo('${m.accountNumber}')">Print</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="unlockMember('${m.accountNumber}')">Unlock</button>
+        <button style="padding:4px 8px;font-size:0.75rem" class="warn" onclick="adminToggleCard('${m.accountNumber}')">${m.cardFrozen?'Unfreeze':'Freeze'} Card</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="danger" onclick="deleteMember('${m.accountNumber}')">Delete</button>
       </td>
     </tr>`
@@ -2348,7 +2797,9 @@ function editMemberName(acc) {
   if (value === null) return;
   const name = value.trim();
   if (!name || name.length > 100) return toast('Enter a name (up to 100 characters)', true);
+  const oldName = m.name;
   m.name = name;
+  auditEvent('Member renamed', `${oldName} → ${name}`, acc);
   saveDB();
   refreshAdminUI();
   toast('Account holder name updated');
@@ -2362,6 +2813,7 @@ function editMemberPin(acc) {
   if (value === null) return;
   if (!/^\d{4,6}$/.test(value)) return toast('PIN must be 4–6 digits', true);
   m.pin = value;
+  auditEvent('Member PIN changed', 'Admin reset member PIN (value not logged)', acc, 'warn');
   m.failedAttempts = 0;
   m.locked = false;
   saveDB();
@@ -2374,7 +2826,8 @@ function createMember() {
   const checking = parseFloat(document.getElementById('new-checking').value) || 0;
   const savings = parseFloat(document.getElementById('new-savings').value) || 0;
   const pin = document.getElementById('new-pin').value.trim();
-  if (!name) return toast('Name required', true);
+  if (!name || name.length > 100) return toast('Enter a name up to 100 characters', true);
+  if (![checking,savings].every(v => Number.isFinite(v) && v >= 0 && v <= 1000000000 && Math.abs(v * 100 - Math.round(v * 100)) < 0.00001)) return toast('Starting balances must be valid nonnegative dollar amounts', true);
   if (!/^\d{4,6}$/.test(pin)) return toast('PIN must be 4-6 digits', true);
   const acc = String(db.nextAcc++);
   db.members[acc] = {
@@ -2387,6 +2840,7 @@ function createMember() {
     rank: 'Bronze',
     failedAttempts: 0,
     locked: false,
+    cardFrozen: false,
     photo: null,
     streak: 0,
     lastDaily: null,
@@ -2405,6 +2859,7 @@ function createMember() {
   if (savings > 0) {
     addTx(db.members[acc], 'Deposit', 'savings', savings, 'Opening balance (Admin)');
   }
+  auditEvent('Member created', `New simulated account for ${name}`, acc);
   saveDB();
   document.getElementById('new-name').value = '';
   refreshAdminUI();
@@ -2417,9 +2872,11 @@ function editBalances() {
   if (!m) return toast('Account not found', true);
   const c = parseFloat(document.getElementById('edit-checking').value);
   const s = parseFloat(document.getElementById('edit-savings').value);
-  if (!isNaN(c)) m.checking = c;
-  if (!isNaN(s)) m.savings = s;
+  if ((!Number.isNaN(c) && (!Number.isFinite(c)||(c<0 || c>1000000000 || Math.abs(c*100-Math.round(c*100))>0.00001))) || (!Number.isNaN(s) && (!Number.isFinite(s)||s<0 || s>1000000000 || Math.abs(s*100-Math.round(s*100))>0.00001))) return toast('Balances must be nonnegative numbers',true);
+  if (!isNaN(c)) m.checking = dollars(cents(c));
+  if (!isNaN(s)) m.savings = dollars(cents(s));
   addTx(m, 'Adjustment', 'admin', 0, 'Admin balance edit');
+  auditEvent('Admin balance adjustment', `New totals: checking ${money(m.checking)}, savings ${money(m.savings)}`, acc,'warn');
   saveDB();
   refreshAdminUI();
   toast('Balances updated for ' + displayAccount(acc));
@@ -2427,7 +2884,9 @@ function editBalances() {
 
 function deleteMember(acc) {
   if (!confirm('Delete member ' + acc + '?')) return;
+  const deletedName = db.members[acc]?.name || '';
   delete db.members[acc];
+  auditEvent('Member deleted', deletedName, acc,'warn');
   saveDB();
   refreshAdminUI();
   toast('Member deleted');
@@ -2438,9 +2897,10 @@ function unlockMember(acc) {
   if (!m) return;
   m.locked = false;
   m.failedAttempts = 0;
+  auditEvent('Account unlocked', 'Member lockout cleared', acc);
   saveDB();
   refreshAdminUI();
-  toast(acc + ' unlocked');
+  toast(displayAccount(acc) + ' unlocked');
 }
 
 function printMemberInfo(acc) {
@@ -2476,9 +2936,9 @@ function printMemberInfo(acc) {
   <div class="sub">Member Account Information</div>
 
   <div class="box">
-    <div class="row"><span class="label">Name</span><span class="value">${m.name}</span></div>
+    <div class="row"><span class="label">Name</span><span class="value">${escapeHtml(m.name)}</span></div>
     <div class="row"><span class="label">Account Number</span><span class="value">${displayAccount(m.accountNumber)}</span></div>
-    <div class="row"><span class="label">PIN / Password</span><span class="value pin">${m.pin}</span></div>
+    <div class="row"><span class="label">PIN / Password</span><span class="value pin">Not shown</span></div>
     <div class="row"><span class="label">Status</span><span class="value">${m.locked ? 'Locked' : 'Active'}</span></div>
     <div class="row"><span class="label">Rank</span><span class="value">${m.rank || 'Bronze'}</span></div>
     <div class="row"><span class="label">Points</span><span class="value">${m.points || 0}</span></div>
@@ -2491,7 +2951,7 @@ function printMemberInfo(acc) {
   </div>
 
   <div class="warn">
-    Keep this document secure. It contains the member’s login credentials.
+    This is a fictional account summary. To change access credentials, use Admin → Members → Edit Profile.
   </div>
 
   <p style="margin-top:20px">
@@ -2520,15 +2980,15 @@ function runReport(type) {
   } else if (type === 'topsavers') {
     const top = members.sort((a,b)=>(b.savings||0)-(a.savings||0)).slice(0,10);
     out.innerHTML = '<p><strong>Top Savers</strong></p><ol>' +
-      top.map(m => `<li>${m.name} (${displayAccount(m.accountNumber)}) — ${money(m.savings)}</li>`).join('') + '</ol>';
+      top.map(m => `<li>${escapeHtml(m.name)} (${displayAccount(m.accountNumber)}) — ${money(m.savings)}</li>`).join('') + '</ol>';
   } else if (type === 'active') {
     const top = members.sort((a,b)=>(b.transactions||[]).length - (a.transactions||[]).length).slice(0,10);
     out.innerHTML = '<p><strong>Most Active</strong></p><ol>' +
-      top.map(m => `<li>${m.name} — ${(m.transactions||[]).length} transactions</li>`).join('') + '</ol>';
+      top.map(m => `<li>${escapeHtml(m.name)} — ${(m.transactions||[]).length} transactions</li>`).join('') + '</ol>';
   } else if (type === 'richest') {
     const top = members.sort((a,b)=>((b.checking||0)+(b.savings||0)) - ((a.checking||0)+(a.savings||0))).slice(0,10);
     out.innerHTML = '<p><strong>Richest Members</strong></p><ol>' +
-      top.map(m => `<li>${m.name} — ${money((m.checking||0)+(m.savings||0))}</li>`).join('') + '</ol>';
+      top.map(m => `<li>${escapeHtml(m.name)} — ${money((m.checking||0)+(m.savings||0))}</li>`).join('') + '</ol>';
   }
 }
 
@@ -2542,6 +3002,7 @@ function setInterestRate() {
 }
 
 function applyInterest() {
+  if (db.lastInterestDate === todayKey()) return toast('Interest already paid today', true);
   const rate = db.interestRate != null ? db.interestRate : 0.005;
   const pctLabel = (rate * 100).toFixed(2).replace(/\.?0+$/, '') + '%';
   let total = 0;
@@ -2554,6 +3015,8 @@ function applyInterest() {
       total += interest;
     }
   });
+  db.lastInterestDate = todayKey();
+  auditEvent('Interest paid', 'Distributed ' + money(total) + ' in digital savings interest');
   saveDB();
   refreshAdminUI();
   toast('Interest paid: ' + money(total) + ' at ' + pctLabel);
@@ -2585,7 +3048,7 @@ function slotLabel(t) {
 function memberOptionsHtml(selected) {
   const members = Object.values(db.members || {});
   return '<option value="">— empty —</option>' + members.map(m =>
-    `<option value="${m.accountNumber}"${m.accountNumber === selected ? ' selected' : ''}>${displayAccount(m.accountNumber)} — ${m.name}</option>`
+    `<option value="${m.accountNumber}"${m.accountNumber === selected ? ' selected' : ''}>${displayAccount(m.accountNumber)} — ${escapeHtml(m.name)}</option>`
   ).join('');
 }
 
@@ -2860,11 +3323,11 @@ function resetBank() {
 
 /* ---------- Fun: landing, demo, sounds ---------- */
 const TAGLINES = [
-  'Where points beat paperwork',
-  'Your money, your club, your rules',
-  'Stack ranks. Flex savings.',
-  'Offline-first. Fun always on.',
-  'Deposits in, streaks up'
+  'Welcome to your digital banking portal.',
+  'Your accounts. One clear view.',
+  'Everyday banking, made simple.',
+  'Your financial world, all in one place.',
+  'Manage more, all in one place.'
 ];
 
 function playChime(kind) {
@@ -2889,7 +3352,6 @@ function playChime(kind) {
 }
 
 function demoLogin() {
-  loadDB();
   if (!db.members['ACC1001']) {
     toast('Demo member missing — reset defaults from Admin', true);
     return;
@@ -2897,7 +3359,7 @@ function demoLogin() {
   currentUser = { role: 'member', account: 'ACC1001' };
   showScreen('screen-member');
   document.querySelectorAll('#member-tabs .tab').forEach((t,i) => t.classList.toggle('active', i === 0));
-  ['m-home','m-transact','m-history','m-rewards','m-card','m-goals','m-notifs','m-settings'].forEach((id,i) => {
+  ['m-home','m-transact','m-history','m-payments','m-insights','m-rewards','m-card','m-goals','m-notifs','m-settings'].forEach((id,i) => {
     const el = document.getElementById(id);
     if (el) el.classList.toggle('hidden', i !== 0);
   });
@@ -2949,6 +3411,197 @@ function initLanding() {
     if (sv) sv.textContent = money(total) + ' in vault';
     if (ss) ss.textContent = streaks + ' active streak' + (streaks === 1 ? '' : 's');
   } catch (e) {}
+}
+
+
+/* ===============================================================
+   AURORA EDITION · Simulated Payments, Insights & Control Center
+   No real-world payment rails or real financial services involved.
+   =============================================================== */
+function toggleOwnCard() {
+  if (currentUser?.role !== 'member') return;
+  const m = getMember();
+  m.cardFrozen = !m.cardFrozen;
+  auditEvent(m.cardFrozen ? 'Card frozen' : 'Card unfrozen', 'Changed by member',m.accountNumber);
+  pushNotification(m, m.cardFrozen ? 'Your simulated card is frozen. Store charges are blocked.' : 'Your simulated card is active again.', 'alert');
+  saveDB();refreshMemberUI();toast(m.cardFrozen ? 'Card frozen · Store charges blocked' : 'Card active');
+}
+function adminToggleCard(acc) {
+  if (currentUser?.role !== 'admin') return;
+  const m=db.members[acc];if(!m) return;
+  m.cardFrozen = !m.cardFrozen;
+  auditEvent(m.cardFrozen?'Admin froze card':'Admin unfroze card', m.name,acc,'warn');
+  pushNotification(m, m.cardFrozen?'An admin froze your member card.':'An admin unfroze your member card.','alert');
+  saveDB();refreshAdminUI();toast(m.cardFrozen?'Card frozen':'Card unfrozen');
+}
+function openMemberProfile(acc) {
+  if (currentUser?.role !== 'admin') return toast('Admin access required',true);
+  const m=db.members[acc];if(!m)return toast('Account not found',true);
+  document.getElementById('profile-account').value=acc;
+  document.getElementById('profile-name').value=m.name;
+  document.getElementById('profile-pin').value='';
+  document.getElementById('profile-card').value=m.cardFrozen?'frozen':'active';
+  document.getElementById('profile-title').textContent='Edit member · '+displayAccount(acc);
+  document.getElementById('profile-modal').classList.add('open');
+  document.getElementById('profile-name').focus();
+}
+function closeProfileModal(){document.getElementById('profile-modal').classList.remove('open');}
+document.addEventListener('keydown', e=>{if(e.key==='Escape')closeProfileModal();});
+function saveMemberProfile() {
+  if (currentUser?.role !== 'admin')return toast('Admin access required',true);
+  const acc=document.getElementById('profile-account').value, m=db.members[acc];
+  if(!m)return toast('Member no longer exists',true);
+  const name=document.getElementById('profile-name').value.trim();
+  const pin=document.getElementById('profile-pin').value.trim();
+  const frozen=document.getElementById('profile-card').value==='frozen';
+  if(!name||name.length>100)return toast('Enter a valid name (max 100 characters)',true);
+  if(pin&&!/^\d{4,6}$/.test(pin))return toast('PIN must be 4–6 digits',true);
+  const changes=[];
+  if(m.name!==name){changes.push('Name: '+m.name+' → '+name);m.name=name;}
+  if(pin){m.pin=pin;m.locked=false;m.failedAttempts=0;changes.push('PIN reset (value excluded)');}
+  if(m.cardFrozen!==frozen){m.cardFrozen=frozen;changes.push(frozen?'Card frozen':'Card unfrozen');}
+  if(!changes.length){closeProfileModal();return toast('No changes');}
+  auditEvent('Member profile updated',changes.join(' · '),acc,'warn');
+  pushNotification(m, 'An admin updated your account profile. '+(pin?'Your login PIN was reset.':''),'alert');
+  saveDB();closeProfileModal();refreshAdminUI();toast('Member profile saved');
+}
+function renderMemberPayments(){
+  if(currentUser?.role!=='member')return;
+  const m=getMember(),select=document.getElementById('pay-member');if(!select)return;
+  const chosen=select.value;
+  const others=Object.values(db.members).filter(x=>x.accountNumber!==m.accountNumber);
+  select.innerHTML=others.map(x=>`<option value="${escapeHtml(x.accountNumber)}">${escapeHtml(x.name)} · ${displayAccount(x.accountNumber)}</option>`).join('') || '<option value="">No other members yet</option>';
+  if(others.some(x=>x.accountNumber===chosen))select.value=chosen;
+  const history=(db.payments||[]).filter(p=>p.from===m.accountNumber).slice(0,7);
+  document.getElementById('pay-recent').innerHTML=history.length?history.map(p=>
+    `<div class="ops-feed-item"><div class="dot"></div><div><strong>${money(p.amount)}</strong> to ${escapeHtml(p.toName||displayAccount(p.to))}
+    <time>${new Date(p.date).toLocaleString()} · ${escapeHtml(p.note||'Digital member transfer')}</time></div></div>`).join(''):'<p class="muted">No outgoing payments yet</p>';
+}
+function sendMemberPayment(){
+  if(currentUser?.role!=='member')return;
+  const sender=getMember(),receiverAcc=document.getElementById('pay-member').value;
+  const receiver=db.members[receiverAcc];
+  const source=document.getElementById('pay-from').value;
+  const amount=Number(document.getElementById('pay-amount').value);
+  const note=document.getElementById('pay-note').value.trim().slice(0,100);
+  if(!receiver||receiver.accountNumber===sender.accountNumber)return toast('Choose another member',true);
+  if(receiver.locked)return toast('Recipient account is locked',true);
+  if(!['checking','savings'].includes(source))return toast('Invalid source account',true);
+  if(!validDollars(amount))return toast('Enter an amount with up to two decimal places',true);
+  if(cents(sender[source])<cents(amount))return toast('Insufficient simulated funds',true);
+  if(!confirm(`Send ${money(amount)} in digital dollars to ${receiver.name} (${displayAccount(receiverAcc)})?`))return;
+  sender[source]=dollars(cents(sender[source])-cents(amount));
+  receiver.checking=dollars(cents(receiver.checking)+cents(amount));
+  const ref='CLUB-'+uid().toUpperCase();
+  addTx(sender,'Member Payment',source,-amount,`To ${receiver.name} #${displayAccount(receiverAcc)} · ${note} · ${ref}`);
+  addTx(receiver,'Member Payment','checking',amount,`From ${sender.name} #${displayAccount(sender.accountNumber)} · ${note} · ${ref}`);
+  if(!Array.isArray(db.payments))db.payments=[];
+  db.payments.unshift({id:ref,date:new Date().toISOString(),from:sender.accountNumber,to:receiverAcc,toName:receiver.name,amount,note});
+  if(db.payments.length>250)db.payments.length=250;
+  auditEvent('Member-to-member payment',`${money(amount)} · ${displayAccount(sender.accountNumber)} → ${displayAccount(receiverAcc)}`,sender.accountNumber);
+  pushNotification(receiver,`${sender.name} sent you ${money(amount)} digital dollars. Ref ${ref}`,'deposit');
+  pushNotification(sender,`You sent ${money(amount)} digital dollars to ${receiver.name}. Ref ${ref}`,'purchase');
+  saveDB();document.getElementById('pay-amount').value='';document.getElementById('pay-note').value='';
+  refreshMemberUI();toast('Payment complete · '+ref);
+}
+function flowType(tx) {
+  // Internal transfers are a reallocation, not new money.
+  if(tx.type==='Transfer')return null;
+  if(tx.type==='Adjustment'&&Number(tx.amount)===0)return null;
+  return Number(tx.amount)>=0?'in':'out';
+}
+function renderFlowBars(txs, period) {
+  const days=Math.min(Number(period)||30,30);
+  const labels=[];
+  for(let i=days-1;i>=0;i--){const d=new Date();d.setHours(0,0,0,0);d.setDate(d.getDate()-i);
+    const key=d.toISOString().slice(0,10), list=txs.filter(t=>(t.date||'').slice(0,10)===key);
+    labels.push({key, in:list.filter(t=>flowType(t)==='in').reduce((a,t)=>a+Number(t.amount||0),0),
+      out: -list.filter(t=>flowType(t)==='out').reduce((a,t)=>a+Number(t.amount||0),0)});
+  }
+  const max=Math.max(1,...labels.flatMap(x=>[x.in,x.out]));
+  const axis=labels.length>14?labels.filter((_,i)=>i%5===0):labels.filter((_,i)=>i%2===0);
+  return `<div class="chart-bars">${labels.map(v=>`<div style="display:flex;align-items:end;gap:1px;flex:1;height:100%;min-width:0" title="${v.key}: ${money(v.in)} in, ${money(v.out)} out">
+    <div class="bar" style="height:${Math.max(2,Math.round(100*v.in/max))}%;opacity:${v.in?1:.15}"></div>
+    <div class="bar outflow" style="height:${Math.max(2,Math.round(100*v.out/max))}%;opacity:${v.out?1:.15}"></div></div>`).join('')}</div><div class="chart-legend"><span>${labels[0]?.key||''}</span><span>${labels.at(-1)?.key||''}</span></div>`;
+}
+function renderBreakdown(items,empty) {
+  if(!items.length)return `<p class="muted">${empty}</p>`;
+  const max=Math.max(...items.map(x=>x.value),1);
+  return items.slice(0,6).map(x=>`<div style="margin-bottom:15px"><div style="display:flex;justify-content:space-between;gap:8px;font-size:.88rem"><strong>${escapeHtml(x.label)}</strong><span>${money(x.value)}</span></div>
+     <div class="progress"><div style="width:${Math.max(2,Math.round(100*x.value/max))}%"></div></div></div>`).join('');
+}
+function renderInsights() {
+  if(currentUser?.role!=='member')return;
+  const m=getMember(), period=Number(document.getElementById('insight-period')?.value||30);
+  const since=Date.now()-period*24*60*60*1000;
+  const txs=(m.transactions||[]).filter(t=>Number.isFinite(Date.parse(t.date)) && Date.parse(t.date)>=since);
+  const incoming=txs.filter(t=>flowType(t)==='in').reduce((a,t)=>a+Number(t.amount||0),0);
+  const outgoing=-txs.filter(t=>flowType(t)==='out').reduce((a,t)=>a+Number(t.amount||0),0);
+  document.getElementById('insight-in').textContent=money(incoming);
+  document.getElementById('insight-out').textContent=money(outgoing);
+  document.getElementById('insight-net').textContent=money(incoming-outgoing);
+  document.getElementById('insight-chart').innerHTML=renderFlowBars(txs,period);
+  const cat=which=>{
+    const map=new Map();txs.filter(t=>flowType(t)===which).forEach(t=>{
+      let key=t.type||'Other';
+      if(key==='Purchase'){key='Store purchases';}else if(key==='Withdrawal'){key='Withdrawals';}
+      else if(key==='Member Payment'){key=which==='in'?'Received from members':'Sent to members';}
+      map.set(key,(map.get(key)||0)+Math.abs(Number(t.amount||0)));
+    });
+    return [...map].map(([label,value])=>({label,value})).sort((a,b)=>b.value-a.value);
+  };
+  document.getElementById('insight-breakdown').innerHTML=renderBreakdown(cat('out'),'No spending recorded for this period.');
+  document.getElementById('insight-sources').innerHTML=renderBreakdown(cat('in'),'No incoming transactions recorded for this period.');
+}
+function exportMyTransactions(){
+  if(currentUser?.role!=='member')return;
+  const m=getMember();
+  downloadCsv('allclub_'+displayAccount(m.accountNumber)+'_transactions.csv',
+    ['Date','Transaction ID','Type','Account','Amount','Memo'],
+    (m.transactions||[]).map(t=>[t.date,t.id,t.type,t.account,t.amount,t.note]));
+}
+function exportAllTransactions(){
+  if(currentUser?.role!=='admin')return;
+  const rows=Object.values(db.members).flatMap(m=>(m.transactions||[]).map(t=>[displayAccount(m.accountNumber),m.name,t.date,t.id,t.type,t.account,t.amount,t.note]));
+  downloadCsv('allclub_all_transactions_'+todayKey()+'.csv', ['Account','Member','Date','ID','Type','Account type','Amount','Memo'],rows);
+  auditEvent('Exported transaction ledger', rows.length+' transaction rows');saveDB();
+}
+function exportAuditLog(){
+  if(currentUser?.role!=='admin')return;
+  downloadCsv('allclub_audit_'+todayKey()+'.csv', ['Date','Actor','Action','Details','Account','Severity'],
+    (db.auditLog||[]).map(a=>[a.date,a.actor,a.action,a.details,a.target,a.severity]));
+}
+function renderPortfolioChart(){
+  const target=document.getElementById('ad-main-chart');if(!target)return;
+  const txs=Object.values(db.members).flatMap(m=>m.transactions||[]);
+  target.innerHTML=renderFlowBars(txs,14);
+}
+function renderOperations(){
+  if(currentUser?.role!=='admin')return;
+  const members=Object.values(db.members);
+  const total=members.reduce((a,m)=>a+(m.checking||0)+(m.savings||0),0);
+  const audits=db.auditLog||[];
+  document.getElementById('ops-total').textContent=money(total);
+  document.getElementById('ops-frozen').textContent=members.filter(m=>m.cardFrozen).length;
+  document.getElementById('ops-events').textContent=audits.length;
+  const q=(document.getElementById('ops-search')?.value||'').trim().toLowerCase();
+  const matching=audits.filter(a=>!q||[a.actor,a.action,a.details,a.target].some(x=>String(x||'').toLowerCase().includes(q))).slice(0,70);
+  document.getElementById('ops-feed').innerHTML=matching.length?matching.map(a=>
+    `<div class="ops-feed-item"><span class="dot ${a.severity==='warn'?'warn':''}"></span><div style="min-width:0"><strong>${escapeHtml(a.action)}</strong>
+    <div class="muted" style="margin-top:3px;overflow-wrap:anywhere">${escapeHtml(a.details)}</div>
+    <time>${escapeHtml(a.actor||'system')} · ${a.target?'Account '+escapeHtml(a.target)+' · ':''}${new Date(a.date).toLocaleString()}</time></div></div>`).join(''):
+    '<p class="muted">No matching events yet. New actions will appear here.</p>';
+}
+function changeStaffPin(){
+  if(currentUser?.role!=='admin')return toast('Admin only',true);
+  const role=document.getElementById('ops-role').value;
+  const pin=document.getElementById('ops-new-pin').value.trim();
+  if(!/^\d{4,6}$/.test(pin))return toast('PIN must contain 4–6 digits',true);
+  const field={admin:'adminPin',banker:'bankerPin',store:'storePin'}[role];
+  if(!field)return toast('Invalid terminal',true);
+  if(!confirm(`Change the ${role} terminal PIN?`))return;
+  db[field]=pin;auditEvent('Terminal PIN changed',role+' terminal PIN rotated (value not logged)', '', 'warn');
+  saveDB();document.getElementById('ops-new-pin').value='';renderAdminUI();toast(role+' terminal PIN changed');
 }
 
 /* ---------- Boot ---------- */
