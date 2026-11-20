@@ -353,7 +353,7 @@
       <h1>Member Login</h1>
       <p class="sub">Enter account number and PIN</p>
       <label>Account Number</label>
-      <input id="m-acc" type="text" placeholder="e.g. ACC1001" autocomplete="off">
+      <input id="m-acc" type="text" placeholder="e.g. 1001" autocomplete="off">
       <label>PIN</label>
       <input id="m-pin" type="password" maxlength="6" placeholder="••••" autocomplete="off">
       <div id="m-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
@@ -561,7 +561,7 @@
             <div>
               <div style="font-size:0.7rem;color:var(--muted)">ALL CLUB CREDIT UNION</div>
               <div style="font-weight:700;font-size:1.1rem" id="card-name">Member</div>
-              <div class="muted" id="card-acc">ACC0000</div>
+              <div class="muted" id="card-acc">0000</div>
               <div style="margin-top:8px">
                 <span class="rank-badge" id="card-rank">Bronze</span>
                 <span id="card-status" class="rank-badge" style="background:var(--accent);color:#003d1a;margin-left:6px">Active</span>
@@ -575,7 +575,7 @@
             <div class="muted" style="font-size:0.7rem;margin-bottom:6px">SCAN QR CODE</div>
             <canvas id="card-qr-canvas" width="180" height="180" style="display:block;margin:0 auto;background:#fff;border-radius:10px;padding:8px"></canvas>
             <svg id="card-barcode" style="width:100%;max-width:260px;height:44px;margin-top:10px"></svg>
-            <div class="barcode-acc" id="card-qr">ACC0000</div>
+            <div class="barcode-acc" id="card-qr">0000</div>
           </div>
           <div class="muted" style="text-align:center;font-size:0.75rem;margin-top:8px">Present this card at participating stores &amp; the teller window</div>
         </div>
@@ -651,7 +651,7 @@
         <h3>Select Member</h3>
         <label>Scan / Enter Member Card</label>
         <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-          <input id="bk-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
+          <input id="bk-scan" type="text" placeholder="Type or paste account number from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
           <button class="teal" style="white-space:nowrap" onclick="scanMember('banker')">Lookup</button>
           <button class="secondary" style="white-space:nowrap" onclick="openBarcodeScanner('banker')">📷 Camera Scan</button>
         </div>
@@ -757,7 +757,7 @@
         <h3>Charge Member</h3>
         <label>Scan / Enter Member Card</label>
         <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
-          <input id="st-scan" type="text" placeholder="Type or paste ACC#### from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
+          <input id="st-scan" type="text" placeholder="Type or paste account number from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
           <button class="blue" style="white-space:nowrap" onclick="scanMember('store')">Lookup</button>
           <button class="secondary" style="white-space:nowrap" onclick="openBarcodeScanner('store')">📷 Camera Scan</button>
         </div>
@@ -863,7 +863,7 @@
       <div class="card">
         <h3>Edit Balances</h3>
         <label>Account Number</label>
-        <input id="edit-acc" placeholder="ACC1001">
+        <input id="edit-acc" placeholder="1001">
         <label>Checking</label>
         <input id="edit-checking" type="number" step="0.01">
         <label>Savings</label>
@@ -1323,18 +1323,22 @@ function clearAllNotifs() {
   toast('Notifications cleared');
 }
 
+/* Account numbers shown without the legacy ACC prefix. Existing database keys stay intact. */
+function displayAccount(acc) { return String(acc || '').replace(/^ACC/i, ''); }
+function resolveAccount(raw) {
+  const code = String(raw || '').trim().toUpperCase();
+  if (!code) return null;
+  if (db.members[code]) return code;
+  if (/^\d+$/.test(code) && db.members['ACC' + code]) return 'ACC' + code;
+  return null;
+}
+
 /* ---------- Card Scan ---------- */
 function parseMemberCode(raw) {
-  const text = (raw || '').trim().toUpperCase();
-  if (!text) return null;
-  // Formats: ACC1001 | ALLCLUB|ACC1001 | ALLCLUB|ACC1001|NAME|RANK
-  const pipe = text.split('|');
-  if (pipe[0] === 'ALLCLUB' && pipe[1]) {
-    const m = pipe[1].match(/ACC\d+/);
-    if (m) return m[0];
-  }
-  const match = text.match(/ACC\d+/);
-  return match ? match[0] : null;
+  const text = String(raw || '').trim().toUpperCase();
+  const candidate = text.startsWith('ALLCLUB|') ? text.split('|')[1] : text;
+  const match = String(candidate || '').match(/^(?:ACC)?\d+$/);
+  return match ? resolveAccount(match[0]) : null;
 }
 
 function scanMember(role, codeFromScanner) {
@@ -1368,13 +1372,13 @@ function scanMember(role, codeFromScanner) {
 }
 
 function memberQrPayload(accountNumber, name, rank) {
-  const acc = accountNumber || 'ACC0000';
+  const acc = displayAccount(accountNumber || '0000');
   // Short, scannable payload for iPad cameras
   return 'ALLCLUB|' + acc + (name ? '|' + String(name).slice(0, 16) : '') + (rank ? '|' + rank : '');
 }
 
 function renderMemberBarcode(accountNumber, name, rank) {
-  const acc = accountNumber || 'ACC0000';
+  const acc = displayAccount(accountNumber || '0000');
   const payload = memberQrPayload(acc, name, rank);
 
   // Primary: QR code (best for iPad camera)
@@ -1504,7 +1508,7 @@ function closeBarcodeScanner() {
 
 /* ---------- Auth ---------- */
 function memberLogin() {
-  const acc = document.getElementById('m-acc').value.trim().toUpperCase();
+  const acc = resolveAccount(document.getElementById('m-acc').value);
   const pin = document.getElementById('m-pin').value.trim();
   const msg = document.getElementById('m-login-msg');
   msg.textContent = '';
@@ -1702,13 +1706,13 @@ function refreshBankerUI() {
   const members = Object.values(db.members);
   const sel = document.getElementById('bk-member-select');
   sel.innerHTML = members.map(m =>
-    `<option value="${m.accountNumber}">${m.accountNumber} — ${m.name}</option>`
+    `<option value="${m.accountNumber}">${displayAccount(m.accountNumber)} — ${m.name}</option>`
   ).join('');
   previewBankerMember();
 
   document.getElementById('bk-members-body').innerHTML = members.map(m =>
     `<tr>
-      <td>${m.accountNumber}</td>
+      <td>${displayAccount(m.accountNumber)}</td>
       <td>${m.name}</td>
       <td>${money(m.checking)}</td>
       <td>${money(m.savings)}</td>
@@ -1723,7 +1727,7 @@ function refreshBankerUI() {
       ? members.map(m => `
           <label style="display:flex;align-items:center;gap:8px;padding:6px 4px;cursor:pointer;border-bottom:1px solid var(--border)">
             <input type="checkbox" class="bk-bulk-check" value="${m.accountNumber}" ${m.locked ? 'disabled' : ''}>
-            <span style="flex:1">${m.accountNumber} — ${m.name}${m.locked ? ' <span class="error">(Locked)</span>' : ''}</span>
+            <span style="flex:1">${displayAccount(m.accountNumber)} — ${m.name}${m.locked ? ' <span class="error">(Locked)</span>' : ''}</span>
             <span class="muted" style="font-size:0.8rem">${money(m.checking)} / ${money(m.savings)}</span>
           </label>`).join('')
       : '<p class="muted">No members</p>';
@@ -2115,9 +2119,9 @@ function refreshMemberUI() {
   document.getElementById('lottery-info').textContent = `Your tickets: ${m.lotteryTickets || 0} · Pool tickets: ${db.lotteryPool || 0}`;
 
   document.getElementById('card-name').textContent = m.name;
-  document.getElementById('card-acc').textContent = m.accountNumber;
+  document.getElementById('card-acc').textContent = displayAccount(m.accountNumber);
   document.getElementById('card-rank').textContent = m.rank || 'Bronze';
-  document.getElementById('card-qr').textContent = m.accountNumber;
+  document.getElementById('card-qr').textContent = displayAccount(m.accountNumber);
   renderMemberBarcode(m.accountNumber, m.name, m.rank);
   const statusEl = document.getElementById('card-status');
   if (m.locked) {
@@ -2217,11 +2221,11 @@ function printStatement() {
 function refreshStoreUI() {
   const sel = document.getElementById('st-member-select');
   const members = Object.values(db.members);
-  sel.innerHTML = members.map(m => `<option value="${m.accountNumber}">${m.accountNumber} — ${m.name}</option>`).join('');
+  sel.innerHTML = members.map(m => `<option value="${m.accountNumber}">${displayAccount(m.accountNumber)} — ${m.name}</option>`).join('');
   previewMemberBalance();
 
   document.getElementById('st-members-body').innerHTML = members.map(m =>
-    `<tr><td>${m.accountNumber}</td><td>${m.name}</td><td>${money(m.checking)}</td><td>${money(m.savings)}</td></tr>`
+    `<tr><td>${displayAccount(m.accountNumber)}</td><td>${m.name}</td><td>${money(m.checking)}</td><td>${money(m.savings)}</td></tr>`
   ).join('');
 
   document.getElementById('st-sales-body').innerHTML = (db.sales || []).slice().reverse().map(s =>
@@ -2320,18 +2324,49 @@ function renderAdminMembers() {
   );
   document.getElementById('ad-members-body').innerHTML = members.map(m =>
     `<tr>
-      <td>${m.accountNumber}${m.locked?' 🔒':''}</td>
+      <td>${displayAccount(m.accountNumber)}${m.locked?' 🔒':''}</td>
       <td>${m.name}</td>
       <td>${money(m.checking)}</td>
       <td>${money(m.savings)}</td>
       <td>${m.points||0}</td>
       <td>
+        <button style="padding:4px 8px;font-size:0.75rem" class="blue" onclick="editMemberName('${m.accountNumber}')">Edit Name</button>
+        <button style="padding:4px 8px;font-size:0.75rem" class="purple" onclick="editMemberPin('${m.accountNumber}')">Change PIN</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="printMemberInfo('${m.accountNumber}')">Print</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="unlockMember('${m.accountNumber}')">Unlock</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="danger" onclick="deleteMember('${m.accountNumber}')">Delete</button>
       </td>
     </tr>`
   ).join('') || '<tr><td colspan="6" class="muted">No members</td></tr>';
+}
+
+function editMemberName(acc) {
+  if (!currentUser || currentUser.role !== 'admin') return toast('Admin only', true);
+  const m = db.members[acc];
+  if (!m) return toast('Member not found', true);
+  const value = prompt('New account holder name for ' + displayAccount(acc) + ':', m.name);
+  if (value === null) return;
+  const name = value.trim();
+  if (!name || name.length > 100) return toast('Enter a name (up to 100 characters)', true);
+  m.name = name;
+  saveDB();
+  refreshAdminUI();
+  toast('Account holder name updated');
+}
+
+function editMemberPin(acc) {
+  if (!currentUser || currentUser.role !== 'admin') return toast('Admin only', true);
+  const m = db.members[acc];
+  if (!m) return toast('Member not found', true);
+  const value = prompt('Enter new 4–6 digit PIN for ' + displayAccount(acc) + ':');
+  if (value === null) return;
+  if (!/^\d{4,6}$/.test(value)) return toast('PIN must be 4–6 digits', true);
+  m.pin = value;
+  m.failedAttempts = 0;
+  m.locked = false;
+  saveDB();
+  refreshAdminUI();
+  toast('Member PIN updated');
 }
 
 function createMember() {
@@ -2341,7 +2376,7 @@ function createMember() {
   const pin = document.getElementById('new-pin').value.trim();
   if (!name) return toast('Name required', true);
   if (!/^\d{4,6}$/.test(pin)) return toast('PIN must be 4-6 digits', true);
-  const acc = 'ACC' + (db.nextAcc++);
+  const acc = String(db.nextAcc++);
   db.members[acc] = {
     accountNumber: acc,
     name,
@@ -2373,11 +2408,11 @@ function createMember() {
   saveDB();
   document.getElementById('new-name').value = '';
   refreshAdminUI();
-  toast('Created ' + acc + ' for ' + name);
+  toast('Created ' + displayAccount(acc) + ' for ' + name);
 }
 
 function editBalances() {
-  const acc = document.getElementById('edit-acc').value.trim().toUpperCase();
+  const acc = resolveAccount(document.getElementById('edit-acc').value);
   const m = db.members[acc];
   if (!m) return toast('Account not found', true);
   const c = parseFloat(document.getElementById('edit-checking').value);
@@ -2387,7 +2422,7 @@ function editBalances() {
   addTx(m, 'Adjustment', 'admin', 0, 'Admin balance edit');
   saveDB();
   refreshAdminUI();
-  toast('Balances updated for ' + acc);
+  toast('Balances updated for ' + displayAccount(acc));
 }
 
 function deleteMember(acc) {
@@ -2422,7 +2457,7 @@ function printMemberInfo(acc) {
   const w = window.open('', '_blank');
   w.document.write(`<!DOCTYPE html>
 <html><head>
-<title>Member Account — ${m.accountNumber}</title>
+<title>Member Account — ${displayAccount(m.accountNumber)}</title>
 <style>
   body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; padding: 32px; color: #111; max-width: 480px; margin: 0 auto; }
   h1 { font-size: 1.25rem; margin: 0 0 4px; }
@@ -2442,7 +2477,7 @@ function printMemberInfo(acc) {
 
   <div class="box">
     <div class="row"><span class="label">Name</span><span class="value">${m.name}</span></div>
-    <div class="row"><span class="label">Account Number</span><span class="value">${m.accountNumber}</span></div>
+    <div class="row"><span class="label">Account Number</span><span class="value">${displayAccount(m.accountNumber)}</span></div>
     <div class="row"><span class="label">PIN / Password</span><span class="value pin">${m.pin}</span></div>
     <div class="row"><span class="label">Status</span><span class="value">${m.locked ? 'Locked' : 'Active'}</span></div>
     <div class="row"><span class="label">Rank</span><span class="value">${m.rank || 'Bronze'}</span></div>
@@ -2485,7 +2520,7 @@ function runReport(type) {
   } else if (type === 'topsavers') {
     const top = members.sort((a,b)=>(b.savings||0)-(a.savings||0)).slice(0,10);
     out.innerHTML = '<p><strong>Top Savers</strong></p><ol>' +
-      top.map(m => `<li>${m.name} (${m.accountNumber}) — ${money(m.savings)}</li>`).join('') + '</ol>';
+      top.map(m => `<li>${m.name} (${displayAccount(m.accountNumber)}) — ${money(m.savings)}</li>`).join('') + '</ol>';
   } else if (type === 'active') {
     const top = members.sort((a,b)=>(b.transactions||[]).length - (a.transactions||[]).length).slice(0,10);
     out.innerHTML = '<p><strong>Most Active</strong></p><ol>' +
@@ -2550,7 +2585,7 @@ function slotLabel(t) {
 function memberOptionsHtml(selected) {
   const members = Object.values(db.members || {});
   return '<option value="">— empty —</option>' + members.map(m =>
-    `<option value="${m.accountNumber}"${m.accountNumber === selected ? ' selected' : ''}>${m.accountNumber} — ${m.name}</option>`
+    `<option value="${m.accountNumber}"${m.accountNumber === selected ? ' selected' : ''}>${displayAccount(m.accountNumber)} — ${m.name}</option>`
   ).join('');
 }
 
