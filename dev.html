@@ -1,0 +1,485 @@
+<!doctype html>
+<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#122747"><title>Developer Command Center | All Club Credit Union</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+<style>
+:root{color-scheme:light;--navy:#102849;--deep:#0b203a;--ink:#1d304a;--muted:#67788e;--line:#e2e9f2;--bg:#f3f6fa;--white:#fff;--blue:#235eae;--lime:#a9ee3c;--purple:#6c2cbd;--green:#008d67;--red:#d13c53;--orange:#ad721e}
+*{box-sizing:border-box}body{margin:0;font:14px/1.5 Inter,ui-sans-serif,-apple-system,BlinkMacSystemFont,'Segoe UI',Arial,sans-serif;background:var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}a{color:var(--blue)}:focus-visible{outline:3px solid #92c8ff;outline-offset:2px}
+.topline{height:5px;background:linear-gradient(90deg,#2462b5 0 48%,var(--lime) 48% 74%,var(--purple) 74%)}
+.brandbar{display:flex;gap:16px;align-items:center;justify-content:space-between;padding:13px clamp(16px,3vw,43px);background:white;border-bottom:1px solid var(--line);min-height:79px}.brand{display:flex;align-items:center;gap:12px}.logo{width:46px;height:46px;border-radius:13px;background:#183c70;color:#fff;display:grid;place-items:center;font-size:25px;box-shadow:0 5px 14px #16375b22}.brand strong{display:block;font-size:16px;letter-spacing:-.4px;color:#102c53}.brand small{display:block;letter-spacing:1.3px;font-size:9px;font-weight:800;color:#7f90a6}.brand-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:flex-end}.status{display:inline-flex;align-items:center;gap:7px;background:#f0f6f4;color:#087e62;padding:8px 11px;border:1px solid #cce9d8;border-radius:24px;font-size:12px;font-weight:700}.status:before{content:'';width:8px;height:8px;background:currentColor;border-radius:50%}.status.bad{background:#fff5eb;color:#b35f26;border-color:#f2d8b8}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:6px;border-radius:9px;border:1px solid #ccd8e8;background:white;color:#285184;font-weight:720;padding:9px 14px;min-height:39px}.btn:hover{filter:brightness(.97)}.btn.primary{border-color:#1652a0;background:#1b5aaf;color:white}.btn.purple{border-color:#6024ab;background:#6828b1;color:white}.btn.lime{border-color:#a0da2d;background:#b8f23b;color:#334900}.btn.danger{border-color:#d13c53;background:#d13c53;color:white}.btn.warn{border-color:#e0b36f;background:#fff5e8;color:#9a5c00}.btn.sm{padding:6px 10px;font-size:12px;min-height:31px}.btn:active{transform:translateY(1px)}.actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center}.w100{width:100%}
+#auth-shell{min-height:calc(100vh - 84px);display:flex;align-items:center;justify-content:center;padding:40px 20px}.auth-card{background:white;box-shadow:0 22px 55px #1a365216;border:1px solid var(--line);width:min(100%,470px);border-radius:20px;padding:34px}.auth-symbol{width:56px;height:56px;border-radius:17px;background:linear-gradient(140deg,#123c73,#6023a9);color:#c7ff6a;display:grid;place-items:center;font-size:30px;margin-bottom:22px}.eyebrow{color:#366cb4;font-size:10px;font-weight:850;letter-spacing:1.8px;text-transform:uppercase}.auth-card h1{font-size:30px;letter-spacing:-1.2px;margin:7px 0 8px}.subtext{color:var(--muted);font-size:13px;margin:0 0 23px}.notice{padding:11px 14px;border:1px solid #d4e1f1;border-radius:11px;background:#eff5fc;color:#486280;font-size:12px;margin:15px 0}.notice.warning{border-color:#eedab9;background:#fff8ed;color:#865c22}.auth-card input{margin-bottom:11px}.auth-footer{font-size:11px;color:#8a98a8;margin-top:20px}
+label{display:block;font-size:12px;font-weight:750;color:#526781;margin:12px 0 5px}input,select,textarea{width:100%;background:#fff;color:#1d304a;border:1px solid #cfdaea;border-radius:9px;padding:10px 11px;min-height:40px}textarea{min-height:95px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:#2e6dbf;outline:2px solid #2e6dbf18}input[type=checkbox]{width:17px;min-height:17px;height:17px;accent-color:#2a61ab;margin:0}input[type=file]{padding:8px}.formgrid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:0 12px}.formgrid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.formgrid>*{min-width:0}.fieldhint{font-size:11px;color:#8b9aaa}.error{color:#b52743;font-size:13px;min-height:17px}
+#workspace{display:none}.shell{display:grid;grid-template-columns:248px minmax(0,1fr);max-width:1720px;margin:0 auto;padding:18px 24px;gap:22px;align-items:start}.sidebar{position:sticky;top:18px;background:var(--navy);color:#d0dced;border:1px solid #1a3b62;box-shadow:0 13px 32px #18365718;border-radius:17px;padding:22px 12px 18px;min-height:min(740px,calc(100vh - 35px));display:flex;flex-direction:column;gap:4px}.side-caption{font-size:10px;font-weight:850;letter-spacing:1.7px;color:#8ca8c7;padding:0 14px;margin:5px 0 12px}.nav-btn{border:0;width:100%;border-radius:10px;text-align:left;color:#c6d5e6;background:transparent;padding:11px 13px;min-height:44px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:12px}.nav-btn:hover{background:#213e61}.nav-btn.active{background:#2a5688;box-shadow:inset 3px 0 0 #acf044;color:#fff}.nav-icon{font-size:17px;width:23px;text-align:center}.sidebar-bottom{margin-top:auto;border-top:1px solid #385171;padding:17px 12px 1px}.sidebar-bottom strong{font-size:13px;display:block;color:#fff}.sidebar-bottom span{font-size:11px;color:#9ab2d1}.main{min-width:0;padding:4px 0 30px}h1,h2,h3,p{margin-top:0}.page-head{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:19px}.page-head h1{font-size:clamp(25px,2.6vw,34px);color:#132d52;letter-spacing:-1.15px;margin:4px 0 4px}.page-head p{color:#72849b;margin:0;font-size:13px}.tag{font-size:11px;font-weight:750;border-radius:99px;padding:5px 10px;background:#edf3fc;color:#3465a3;white-space:nowrap}.tag.main{background:#e9f1fc;color:#195cb0}.tag.west{background:#efe4fc;color:#6d20ac;border:1px solid #d2afed}.tag.ok{background:#e9f6ef;color:#12805c}.tag.warn{background:#fff0e5;color:#a76322}.tag.bad{background:#ffedf0;color:#bb3750}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:18px}.metric{padding:19px;border-radius:14px;background:white;border:1px solid var(--line);box-shadow:0 4px 15px #19375807}.metric .label{font-size:10px;letter-spacing:1px;font-weight:850;color:#8392a5;text-transform:uppercase}.metric .num{font-size:clamp(20px,2.1vw,27px);letter-spacing:-1px;font-weight:850;color:#173457;margin-top:10px;line-height:1.2}.metric .hint{color:#8e9bab;font-size:11px;margin-top:5px}.card{border-radius:15px;background:white;border:1px solid var(--line);padding:22px;box-shadow:0 6px 22px #1a355009;margin-bottom:17px;min-width:0}.card h2{font-size:17px;color:#173255;margin-bottom:5px;letter-spacing:-.35px}.card h3{font-size:14px;color:#263f5c;margin:0 0 10px}.card .muted{color:var(--muted);font-size:12px}.cards2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.cards3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px}.sectionbar{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:14px}.sectionbar h2{margin:0}.tablewrap{overflow-x:auto;border:1px solid #e6ecf4;border-radius:11px}table{border-collapse:collapse;width:100%;text-align:left;font-size:12px}th{background:#f8fafd;color:#74869b;letter-spacing:.7px;font-size:10px;font-weight:850;text-transform:uppercase}th,td{padding:12px 13px;border-bottom:1px solid #e8edf3;white-space:nowrap}tr:last-child td{border-bottom:0}tbody tr:hover{background:#f9fbfd}.empty{text-align:center;padding:24px;color:#8998aa}.filters{display:flex;gap:9px;flex-wrap:wrap;align-items:center}.filters input{min-width:180px;flex:1}.filters select{width:auto;min-width:130px}.value-pos{color:#068459;font-weight:750}.value-neg{color:#b83f53;font-weight:750}.mono{font-variant-numeric:tabular-nums;font-family:ui-monospace,SFMono-Regular,Consolas,monospace}.vsep{height:1px;background:var(--line);margin:20px 0}.campus-lines{display:flex;flex-direction:column;gap:14px;margin-top:19px}.campus-line .heading{display:flex;align-items:center;justify-content:space-between;font-weight:800;font-size:13px;margin-bottom:8px}.track{height:11px;border-radius:20px;background:#e8eef6;overflow:hidden}.fill{height:100%;border-radius:20px;background:linear-gradient(90deg,#1d5eae,#69abfa)}.fill.west{background:linear-gradient(90deg,#6327ac,#b8f23b)}.timeline{display:grid;gap:9px}.event{border:1px solid #e6edf4;background:#fbfcfe;border-radius:11px;padding:11px 13px;display:grid;grid-template-columns:10px 1fr;gap:10px}.event i{display:block;margin-top:7px;width:9px;height:9px;border-radius:50%;background:#2f79be}.event i.warn{background:#e1a34d}.event strong{font-size:12px}.event small{font-size:11px;color:#78899d;display:block;margin-top:3px;overflow-wrap:anywhere}.pill-note{padding:9px 12px;border-left:3px solid #b8e978;background:#f5faeb;font-size:12px;color:#547b20;border-radius:6px;margin:10px 0}.modal{display:none;position:fixed;inset:0;z-index:3000;background:#07162bd9;padding:20px;align-items:center;justify-content:center;backdrop-filter:blur(3px)}.modal.open{display:flex}.modal-dialog{width:min(100%,620px);max-height:94vh;overflow:auto;background:#fff;border-radius:20px;padding:27px;box-shadow:0 35px 100px #0004}.modal-dialog h2{font-size:22px;margin:4px 0 6px;color:#163255}.modal-dialog p{color:#718197;font-size:12px}.modal-dialog .actions{justify-content:flex-end;margin-top:20px}.footline{font-size:11px;color:#91a0b2;text-align:center;padding:20px 0}.loading{font-size:13px;color:#77889c}.report-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.report-item{padding:15px;border:1px solid #e3eaf3;border-radius:12px}.report-item strong{display:block;font-size:19px;color:#19365b}.report-item span{font-size:11px;color:#788ca0}.inline-status{font-size:12px;color:#54708d}.simple-list{padding:0;list-style:none}.simple-list li{padding:10px 0;border-bottom:1px solid #edf0f6;font-size:12px}.simple-list li:last-child{border-bottom:0}.toast{position:fixed;right:20px;bottom:20px;background:#193a63;color:#fff;border-radius:12px;padding:12px 16px;box-shadow:0 15px 35px #11233a33;z-index:5000;max-width:min(440px,95vw);display:none}.toast.show{display:block}.toast.bad{background:#b9304b}.auth-card code{font-weight:750}
+@media(max-width:1150px){.metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.shell{grid-template-columns:208px minmax(0,1fr);gap:15px;padding:14px}}@media(max-width:800px){.shell{display:block;padding:12px}.sidebar{position:static;min-height:0;padding:9px;display:flex;flex-direction:row;gap:5px;overflow-x:auto;margin-bottom:15px;border-radius:12px}.sidebar .side-caption,.sidebar-bottom{display:none}.nav-btn{min-width:115px;width:auto;flex:none;white-space:nowrap;font-size:11px;justify-content:center}.nav-icon{width:auto}.cards2,.cards3{grid-template-columns:1fr}.brandbar{padding:13px}.brand-actions .status{display:none}}@media(max-width:550px){.metrics{grid-template-columns:1fr 1fr;gap:8px}.metric{padding:12px}.metric .num{font-size:18px}.card{padding:16px}.formgrid,.formgrid.three,.report-grid{grid-template-columns:1fr}.filters>*{width:100%!important}.brand .brand-text strong{font-size:13px}.brand small{font-size:8px}.brandbar{align-items:flex-start}.brand-actions{gap:4px}.auth-card{padding:23px}}
+</style></head><body>
+<div class="topline"></div>
+<header class="brandbar"><div class="brand"><div class="logo">♜</div><div class="brand-text"><strong>All Club Credit Union</strong><small>DEVELOPER COMMAND CENTER · SIMULATION</small></div></div><div class="brand-actions"><span id="connection" class="status bad">Connecting…</span><a class="btn sm" href="index.html">Campus selector</a><button id="top-sync" class="btn sm" onclick="refreshCloud()" hidden>↻ Refresh</button><button id="top-logout" class="btn sm" onclick="devLogout()" hidden>Sign out</button></div></header>
+<section id="auth-shell"><div class="auth-card"><div class="auth-symbol">◇</div><div class="eyebrow">Global operations · both campuses</div><h1>Developer access.</h1><p class="subtext">One master operations workspace across Main Campus and West Campus.</p><div id="auth-content"><p class="loading">Connecting to the credit union database…</p></div><div class="notice warning">Fictional banking simulation only. This browser-based console is <b>not secure for real accounts, real funds, or private information.</b></div><div class="auth-footer">All Club Credit Union · Internal simulation tools</div></div></section>
+<div id="workspace"><div class="shell"><aside class="sidebar"><div class="side-caption">SYSTEM ADMINISTRATION</div>
+<button class="nav-btn active" data-page="overview"><span class="nav-icon">◫</span>Overview</button>
+<button class="nav-btn" data-page="members"><span class="nav-icon">♙</span>All members</button>
+<button class="nav-btn" data-page="transfers"><span class="nav-icon">⇄</span>Money operations</button>
+<button class="nav-btn" data-page="transactions"><span class="nav-icon">▤</span>Ledger explorer</button>
+<button class="nav-btn" data-page="audit"><span class="nav-icon">◎</span>Action activity</button>
+<button class="nav-btn" data-page="reports"><span class="nav-icon">◷</span>Campus reports</button>
+<button class="nav-btn" data-page="messaging"><span class="nav-icon">✉</span>Announcements</button>
+<button class="nav-btn" data-page="settings"><span class="nav-icon">⚙</span>System settings</button>
+<button class="nav-btn" data-page="backup"><span class="nav-icon">▣</span>Backup & restore</button>
+<div class="sidebar-bottom"><strong>dev · Master operator</strong><span>Main + West Campus · Fictional funds</span></div></aside><main class="main"><div id="page-content"></div><footer class="footline">All Club Credit Union · Master Operations · Simulated accounts only · No real banking services</footer></main></div></div>
+<div class="modal" id="account-modal" onclick="if(event.target===this)closeAccount()"><div class="modal-dialog"><div class="eyebrow">Global member administration</div><h2 id="modal-title">Edit account</h2><p>Manage a member on either campus. Account numbers stay unchanged when members move.</p>
+<form id="account-form" onsubmit="saveAccount(event)"><input type="hidden" id="account-key"><div class="formgrid"><div><label for="account-name">Account holder</label><input id="account-name" maxlength="100" required></div><div><label for="account-campus">Campus</label><select id="account-campus"><option value="main">Main Campus</option><option value="west">West Campus</option></select></div><div><label for="account-pin">Member PIN</label><input id="account-pin" type="password" minlength="4" maxlength="6" pattern="[0-9]{4,6}" inputmode="numeric" placeholder="Leave blank to keep"></div><div><label for="account-points">Rewards points</label><input id="account-points" type="number" min="0" max="10000000" step="1"></div><div><label for="account-checking">Checking balance ($)</label><input id="account-checking" type="number" min="0" max="1000000000" step="0.01"></div><div><label for="account-savings">Savings balance ($)</label><input id="account-savings" type="number" min="0" max="1000000000" step="0.01"></div><div><label for="account-frozen">Card status</label><select id="account-frozen"><option value="false">Active</option><option value="true">Frozen</option></select></div><div><label for="account-locked">Member login</label><select id="account-locked"><option value="false">Unlocked</option><option value="true">Locked</option></select></div></div><p class="pill-note">Balance changes are recorded in the member's simulated transaction ledger and action log. PIN values are never written into the action log.</p><div class="actions"><button type="button" class="btn" onclick="closeAccount()">Cancel</button><button class="btn primary" type="submit">Save account</button></div></form></div></div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+<script>
+/* MASTER DEV — separate browser-only simulator interface.
+   The shared Supabase publishable key / JSON document is not a secure authorization boundary.
+   Never use this application to manage real banking information. */
+'use strict';
+const SUPABASE_URL='https://yshkhkcplivhgxmedsfe.supabase.co';
+const SUPABASE_KEY='sb_publishable_zzE1deqJoEQ6nz_KgirUgA_Kr8O1lTG';
+const STATE_ID='main';
+const SB=window.supabase?.createClient?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
+let DB=null, REV=0, DEV=false, SESSION_HASH='', PAGE='overview', busy=false, lastFetch=0;
+const SELECTED=new Set();
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const money=n=>new Intl.NumberFormat('en-US',{style:'currency',currency:'USD'}).format(Number(n)||0);
+const short=k=>String(k??'').replace(/^ACC/i,'');
+const branch=c=>c==='west'?'West Campus':'Main Campus';
+const campus=m=>m?.campus==='west'?'west':'main';
+const stamp=d=>{const t=new Date(d);return Number.isNaN(t.valueOf())?'—':t.toLocaleString();};
+const uid=()=>Date.now().toString(36)+Math.random().toString(36).slice(2,9);
+const copy=d=>JSON.parse(JSON.stringify(d));
+const records=d=>Object.entries(d?.members||{}).map(([key,m])=>({key,m}));
+const cents=n=>Math.round(Number(n)*100);
+const fixed=n=>Math.round(n*100)/100;
+const amountOK=n=>Number.isFinite(n)&&n>0&&n<=1000000000&&Math.abs(n*100-Math.round(n*100))<0.00001;
+const balanceOK=n=>Number.isFinite(n)&&n>=0&&n<=1000000000&&Math.abs(n*100-Math.round(n*100))<0.00001;
+const rank=p=>p>=1000?'Platinum':p>=500?'Gold':p>=150?'Silver':'Bronze';
+const memberOptions=()=>records(DB).sort((a,b)=>a.m.name.localeCompare(b.m.name)).map(({key,m})=>`<option value="${esc(key)}">${esc(short(key))} · ${esc(m.name)} (${branch(campus(m))})</option>`).join('');
+const makeCampusTag=c=>`<span class="tag ${c==='west'?'west':'main'}">${c==='west'?'West':'Main'}</span>`;
+const numeric=n=>Number(n)||0;
+function notify(msg,bad=false){const e=$('toast');e.textContent=msg;e.className='toast show'+(bad?' bad':'');clearTimeout(window.toastTimer);window.toastTimer=setTimeout(()=>e.className='toast',5000);}
+function setStatus(text,good){let e=$('connection');e.className='status'+(good?'':' bad');e.textContent=text;}
+function screen(ready){$('auth-shell').style.display=ready?'none':'flex';$('workspace').style.display=ready?'block':'none';$('top-logout').hidden=!ready;$('top-sync').hidden=!ready;}
+function authError(msg){let e=$('auth-error');if(e)e.textContent=msg;else notify(msg,true);}
+function audit(d,action,details,camp='all',target='',severity='normal',actor='dev'){
+ d.auditLog=Array.isArray(d.auditLog)?d.auditLog:[];
+ d.auditLog.unshift({id:uid(),date:new Date().toISOString(),actor,action:String(action).slice(0,130),details:String(details).slice(0,500),campus:camp,target:short(target),severity});
+ if(d.auditLog.length>1500)d.auditLog=d.auditLog.slice(0,1500);
+}
+function ledger(d,m,type,acct,amt,note){
+ m.transactions=Array.isArray(m.transactions)?m.transactions:[];
+ m.transactions.unshift({id:uid(),date:new Date().toISOString(),type,account:acct,amount:fixed(amt),note:String(note||'').slice(0,180)});
+ if(m.transactions.length>500)m.transactions.length=500;
+}
+function message(m,msg,typ='info'){
+ m.notifications=Array.isArray(m.notifications)?m.notifications:[];
+ m.notifications.unshift({id:uid(),date:new Date().toISOString(),message:String(msg).slice(0,350),read:false,type:typ});
+ if(m.notifications.length>150)m.notifications.length=150;
+}
+async function retrieve(){
+ if(!SB)throw Error('Supabase library could not load. Check your connection or browser extensions.');
+ const {data,error}=await SB.from('club_state').select('data,version').eq('id',STATE_ID).maybeSingle();
+ if(error)throw Error('Supabase: '+error.message);
+ if(!data||!data.data?.members)throw Error('Shared bank state not found. Open Main Campus once, then retry.');
+ return data;
+}
+async function refreshCloud(manual=false){
+ if(busy)return;
+ if(!manual&&DEV&&['INPUT','TEXTAREA','SELECT'].includes(document.activeElement?.tagName))return;
+ try{
+  const doc=await retrieve();
+  DB=doc.data;REV=doc.version||0;lastFetch=Date.now();setStatus('Cloud connected · v'+REV,true);
+  if(DEV){if(SESSION_HASH&&DB.devAuth?.hash!==SESSION_HASH){DEV=false;SESSION_HASH='';screen(false);drawAuth();notify('dev password changed elsewhere. Sign in again.',true);return;}screen(true);render();}
+  else{screen(false);drawAuth();}
+  if(manual)notify('Data refreshed from Supabase');
+ }catch(err){setStatus('Connection unavailable',false);if(!DEV)drawAuth(String(err.message));if(manual)notify(err.message,true);}
+}
+// Optimistic concurrency: use a fresh snapshot, commit by version, retry conflicting writes.
+// Mutator must be synchronous. All balance and audit changes are applied in the same write.
+async function commit(mutator,allowSetup=false){
+ if(!DEV&&!allowSetup)throw Error('Developer sign-in required.');
+ if(busy)throw Error('Another operation is already running.');
+ busy=true;
+ try{
+  for(let i=0;i<6;i++){
+   const remote=await retrieve(),next=copy(remote.data);
+   const changes=mutator(next)||{};
+   next.updatedAt=new Date().toISOString();
+   if(changes.action)audit(next,changes.action,changes.details||'',changes.campus||'all',changes.target||'',changes.severity||'normal',changes.actor||'dev');
+   const {data,error}=await SB.from('club_state').update({data:next,version:remote.version+1,updated_at:new Date().toISOString()})
+        .eq('id',STATE_ID).eq('version',remote.version).select('version');
+   if(error)throw Error('Could not save to Supabase: '+error.message);
+   if(data?.length){DB=next;REV=remote.version+1;lastFetch=Date.now();setStatus('Cloud connected · v'+REV,true);return changes;}
+  }
+  throw Error('Other edits happened at the same time. Please retry.');
+ }finally{busy=false;}
+}
+function bytesTo64(bytes){return btoa(Array.from(bytes,b=>String.fromCharCode(b)).join(''));}
+function b64ToBytes(s){return Uint8Array.from(atob(s),c=>c.charCodeAt(0));}
+async function hashPassword(password,salt,iterations=170000){
+ if(!crypto?.subtle)throw Error('Secure browser crypto is unavailable. Use HTTPS.');
+ const key=await crypto.subtle.importKey('raw',new TextEncoder().encode(password),'PBKDF2',false,['deriveBits']);
+ const bytes=await crypto.subtle.deriveBits({name:'PBKDF2',salt:b64ToBytes(salt),iterations,hash:'SHA-256'},key,256);
+ return bytesTo64(new Uint8Array(bytes));
+}
+function drawAuth(failure=''){
+ const ready=!!DB?.devAuth;
+ const area=$('auth-content');
+ if(!DB){area.innerHTML=`<div class="error">${esc(failure||'Connecting to bank data…')}</div><button class="btn primary w100" onclick="refreshCloud(true)">Try connecting again</button>`;return;}
+ if(!ready){area.innerHTML=`<div class="notice"><b>First-time setup:</b> confirm the existing bank Admin PIN, then choose the new master developer password. Username is always <code>dev</code>.</div>
+  <form onsubmit="setupDeveloper(event)"><label>Master username</label><input value="dev" disabled autocomplete="username">
+  <label>Existing Admin PIN (setup only)</label><input id="dev-admin-pin" type="password" autocomplete="off" inputmode="numeric" required>
+  <label>New master password · 10+ characters</label><input id="dev-new-password" type="password" autocomplete="new-password" minlength="10" required>
+  <label>Confirm master password</label><input id="dev-confirm-password" type="password" autocomplete="new-password" minlength="10" required>
+  <p class="error" id="auth-error"></p><button class="btn primary w100" type="submit">Initialize dev account</button></form>`;
+ }else{area.innerHTML=`<form onsubmit="loginDeveloper(event)"><label>Username</label><input id="dev-username" value="dev" autocomplete="username" required>
+  <label>Master password</label><input id="dev-password" type="password" autocomplete="current-password" required>
+  <p class="error" id="auth-error"></p><button class="btn primary w100" type="submit">Access developer console</button></form><p class="fieldhint" style="margin-top:12px">Your password was chosen when dev was initialized. There is no preset dev password.</p>`;}
+}
+let failedLogins=0,lockedUntil=0;
+async function setupDeveloper(ev){
+ ev.preventDefault();if(busy)return;
+ const pin=$('dev-admin-pin').value,p=$('dev-new-password').value,c=$('dev-confirm-password').value;
+ if(p.length<10||p!==c)return authError('Passwords must match and contain at least 10 characters.');
+ try{
+  const salt=bytesTo64(crypto.getRandomValues(new Uint8Array(20))),iterations=170000,hash=await hashPassword(p,salt,iterations);
+  await commit(d=>{
+   if(d.devAuth)throw Error('Developer account already exists. Refresh and sign in.');
+   if(pin!==d.adminPin)throw Error('The current Admin PIN is incorrect.');
+   d.devAuth={username:'dev',salt,hash,iterations,createdAt:new Date().toISOString()};
+   return {action:'Developer initialized',details:'Master account dev activated (password not logged)',severity:'warn',actor:'dev/setup'};
+  },true);
+  DEV=true;SESSION_HASH=hash;PAGE='overview';screen(true);render();notify('Master account dev initialized');
+ }catch(e){authError(e.message);}
+}
+async function loginDeveloper(ev){
+ ev.preventDefault();if(Date.now()<lockedUntil)return authError('Too many tries. Retry shortly.');
+ if(busy)return;
+ const user=$('dev-username').value.trim().toLowerCase(),password=$('dev-password').value;
+ if(user!=='dev')return authError('Incorrect developer credentials.');
+ try{
+  const doc=await retrieve();DB=doc.data;REV=doc.version;
+  const auth=DB.devAuth;
+  if(!auth?.salt)throw Error('dev account has not been initialized yet.');
+  const hashed=await hashPassword(password,auth.salt,auth.iterations||170000);
+  if(hashed!==auth.hash){failedLogins++;if(failedLogins>=5){lockedUntil=Date.now()+45000;failedLogins=0;}throw Error('Incorrect developer credentials.');}
+  failedLogins=0;DEV=true;SESSION_HASH=hashed;PAGE='overview';
+  await commit(()=>({action:'Developer signed in',details:'dev opened master operations console',campus:'all'}));
+  screen(true);render();notify('Welcome, dev · Full simulated banking access');
+ }catch(err){if(DEV){DEV=false;SESSION_HASH='';}authError(err.message);}
+}
+async function devLogout(){
+ if(!DEV)return;
+ try{await commit(()=>({action:'Developer signed out',details:'dev ended master console session',campus:'all'}));}catch(e){notify(e.message,true);}
+ DEV=false;SESSION_HASH='';PAGE='overview';screen(false);drawAuth();
+}
+function view(page){if(!DEV)return;if(!['overview','members','transfers','transactions','audit','reports','messaging','settings','backup'].includes(page))return;PAGE=page;render();}
+document.addEventListener('click',e=>{
+ const nav=e.target.closest('[data-page]');if(nav){view(nav.dataset.page);return;}
+ const edit=e.target.closest('[data-edit]');if(edit){openAccount(edit.dataset.edit);return;}
+ const del=e.target.closest('[data-delete]');if(del){deleteAccount(del.dataset.delete);return;}
+ const restore=e.target.closest('[data-restore]');if(restore){restoreAccount(restore.dataset.restore);return;}
+});
+function frame(title,subtitle='',buttons=''){return `<div class="page-head"><div><div class="eyebrow">All Club · global operations · dev</div><h1>${esc(title)}</h1><p>${esc(subtitle)}</p></div><div class="actions">${buttons}</div></div>`;}
+function render(){if(!DEV||!DB)return;document.querySelectorAll('.nav-btn').forEach(n=>n.classList.toggle('active',n.dataset.page===PAGE));
+ const fn={overview:renderOverview,members:renderMembers,transfers:renderTransfers,transactions:renderTransactions,audit:renderAudit,reports:renderReports,messaging:renderMessaging,settings:renderSettings,backup:renderBackup}[PAGE];
+ $('page-content').innerHTML=fn();
+ if(PAGE==='members')fillMembers();
+ if(PAGE==='transactions')fillTransactions();
+ if(PAGE==='audit')fillAudit();
+}
+function renderOverview(){
+ const rows=records(DB),main=rows.filter(x=>campus(x.m)==='main'),west=rows.filter(x=>campus(x.m)==='west'),all=rows.map(x=>x.m);
+ const total=all.reduce((a,m)=>a+numeric(m.checking)+numeric(m.savings),0),checking=all.reduce((a,m)=>a+numeric(m.checking),0),savings=total-checking;
+ const flags=all.filter(m=>m.locked||m.cardFrozen).length,act=(DB.auditLog||[]),pay=(DB.payments||[]);
+ const allTotal=total||1;const mainTotal=main.reduce((a,x)=>a+numeric(x.m.checking)+numeric(x.m.savings),0),westTotal=total-mainTotal;
+ return frame('Master control center','Live overview of both campuses and the shared fictional bank.',`<button class="btn primary" onclick="openAccount()">＋ New account</button><button class="btn" onclick="refreshCloud(true)">↻ Sync</button>`)+
+ `<div class="metrics"><div class="metric"><div class="label">Total fictional funds</div><div class="num">${money(total)}</div><div class="hint">${money(checking)} checking · ${money(savings)} savings</div></div>
+ <div class="metric"><div class="label">Total members</div><div class="num">${rows.length}</div><div class="hint">${main.length} Main · ${west.length} West</div></div>
+ <div class="metric"><div class="label">Recorded actions</div><div class="num">${act.length.toLocaleString()}</div><div class="hint">Most recent ${Math.min(act.length,1500)} stored events</div></div>
+ <div class="metric"><div class="label">Account flags</div><div class="num">${flags}</div><div class="hint">Locked member logins or frozen cards</div></div></div>
+ <div class="cards2"><section class="card"><div class="sectionbar"><h2>Campus portfolio</h2><span class="tag">Both branches</span></div>
+ <div class="campus-lines"><div class="campus-line"><div class="heading"><span>${makeCampusTag('main')} ${main.length} members</span><span>${money(mainTotal)}</span></div><div class="track"><div class="fill" style="width:${Math.min(100,mainTotal/allTotal*100).toFixed(2)}%"></div></div></div>
+ <div class="campus-line"><div class="heading"><span>${makeCampusTag('west')} ${west.length} members</span><span>${money(westTotal)}</span></div><div class="track"><div class="fill west" style="width:${Math.min(100,westTotal/allTotal*100).toFixed(2)}%"></div></div></div></div>
+ <div class="vsep"></div><div class="report-grid"><div class="report-item"><strong>${(DB.sales||[]).length}</strong><span>Recorded merchant charges</span></div><div class="report-item"><strong>${(DB.tellerLog||[]).length}</strong><span>Teller entries</span></div><div class="report-item"><strong>${pay.length}</strong><span>Member payments</span></div><div class="report-item"><strong>${(DB.devTrash||[]).length}</strong><span>Archived members</span></div></div></section>
+ <section class="card"><div class="sectionbar"><h2>Latest action activity</h2><button class="btn sm" onclick="view('audit')">Full audit trail</button></div><div class="timeline">${act.slice(0,8).map(a=>`<div class="event"><i class="${a.severity==='warn'?'warn':''}"></i><div><strong>${esc(a.action)}</strong><small>${esc(a.actor||'system')} · ${esc(a.details||'')} · ${stamp(a.date)}</small></div></div>`).join('')||'<p class="empty">No recorded action history yet.</p>'}</div></section></div>
+ <section class="card"><div class="sectionbar"><h2>Developer quick actions</h2></div><div class="actions"><button class="btn primary" onclick="view('members')">All accounts →</button><button class="btn" onclick="view('transfers')">Move fictional money →</button><button class="btn" onclick="view('reports')">Branch reports →</button><button class="btn" onclick="view('messaging')">Notify members →</button><button class="btn" onclick="view('backup')">Backup database →</button></div><p class="pill-note">Activity reflects the existing audit trail plus new dev operations. Old events not previously recorded cannot be reconstructed.</p></section>`;
+}
+let memberQuery='',memberCampus='all';
+function renderMembers(){
+ const all=records(DB);const cnt=c=>all.filter(x=>campus(x.m)===c).length;
+ return frame('Member directory','Create, edit, archive, restore, and move accounts across campuses.',`<button class="btn primary" onclick="openAccount()">＋ Create member</button>`)+
+ `<section class="card"><div class="sectionbar"><h2>All campus accounts</h2><div class="actions"><span class="tag main">Main ${cnt('main')}</span><span class="tag west">West ${cnt('west')}</span></div></div>
+ <div class="filters"><input id="member-search" placeholder="Find account number or member name…" value="${esc(memberQuery)}" oninput="memberQuery=this.value;fillMembers()"><select id="member-campus-filter" onchange="memberCampus=this.value;fillMembers()"><option value="all">Both campuses</option><option value="main" ${memberCampus==='main'?'selected':''}>Main Campus</option><option value="west" ${memberCampus==='west'?'selected':''}>West Campus</option></select><button class="btn sm" onclick="exportMemberCSV()">Export directory</button></div>
+ <div class="tablewrap" style="margin-top:14px"><table><thead><tr><th><input id="select-all-members" type="checkbox" onchange="checkAllVisible(this.checked)" aria-label="Select all visible members"></th><th>Account</th><th>Member</th><th>Campus</th><th>Checking</th><th>Savings</th><th>Points</th><th>Status</th><th>Controls</th></tr></thead><tbody id="member-rows"></tbody></table></div>
+ <div class="actions" style="margin-top:14px"><span class="inline-status" id="member-selection">0 selected</span><select style="width:auto;min-width:170px" id="bulk-destination"><option value="main">Move to Main Campus</option><option value="west">Move to West Campus</option></select><button class="btn purple" onclick="bulkMove()">Move selected</button></div>
+ </section><section class="card"><div class="sectionbar"><h2>Archived accounts</h2><span class="tag">Recover deleted members</span></div><div class="tablewrap"><table><thead><tr><th>Account</th><th>Member</th><th>Original campus</th><th>Archived</th><th>Restore</th></tr></thead><tbody>${(DB.devTrash||[]).slice().reverse().slice(0,50).map(x=>`<tr><td class="mono">${esc(short(x.key))}</td><td>${esc(x.member?.name||'—')}</td><td>${makeCampusTag(campus(x.member))}</td><td>${stamp(x.deletedAt)}</td><td><button class="btn sm" data-restore="${esc(x.id)}">Restore</button></td></tr>`).join('')||'<tr><td class="empty" colspan="5">No archived members</td></tr>'}</tbody></table></div></section>`;
+}
+function filteredMembers(){return records(DB).filter(({key,m})=>(memberCampus==='all'||campus(m)===memberCampus)&&(!memberQuery.trim()||[key,short(key),m.name].some(v=>String(v||'').toLowerCase().includes(memberQuery.toLowerCase().trim())))).sort((a,b)=>a.m.name.localeCompare(b.m.name));}
+function fillMembers(){
+ const body=$('member-rows');if(!body)return;
+ const visible=filteredMembers();body.innerHTML=visible.map(({key,m})=>`<tr><td><input type="checkbox" data-select-member="${esc(key)}" ${SELECTED.has(key)?'checked':''} aria-label="Select ${esc(short(key))}" onchange="toggleSelected(this.dataset.selectMember,this.checked)"></td>
+ <td class="mono">${esc(short(key))}</td><td><b>${esc(m.name)}</b></td><td>${makeCampusTag(campus(m))}</td><td>${money(m.checking)}</td><td>${money(m.savings)}</td><td>${numeric(m.points).toLocaleString()}</td><td>${m.locked?'<span class="tag bad">Locked</span>':m.cardFrozen?'<span class="tag warn">Card frozen</span>':'<span class="tag ok">Active</span>'}</td><td class="actions"><button class="btn sm" data-edit="${esc(key)}">Edit</button><button class="btn sm danger" data-delete="${esc(key)}">Archive</button></td></tr>`).join('')||'<tr><td colspan="9" class="empty">No members match your search.</td></tr>';
+ const n=$('member-selection');if(n)n.textContent=SELECTED.size+' selected';
+ const allBox=$('select-all-members');if(allBox)allBox.checked=visible.length>0&&visible.every(x=>SELECTED.has(x.key));
+}
+function toggleSelected(k,checked){checked?SELECTED.add(k):SELECTED.delete(k);const n=$('member-selection');if(n)n.textContent=SELECTED.size+' selected';}
+function checkAllVisible(v){filteredMembers().forEach(x=>v?SELECTED.add(x.key):SELECTED.delete(x.key));fillMembers();}
+function openAccount(key=''){
+ if(!DEV)return;
+ const m=DB.members[key];$('account-key').value=m?key:'';
+ $('modal-title').textContent=m?'Edit account · '+short(key):'Create new account';
+ $('account-name').value=m?.name||'';$('account-campus').value=campus(m);
+ $('account-pin').value='';$('account-pin').placeholder=m?'Leave blank to keep':'Required 4–6 digits';$('account-pin').required=!m;
+ $('account-points').value=m?.points??0;$('account-checking').value=m?.checking??0;$('account-savings').value=m?.savings??0;
+ $('account-frozen').value=String(!!m?.cardFrozen);$('account-locked').value=String(!!m?.locked);
+ $('account-modal').classList.add('open');$('account-name').focus();
+}
+function closeAccount(){$('account-modal').classList.remove('open');}
+function validateMemberForm(){
+ const name=$('account-name').value.trim(),place=$('account-campus').value,pin=$('account-pin').value.trim(),pts=Number($('account-points').value);
+ const checking=Number($('account-checking').value),savings=Number($('account-savings').value);
+ if(!name||name.length>100)throw Error('Enter a name under 100 characters.');
+ if(!['main','west'].includes(place))throw Error('Select a valid campus.');
+ if(pin&&!/^\d{4,6}$/.test(pin))throw Error('PIN must be 4–6 digits.');
+ if(!Number.isSafeInteger(pts)||pts<0||pts>10000000)throw Error('Rewards points must be a whole number from 0 to 10,000,000.');
+ if(!balanceOK(checking)||!balanceOK(savings))throw Error('Enter nonnegative balances with up to two decimals.');
+ return {name,place,pin,pts,checking:fixed(checking),savings:fixed(savings),frozen:$('account-frozen').value==='true',locked:$('account-locked').value==='true'};
+}
+async function saveAccount(ev){
+ ev.preventDefault();let form;try{form=validateMemberForm();}catch(e){notify(e.message,true);return;}
+ const key=$('account-key').value;
+ if(!key&&!form.pin)return notify('New accounts need a PIN.',true);
+ if(key&&!DB.members[key])return notify('Account not found. Refresh first.',true);
+ try{await commit(d=>{
+  if(key){
+   const changes=[];
+   const m=d.members[key];if(!m)throw Error('Member no longer exists.');
+   if(m.name!==form.name){changes.push('Name updated');m.name=form.name;}
+   if(campus(m)!==form.place){changes.push('Moved '+branch(campus(m))+' → '+branch(form.place));m.campus=form.place;}
+   if(form.pin){m.pin=form.pin;m.locked=false;m.failedAttempts=0;changes.push('PIN reset (secret excluded)');}
+   for(const field of ['checking','savings']){
+    const before=numeric(m[field]),after=form[field];
+    if(cents(before)!==cents(after)){ledger(d,m,'Developer adjustment',field,fixed(after-before),'Master dev balance correction');changes.push(field+' '+money(before)+' → '+money(after));m[field]=after;}
+   }
+   if(m.points!==form.pts){m.points=form.pts;m.rank=rank(form.pts);changes.push('Points changed');}
+   if(!!m.cardFrozen!==form.frozen){m.cardFrozen=form.frozen;changes.push(form.frozen?'Card frozen':'Card unfrozen');}
+   if(!!m.locked!==form.locked){m.locked=form.locked;changes.push(form.locked?'Login locked':'Login unlocked');}
+   if(!m.locked)m.failedAttempts=0;
+   if(!changes.length)return {action:'Developer profile viewed',details:'No changes saved for account',campus:campus(m),target:key};
+   message(m,'Your simulated account was updated by the credit union developer.','alert');
+   return {action:'Developer updated member',details:changes.join(' · '),campus:campus(m),target:key,severity:'warn'};
+  }
+  d.nextAcc=Math.max(1002,Number(d.nextAcc)||1002);
+  while(d.members[String(d.nextAcc)]||d.members['ACC'+d.nextAcc])d.nextAcc++;
+  const id=String(d.nextAcc++),m={accountNumber:id,campus:form.place,name:form.name,pin:form.pin,checking:form.checking,savings:form.savings,points:form.pts,rank:rank(form.pts),failedAttempts:0,locked:form.locked,cardFrozen:form.frozen,photo:null,streak:0,lastDaily:null,createdAt:new Date().toISOString(),transactions:[],goals:[],achievements:[],lotteryTickets:0,notifications:[]};
+  d.members[id]=m;message(m,'Welcome to All Club Credit Union '+branch(form.place)+'! Your simulated account is ready.');
+  if(form.checking>0)ledger(d,m,'Opening deposit','checking',form.checking,'Opening balance (dev)');
+  if(form.savings>0)ledger(d,m,'Opening deposit','savings',form.savings,'Opening balance (dev)');
+  return {action:'Developer created member',details:form.name+' · '+branch(form.place),campus:form.place,target:id,severity:'warn'};
+ });closeAccount();SELECTED.clear();render();notify(key?'Account updated and audited':'Account created successfully');}
+ catch(e){notify(e.message,true);}
+}
+async function deleteAccount(key){const member=DB?.members?.[key];if(!member)return notify('Member no longer exists.',true);
+ const proof=prompt('To archive '+member.name+' ('+short(key)+'), type the account number '+short(key)+':');
+ if(proof===null)return;if(proof.trim()!==short(key))return notify('Archive cancelled: account number did not match.',true);
+ if(!confirm('Archive member '+member.name+'? This removes access from campus portals. You can restore it in the developer directory.'))return;
+ try{await commit(d=>{
+  const m=d.members[key];if(!m)throw Error('Account no longer exists.');
+  d.devTrash=Array.isArray(d.devTrash)?d.devTrash:[];
+  d.devTrash.push({id:uid(),key,member:copy(m),deletedAt:new Date().toISOString()});
+  if(d.devTrash.length>100)d.devTrash=d.devTrash.slice(-100);
+  delete d.members[key];
+  return{action:'Developer archived member',details:esc(m.name)+' · full member snapshot saved',target:key,campus:campus(m),severity:'warn'};
+ });SELECTED.delete(key);render();notify('Member archived. Restore from the directory if needed.');}catch(e){notify(e.message,true);}
+}
+async function restoreAccount(id){let a=(DB.devTrash||[]).find(x=>x.id===id);if(!a)return notify('Archive entry missing.',true);
+ if(!confirm('Restore account '+short(a.key)+' for '+a.member.name+'?'))return;
+ try{await commit(d=>{
+  const entry=(d.devTrash||[]).find(x=>x.id===id);if(!entry)throw Error('Archive entry no longer exists.');
+  if(d.members[entry.key])throw Error('Account number is already in use. Cannot restore automatically.');
+  d.members[entry.key]=copy(entry.member);
+  d.devTrash=d.devTrash.filter(x=>x.id!==id);
+  return{action:'Developer restored member',details:entry.member.name,target:entry.key,campus:campus(entry.member),severity:'warn'};
+ });render();notify('Archived member restored');}catch(e){notify(e.message,true);}
+}
+async function bulkMove(){const ids=[...SELECTED],to=$('bulk-destination')?.value;
+ if(!ids.length)return notify('Select one or more members first.',true);
+ if(!['main','west'].includes(to))return;
+ if(!confirm('Move '+ids.length+' selected member(s) to '+branch(to)+'? Balances, account numbers and history remain unchanged.'))return;
+ try{let n=0;await commit(d=>{
+  n=0;for(const id of ids){const m=d.members[id];if(m&&campus(m)!==to){m.campus=to;message(m,'Your simulated account is now assigned to '+branch(to)+'.','alert');n++;}}
+  return{action:'Developer bulk campus transfer',details:n+' account(s) moved to '+branch(to),campus:to,severity:'warn'};
+ });SELECTED.clear();render();notify(n+' member(s) moved to '+branch(to));}catch(e){notify(e.message,true);}
+}
+function renderTransfers(){return frame('Money operations','Developer-authorized fictional ledger actions on either campus.')+
+ `<div class="cards2"><section class="card"><div class="sectionbar"><h2>Member-to-member transfer</h2><span class="tag">Cross-campus supported</span></div><p class="muted">Debits one member, credits another, writes both ledger entries and alerts both members.</p>
+ <form onsubmit="transferFunds(event)"><label>Send from</label><select id="transfer-from" required><option value="">Choose source member</option>${memberOptions()}</select><label>Send to</label><select id="transfer-to" required><option value="">Choose destination member</option>${memberOptions()}</select><div class="formgrid"><div><label>Source balance</label><select id="transfer-source"><option value="checking">Checking</option><option value="savings">Savings</option></select></div><div><label>Destination balance</label><select id="transfer-dest"><option value="checking">Checking</option><option value="savings">Savings</option></select></div></div><label>Amount ($)</label><input id="transfer-amount" type="number" min="0.01" step="0.01" max="1000000000" required><label>Reference / reason</label><input id="transfer-reason" maxlength="120" placeholder="e.g. Staff-approved transfer" required><div class="actions" style="margin-top:16px"><button type="submit" class="btn primary">Send simulated transfer</button></div></form></section>
+ <section class="card"><div class="sectionbar"><h2>Developer ledger adjustment</h2><span class="tag warn">Audited</span></div><p class="muted">Issue a controlled credit or debit, including for members on West Campus.</p>
+ <form onsubmit="adjustFunds(event)"><label>Member account</label><select id="adjust-member" required>${memberOptions()}</select><div class="formgrid"><div><label>Balance</label><select id="adjust-account"><option value="checking">Checking</option><option value="savings">Savings</option></select></div><div><label>Direction</label><select id="adjust-kind"><option value="credit">Credit (add)</option><option value="debit">Debit (subtract)</option></select></div></div><label>Amount ($)</label><input id="adjust-amount" type="number" step="0.01" min="0.01" max="1000000000" required><label>Reason (required)</label><input id="adjust-reason" maxlength="120" required placeholder="e.g. Payroll correction, bonus, refund"><div class="actions" style="margin-top:16px"><button class="btn purple" type="submit">Post ledger adjustment</button></div></form><div class="pill-note">All adjustments are simulated. The activity trail records who changed what and why, without exposing PINs.</div></section></div>`;}
+async function transferFunds(ev){ev.preventDefault();const from=$('transfer-from').value,to=$('transfer-to').value,source=$('transfer-source').value,dest=$('transfer-dest').value,amount=Number($('transfer-amount').value),reason=$('transfer-reason').value.trim();
+ if(!from||!to||from===to)return notify('Choose two different members.',true);
+ if(!['checking','savings'].includes(source)||!['checking','savings'].includes(dest)||!amountOK(amount)||!reason)return notify('Enter valid accounts, amount, and reason.',true);
+ if(!confirm('Move '+money(amount)+' in fictional funds from '+short(from)+' to '+short(to)+'?'))return;
+ try{await commit(d=>{const a=d.members[from],b=d.members[to];if(!a||!b)throw Error('One of the accounts no longer exists.');
+  if(cents(a[source])<cents(amount))throw Error('Insufficient simulated funds on source balance.');
+  a[source]=fixed((cents(a[source])-cents(amount))/100);b[dest]=fixed((cents(b[dest])+cents(amount))/100);
+  if(!balanceOK(b[dest]))throw Error('Destination balance would exceed the allowed limit.');
+  const ref='DEV-'+uid().toUpperCase();
+  ledger(d,a,'Developer transfer',source,-amount,'To '+b.name+' #'+short(to)+' · '+reason+' · '+ref);
+  ledger(d,b,'Developer transfer',dest,amount,'From '+a.name+' #'+short(from)+' · '+reason+' · '+ref);
+  d.payments=Array.isArray(d.payments)?d.payments:[];
+  d.payments.unshift({id:ref,date:new Date().toISOString(),from,to,toName:b.name,amount,note:'Dev: '+reason,campus:campus(a)});
+  if(d.payments.length>500)d.payments=d.payments.slice(0,500);
+  message(a,'Developer transfer of '+money(amount)+' to '+b.name+'. Reference '+ref,'purchase');
+  message(b,'Developer transfer of '+money(amount)+' from '+a.name+'. Reference '+ref,'deposit');
+  return{action:'Developer transfer',details:money(amount)+' · '+short(from)+' ('+branch(campus(a))+') → '+short(to)+' ('+branch(campus(b))+') · '+reason+' · '+ref,campus:'all',target:from,severity:'warn'};
+ });render();notify('Simulated transfer posted to both accounts');}catch(e){notify(e.message,true);}
+}
+async function adjustFunds(ev){ev.preventDefault();const id=$('adjust-member').value,account=$('adjust-account').value,kind=$('adjust-kind').value,amount=Number($('adjust-amount').value),reason=$('adjust-reason').value.trim();
+ if(!id||!['checking','savings'].includes(account)||!['credit','debit'].includes(kind)||!amountOK(amount)||!reason)return notify('Enter a valid member, amount, and reason.',true);
+ if(!confirm((kind==='credit'?'Credit ':'Debit ')+money(amount)+' '+account+' on '+short(id)+'?'))return;
+ try{await commit(d=>{const m=d.members[id];if(!m)throw Error('Member missing.');const signed=kind==='credit'?amount:-amount,newBal=(cents(m[account])+cents(signed))/100;
+  if(!balanceOK(newBal))throw Error('Balance would go below zero or exceed allowed maximum.');
+  m[account]=fixed(newBal);ledger(d,m,kind==='credit'?'Developer credit':'Developer debit',account,signed,reason);
+  message(m,'Your '+account+' balance received a simulated '+kind+' of '+money(amount)+'. '+reason,'alert');
+  return{action:'Developer '+kind,details:money(amount)+' '+account+' · '+reason+' · new balance '+money(newBal),campus:campus(m),target:id,severity:'warn'};
+ });render();notify('Ledger adjustment posted and audited');}catch(e){notify(e.message,true);}
+}
+let txQuery='',txCampus='all',txType='all';
+function allTransactions(){return records(DB).flatMap(({key,m})=>(m.transactions||[]).map(t=>({...t,key,name:m.name,campus:campus(m)}))).sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));}
+function filteredTransactions(){return allTransactions().filter(t=>(txCampus==='all'||t.campus===txCampus)&&(txType==='all'||String(t.type).toLowerCase().includes(txType))&&(!txQuery||[t.name,t.key,short(t.key),t.type,t.account,t.note].some(x=>String(x||'').toLowerCase().includes(txQuery.toLowerCase()))));}
+function renderTransactions(){return frame('Ledger explorer','Search member transaction history across the entire credit union.',`<button class="btn" onclick="exportLedgerCSV()">Export all ledger rows</button>`)+
+ `<section class="card"><div class="sectionbar"><h2>Recorded transactions</h2><span class="tag">${allTransactions().length.toLocaleString()} entries</span></div><div class="filters"><input id="tx-search" placeholder="Search member, account, memo, type" value="${esc(txQuery)}" oninput="txQuery=this.value;fillTransactions()"><select id="tx-campus" onchange="txCampus=this.value;fillTransactions()"><option value="all">Both campuses</option><option value="main" ${txCampus==='main'?'selected':''}>Main Campus</option><option value="west" ${txCampus==='west'?'selected':''}>West Campus</option></select><select id="tx-type" onchange="txType=this.value;fillTransactions()"><option value="all">All transaction types</option>${['deposit','withdrawal','purchase','transfer','payment','payroll','interest','adjustment'].map(t=>`<option ${txType===t?'selected':''} value="${t}">${t[0].toUpperCase()+t.slice(1)}</option>`).join('')}</select></div><div class="tablewrap" style="margin-top:13px"><table><thead><tr><th>Date / time</th><th>Account</th><th>Member</th><th>Campus</th><th>Type</th><th>Balance</th><th>Amount</th><th>Details</th></tr></thead><tbody id="tx-rows"></tbody></table></div><p class="fieldhint" id="tx-count" style="margin-top:8px"></p></section>`;}
+function fillTransactions(){let rows=filteredTransactions(),body=$('tx-rows');if(!body)return;
+ body.innerHTML=rows.slice(0,300).map(t=>`<tr><td>${stamp(t.date)}</td><td class="mono">${esc(short(t.key))}</td><td>${esc(t.name)}</td><td>${makeCampusTag(t.campus)}</td><td>${esc(t.type)}</td><td>${esc(t.account)}</td><td class="${numeric(t.amount)>=0?'value-pos':'value-neg'}">${money(t.amount)}</td><td title="${esc(t.note||'')}">${esc(String(t.note||'').slice(0,110))}</td></tr>`).join('')||'<tr><td colspan="8" class="empty">No matching transactions.</td></tr>';
+ $('tx-count').textContent='Showing '+Math.min(300,rows.length)+' of '+rows.length+' filtered entries. Export includes all matching records.';
+}
+let auditQuery='',auditCampus='all',auditSeverity='all';
+function allAudit(){return (DB.auditLog||[]).slice().sort((a,b)=>String(b.date||'').localeCompare(String(a.date||'')));}
+function filteredAudit(){return allAudit().filter(a=>(auditCampus==='all'||(a.campus||'main')===auditCampus)&&(auditSeverity==='all'||a.severity===auditSeverity)&&(!auditQuery||[a.action,a.actor,a.details,a.target].some(x=>String(x||'').toLowerCase().includes(auditQuery.toLowerCase()))));}
+function renderAudit(){return frame('Action activity','Read actual bank audit events from both campuses, including developer actions.',`<button class="btn" onclick="exportAuditCSV()">Export audit CSV</button>`)+
+ `<section class="card"><div class="sectionbar"><h2>Live action history</h2><span class="tag">${allAudit().length.toLocaleString()} recorded events</span></div><div class="filters"><input id="audit-search" value="${esc(auditQuery)}" placeholder="Find action, member, actor, detail…" oninput="auditQuery=this.value;fillAudit()"><select id="audit-campus" onchange="auditCampus=this.value;fillAudit()"><option value="all">All campuses</option><option value="main" ${auditCampus==='main'?'selected':''}>Main only</option><option value="west" ${auditCampus==='west'?'selected':''}>West only</option></select><select id="audit-severity" onchange="auditSeverity=this.value;fillAudit()"><option value="all">Any severity</option><option value="normal" ${auditSeverity==='normal'?'selected':''}>Normal</option><option value="warn" ${auditSeverity==='warn'?'selected':''}>Important</option></select></div>
+ <div class="tablewrap" style="margin-top:13px"><table><thead><tr><th>Time</th><th>Actor</th><th>Campus</th><th>Action</th><th>Target account</th><th>Details</th><th>Level</th></tr></thead><tbody id="audit-rows"></tbody></table></div><p class="fieldhint" id="audit-count" style="margin-top:8px"></p><p class="pill-note">This trail displays events actually saved by the app. Earlier activity that was never logged isn't available; legacy campus portals may retain only their most recent 500 audit events.</p></section>`;}
+function fillAudit(){let arr=filteredAudit();const body=$('audit-rows');if(!body)return;
+ body.innerHTML=arr.slice(0,350).map(a=>`<tr><td>${stamp(a.date)}</td><td><b>${esc(a.actor||'system')}</b></td><td>${a.campus==='all'?'<span class="tag">Global</span>':makeCampusTag(a.campus||'main')}</td><td>${esc(a.action)}</td><td class="mono">${esc(a.target||'—')}</td><td>${esc(a.details||'')}</td><td>${a.severity==='warn'?'<span class="tag warn">Important</span>':'<span class="tag ok">Normal</span>'}</td></tr>`).join('')||'<tr><td class="empty" colspan="7">No matching events.</td></tr>';
+ $('audit-count').textContent='Showing '+Math.min(350,arr.length)+' of '+arr.length+' matched events. CSV includes all matches.';
+}
+function renderReports(){
+ const rows=records(DB),parts=['main','west'].map(c=>{
+  const list=rows.filter(x=>campus(x.m)===c),sales=(DB.sales||[]).filter(x=>(x.campus||'main')===c),tellers=(DB.tellerLog||[]).filter(x=>(x.campus||'main')===c),schedules=Object.values(DB.schedules||{}).filter(x=>(x.campus||'main')===c);
+  return{c,list,sales,tellers,schedules,checking:list.reduce((a,x)=>a+numeric(x.m.checking),0),savings:list.reduce((a,x)=>a+numeric(x.m.savings),0)};
+ });
+ return frame('Campus reports','Branch-by-branch operations, payroll, teller volume, and portfolio totals.',`<button class="btn" onclick="exportReportCSV()">Download campus report</button>`)+
+ `<div class="cards2">${parts.map(p=>`<section class="card"><div class="sectionbar"><h2>${branch(p.c)}</h2>${makeCampusTag(p.c)}</div><div class="report-grid"><div class="report-item"><strong>${p.list.length}</strong><span>Current members</span></div><div class="report-item"><strong>${money(p.checking+p.savings)}</strong><span>Total simulated assets</span></div><div class="report-item"><strong>${money(p.checking)}</strong><span>Checking balances</span></div><div class="report-item"><strong>${money(p.savings)}</strong><span>Savings balances</span></div><div class="report-item"><strong>${p.tellers.length}</strong><span>Teller actions</span></div><div class="report-item"><strong>${p.sales.length}</strong><span>Store charges</span></div><div class="report-item"><strong>${p.schedules.filter(s=>s.paid).length}</strong><span>Paid schedule days</span></div><div class="report-item"><strong>${money(p.schedules.filter(s=>s.paid).reduce((n,s)=>n+numeric(s.totalPaid),0))}</strong><span>Recorded payroll</span></div></div></section>`).join('')}</div>
+ <section class="card"><div class="sectionbar"><h2>Recent teller operations</h2><span class="tag">All campuses</span></div><div class="tablewrap"><table><thead><tr><th>Time</th><th>Campus</th><th>Member</th><th>Type</th><th>Account</th><th>Amount</th><th>Note</th></tr></thead><tbody>${(DB.tellerLog||[]).slice().reverse().slice(0,80).map(x=>`<tr><td>${stamp(x.date)}</td><td>${makeCampusTag(x.campus||'main')}</td><td>${esc(x.memberName||short(x.account))}</td><td>${esc(x.type)}</td><td>${esc(x.acctType||'—')}</td><td>${money(x.amount)}</td><td>${esc(x.note||'')}</td></tr>`).join('')||'<tr><td colspan="7" class="empty">No teller activity.</td></tr>'}</tbody></table></div></section>
+ <section class="card"><div class="sectionbar"><h2>Recent payroll schedules</h2><span class="tag">Global view</span></div><div class="tablewrap"><table><thead><tr><th>Campus</th><th>Date</th><th>Status</th><th>Amount paid</th><th>Paid at</th></tr></thead><tbody>${Object.values(DB.schedules||{}).sort((a,b)=>String(b.date).localeCompare(String(a.date))).slice(0,55).map(s=>`<tr><td>${makeCampusTag(s.campus||'main')}</td><td>${esc(s.date)}</td><td>${s.paid?'<span class="tag ok">Paid</span>':'<span class="tag">Draft</span>'}</td><td>${money(s.totalPaid)}</td><td>${s.paidAt?stamp(s.paidAt):'—'}</td></tr>`).join('')||'<tr><td colspan="5" class="empty">No schedules found.</td></tr>'}</tbody></table></div></section>`;
+}
+function renderMessaging(){return frame('Member announcements','Send simulated account alerts to one campus, both, or one member.')+
+ `<section class="card"><h2>Broadcast message</h2><p class="muted">Messages appear in members' Notification Center on their campus portal.</p><form onsubmit="sendAnnouncement(event)"><div class="formgrid"><div><label>Recipient group</label><select id="message-scope" onchange="$('message-member-wrap').hidden=this.value!=='member'"><option value="all">All members · Both campuses</option><option value="main">Main Campus only</option><option value="west">West Campus only</option><option value="member">Single member</option></select></div><div id="message-member-wrap" hidden><label>Choose member</label><select id="message-member">${memberOptions()}</select></div></div><label>Notification</label><textarea id="message-text" maxlength="350" required placeholder="Enter your announcement to members…"></textarea><div class="actions" style="margin-top:15px"><button class="btn primary" type="submit">Send announcement</button></div></form></section>`;}
+async function sendAnnouncement(ev){ev.preventDefault();const scope=$('message-scope').value,to=$('message-member')?.value,text=$('message-text').value.trim();
+ if(!text||text.length>350)return notify('Message must contain 1–350 characters.',true);
+ const count=records(DB).filter(({key,m})=>scope==='all'||scope===campus(m)||(scope==='member'&&to===key)).length;
+ if(!count)return notify('No matching members.',true);
+ if(!confirm('Send notification to '+count+' member(s)?'))return;
+ try{await commit(d=>{
+  let n=0;for(const [key,m] of Object.entries(d.members||{}))if(scope==='all'||scope===campus(m)||(scope==='member'&&key===to)){message(m,text,'info');n++;}
+  if(!n)throw Error('No eligible members found.');
+  return{action:'Developer notification broadcast',details:n+' recipients · '+text.slice(0,130),campus:scope==='member'?campus(d.members[to]):scope};
+ });render();notify(count+' notification(s) delivered');}catch(e){notify(e.message,true);}
+}
+function diagnosticRows(){const problems=[];
+ const keys=Object.keys(DB.members||{}),memberNumbers=new Set();
+ for(const key of keys){const m=DB.members[key];if(!m||typeof m!=='object'){problems.push({level:'error',what:'Invalid member entry '+key});continue;}
+  const shown=short(key);if(memberNumbers.has(shown))problems.push({level:'warning',what:'Duplicate displayed account number '+shown});memberNumbers.add(shown);
+  if(!m.name)problems.push({level:'warning',what:'Member '+shown+' has no name'});
+  if(!balanceOK(Number(m.checking))||!balanceOK(Number(m.savings)))problems.push({level:'error',what:'Invalid balance on account '+shown});
+  if(!['main','west'].includes(m.campus||'main'))problems.push({level:'warning',what:'Unknown campus on '+shown});
+  if(!Array.isArray(m.transactions))problems.push({level:'warning',what:'Transaction history missing on '+shown});
+ }
+ const ids=new Set((DB.auditLog||[]).map(x=>x.id));if(ids.size!==(DB.auditLog||[]).length)problems.push({level:'warning',what:'Duplicate audit event IDs'});
+ if((DB.auditLog||[]).length>=500)problems.push({level:'info',what:'Some older events may have been trimmed by campus pages (legacy 500-event limit).'});
+ if(!problems.length)problems.push({level:'ok',what:'No obvious member-data issues detected.'});return problems;
+}
+function renderSettings(){
+ const issues=diagnosticRows();return frame('System settings','Global staff credentials, branch interest, dev password and diagnostics.')+
+ `<div class="cards2"><section class="card"><h2>Staff terminal credentials</h2><p class="muted">Change the PIN used by campus Admin, Banker, or Merchant portals. The existing site uses global staff PINs shared by both campuses.</p>
+ <form onsubmit="changeTerminalPIN(event)"><label>Terminal role</label><select id="staff-role"><option value="adminPin">Campus Admin</option><option value="bankerPin">Banker / Teller</option><option value="storePin">Merchant / Store</option></select><label>New PIN · 4–6 numbers</label><input id="staff-new-pin" type="password" pattern="[0-9]{4,6}" maxlength="6" inputmode="numeric" autocomplete="new-password" required><div class="actions" style="margin-top:14px"><button class="btn purple" type="submit">Rotate terminal PIN</button></div></form></section>
+ <section class="card"><h2>Campus savings interest</h2><p class="muted">Change the simulated interest rate separately for Main and West Campus. Interest payout still runs through each campus Admin portal.</p>
+ <form onsubmit="changeInterest(event)"><label>Campus</label><select id="interest-campus" onchange="$('interest-percent').value=String(100*numeric(DB.campusRates?.[this.value]??DB.interestRate??0.005))"><option value="main">Main Campus</option><option value="west">West Campus</option></select><label>Rate (%)</label><input id="interest-percent" type="number" min="0" max="20" step="0.01" value="${(100*numeric(DB.campusRates?.main??DB.interestRate??0.005)).toFixed(2)}" required><div class="actions" style="margin-top:14px"><button class="btn primary" type="submit">Save rate</button></div></form></section></div>
+ <div class="cards2"><section class="card"><h2>Master dev password</h2><p class="muted">Change the one shared developer password. Other active dev sessions sign out when they refresh.</p>
+ <form onsubmit="changeDevPassword(event)"><label>Current master password</label><input id="dev-current" type="password" autocomplete="current-password" required><label>New password · 10+ characters</label><input id="dev-next" type="password" autocomplete="new-password" minlength="10" required><label>Confirm new password</label><input id="dev-next-again" type="password" autocomplete="new-password" minlength="10" required><div class="actions" style="margin-top:14px"><button class="btn purple" type="submit">Change master password</button></div></form></section>
+ <section class="card"><h2>Cloud & app diagnostics</h2><div class="report-grid"><div class="report-item"><strong>v${REV}</strong><span>Shared Supabase revision</span></div><div class="report-item"><strong>${records(DB).length}</strong><span>Total member accounts</span></div><div class="report-item"><strong>${(DB.auditLog||[]).length}</strong><span>Available audit events</span></div><div class="report-item"><strong>${(DB.devTrash||[]).length}</strong><span>Member snapshots in archive</span></div></div>
+ <p class="fieldhint" style="margin:16px 0">Latest cloud read: ${lastFetch?stamp(lastFetch):'none'} · Last change: ${DB.updatedAt?stamp(DB.updatedAt):'unknown'} · Key type: Supabase publishable client key</p><div class="actions"><button class="btn" onclick="refreshCloud(true)">Refresh diagnostics</button><button class="btn" onclick="view('backup')">Full backup →</button></div></section></div>
+ <section class="card"><div class="sectionbar"><h2>Health checks</h2><span class="tag">${issues.length} findings</span></div><ul class="simple-list">${issues.slice(0,50).map(x=>`<li><span class="tag ${x.level==='ok'?'ok':x.level==='error'?'bad':'warn'}">${esc(x.level)}</span> ${esc(x.what)}</li>`).join('')}</ul><p class="muted">Diagnostics are basic client-side checks, not a security audit. The current Supabase architecture does not enforce true server-side master-admin privileges.</p></section>`;
+}
+async function changeTerminalPIN(ev){ev.preventDefault();const field=$('staff-role').value,pin=$('staff-new-pin').value.trim();
+ if(!['adminPin','bankerPin','storePin'].includes(field)||!/^\d{4,6}$/.test(pin))return notify('Invalid terminal or PIN.',true);
+ if(!confirm('Change the '+field+' PIN for BOTH campuses? Current staff must use the new PIN to sign in.'))return;
+ try{await commit(d=>{d[field]=pin;return{action:'Developer changed staff PIN',details:field+' rotated globally (secret excluded)',campus:'all',severity:'warn'};});render();notify('Staff PIN updated for both campuses');}catch(e){notify(e.message,true);}
+}
+async function changeInterest(ev){ev.preventDefault();const c=$('interest-campus').value,pct=Number($('interest-percent').value);
+ if(!['main','west'].includes(c)||!Number.isFinite(pct)||pct<0||pct>20)return notify('Rate must be between 0% and 20%.',true);
+ try{await commit(d=>{d.campusRates=d.campusRates||{};d.campusRates[c]=pct/100;return{action:'Developer changed interest rate',details:branch(c)+' set to '+pct+'%',campus:c,severity:'warn'};});render();notify('Campus interest rate saved');}catch(e){notify(e.message,true);}
+}
+async function changeDevPassword(ev){ev.preventDefault();const old=$('dev-current').value,now=$('dev-next').value,confirmVal=$('dev-next-again').value;
+ if(now.length<10||now!==confirmVal)return notify('New master password must match and contain at least 10 characters.',true);
+ try{const auth=DB.devAuth;if(!auth)throw Error('Master account is not initialized.');
+  const check=await hashPassword(old,auth.salt,auth.iterations||170000);if(check!==auth.hash)throw Error('Current master password is incorrect.');
+  const salt=bytesTo64(crypto.getRandomValues(new Uint8Array(20))),iterations=170000,hash=await hashPassword(now,salt,iterations);
+  await commit(d=>{
+   if(d.devAuth?.hash!==check)throw Error('The dev password changed elsewhere. Refresh and sign in again.');
+   d.devAuth={...d.devAuth,hash,salt,iterations,changedAt:new Date().toISOString()};
+   return{action:'Developer changed master password',details:'Master secret rotated (value excluded)',campus:'all',severity:'warn'};
+  });SESSION_HASH=hash;render();notify('Master password changed successfully');
+ }catch(e){notify(e.message,true);}
+}
+function renderBackup(){return frame('Backup & recovery','Protect the fictional bank with a full JSON export before making major changes.',`<button class="btn primary" onclick="exportFullBackup()">↓ Download complete backup</button>`)+
+ `<div class="cards2"><section class="card"><h2>Full bank backup</h2><p class="muted">Exports member profiles and PINs, both campus balances, ledger history, payroll, audit logs, settings, and the developer password verifier. Only store this file somewhere private.</p>
+ <div class="report-grid"><div class="report-item"><strong>${records(DB).length}</strong><span>Members</span></div><div class="report-item"><strong>${(DB.auditLog||[]).length}</strong><span>Audit events</span></div><div class="report-item"><strong>${allTransactions().length}</strong><span>Member ledger entries</span></div><div class="report-item"><strong>${(DB.devTrash||[]).length}</strong><span>Archived member snapshots</span></div></div><div class="actions" style="margin-top:15px"><button class="btn primary" onclick="exportFullBackup()">Export JSON backup</button><button class="btn" onclick="exportMemberCSV()">Directory CSV</button><button class="btn" onclick="exportAuditCSV()">Activity CSV</button></div></section>
+ <section class="card"><h2>Restore database</h2><p class="muted">Restoring a backup replaces BOTH CAMPUSES and all simulated balances with the uploaded snapshot. The currently active dev password stays in place.</p>
+ <label>Choose a valid All Club JSON backup</label><input id="restore-file" type="file" accept=".json,application/json"><p class="pill-note">Export a current backup first. A restore cannot be undone without another saved backup.</p><div class="actions"><button class="btn danger" onclick="restoreFullBackup()">Restore entire bank</button></div></section></div>
+ <section class="card"><h2>Additional recovery notes</h2><p class="muted">Existing campus Admin portals still include their own database import and reset controls. The developer console writes to the same shared Supabase row, so all changes appear in the campus portals after their next synchronization.</p>
+ <div class="notice warning">This system has browser-side PIN handling and a shared database. It is suitable only for fictional accounts. It does not provide verified, server-enforced access control or tamper-proof audit retention.</div>
+ <p class="fieldhint">Export formats include a UTF-8 JSON snapshot and Excel-compatible CSV ledgers. Never upload real customer records, real payment details, or passwords from other accounts.</p></section>`;}
+function download(name,content,type){const url=URL.createObjectURL(new Blob([content],{type})),a=document.createElement('a');a.href=url;a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);}
+function csv(name,columns,rows){const enc=s=>{let v=String(s??'');if(/^[\t\r\n ]*[=+@]/.test(v))v="'"+v;return '"'+v.replace(/"/g,'""')+'"';};download(name,'\uFEFF'+[columns,...rows].map(r=>r.map(enc).join(',')).join('\r\n'),'text/csv;charset=utf-8');}
+function exportFullBackup(){if(!DEV)return;download('allclub_master_backup_'+new Date().toISOString().slice(0,10)+'.json',JSON.stringify(DB,null,2),'application/json');notify('Full bank backup downloaded; store it privately.');}
+function exportMemberCSV(){if(!DEV)return;csv('allclub_members.csv',['Account','Name','Campus','Checking','Savings','Points','Rank','Card Frozen','Login Locked','Created'],records(DB).map(({key,m})=>[short(key),m.name,branch(campus(m)),m.checking,m.savings,m.points||0,m.rank||'',m.cardFrozen?'yes':'no',m.locked?'yes':'no',m.createdAt||'']));notify('Member directory exported');}
+function exportLedgerCSV(){if(!DEV)return;const arr=filteredTransactions();csv('allclub_ledger.csv',['Date','Account','Name','Campus','Type','Balance','Amount','Note','Transaction ID'],arr.map(t=>[t.date,short(t.key),t.name,branch(t.campus),t.type,t.account,t.amount,t.note,t.id]));notify(arr.length+' transactions exported');}
+function exportAuditCSV(){if(!DEV)return;const arr=filteredAudit();csv('allclub_audit.csv',['Date','Actor','Campus','Action','Account','Details','Level'],arr.map(a=>[a.date,a.actor,a.campus,a.action,a.target,a.details,a.severity]));notify(arr.length+' actions exported');}
+function exportReportCSV(){if(!DEV)return;csv('allclub_campus_reports.csv',['Campus','Members','Checking','Savings','Store sales','Teller operations','Paid days','Payroll paid'],['main','west'].map(c=>{const r=records(DB).filter(x=>campus(x.m)===c),s=Object.values(DB.schedules||{}).filter(x=>x.campus===c&&x.paid);return[branch(c),r.length,r.reduce((v,x)=>v+numeric(x.m.checking),0),r.reduce((v,x)=>v+numeric(x.m.savings),0),(DB.sales||[]).filter(x=>(x.campus||'main')===c).length,(DB.tellerLog||[]).filter(x=>(x.campus||'main')===c).length,s.length,s.reduce((v,x)=>v+numeric(x.totalPaid),0)];}));notify('Campus report exported');}
+async function restoreFullBackup(){
+ const file=$('restore-file')?.files?.[0];if(!file)return notify('Choose a JSON backup first.',true);
+ if(file.size>15_000_000)return notify('Backup exceeds the 15 MB browser limit.',true);
+ let imported;try{imported=JSON.parse(await file.text());}catch(e){return notify('Invalid JSON backup file.',true);}
+ if(!imported||typeof imported!=='object'||Array.isArray(imported)||!imported.members||typeof imported.members!=='object'||Array.isArray(imported.members))return notify('File is not a recognized bank backup.',true);
+ if(Object.keys(imported.members).length>30000)return notify('Backup has too many members for this simulator.',true);
+ for(const [id,m] of Object.entries(imported.members)){
+  if(!id||id.length>50||!m||typeof m!=='object'||Array.isArray(m)||typeof m.name!=='string'||!balanceOK(Number(m.checking))||!balanceOK(Number(m.savings)))return notify('Backup contains an invalid member: '+id,true);
+ }
+ const phrase=prompt('RESTORE WILL REPLACE BOTH CAMPUSES. Type RESTORE BANK to confirm:');if(phrase!=='RESTORE BANK')return notify('Restore cancelled.',true);
+ if(!confirm('One final confirmation: replace the entire shared bank from this backup?'))return;
+ try{await commit(d=>{
+  const existingAuth=d.devAuth;const cloneImported=copy(imported);delete cloneImported.__proto__;
+  // Preserve current master password, even when restoring a pre-dev backup.
+  Object.keys(d).forEach(k=>{if(!['devAuth'].includes(k))delete d[k];});
+  for(const [k,v] of Object.entries(cloneImported))if(k!=='devAuth'&&k!=='__proto__'&&k!=='constructor'&&k!=='prototype')d[k]=v;
+  d.devAuth=existingAuth;
+  d.auditLog=Array.isArray(d.auditLog)?d.auditLog:[];
+  d.devTrash=Array.isArray(d.devTrash)?d.devTrash:[];
+  d.schedules=d.schedules||{};d.campusRates=d.campusRates||{};
+  d.nextAcc=Math.max(1002,Number(d.nextAcc)||1002);
+  for(const m of Object.values(d.members||{}))if(!['main','west'].includes(m.campus))m.campus='main';
+  return{action:'Developer restored full bank backup',details:'Both campuses restored from uploaded JSON · '+Object.keys(d.members||{}).length+' members',campus:'all',severity:'warn'};
+ });SELECTED.clear();PAGE='overview';render();notify('Bank backup restored across both campuses');}catch(e){notify(e.message,true);}
+}
+async function boot(){screen(false);await refreshCloud();if(DEV)render();}
+window.addEventListener('DOMContentLoaded',()=>{
+ boot();
+ setInterval(()=>{if(!busy&&document.visibilityState==='visible')refreshCloud();},16000);
+ window.addEventListener('online',()=>refreshCloud());
+});
+</script></body></html>
