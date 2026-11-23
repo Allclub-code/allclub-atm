@@ -1,0 +1,12 @@
+All Club Credit Union — Two Campus Repair
+
+index.html is the campus CHOICE page (not the blue bank login screen).
+main-campus.html is Main Campus banking.
+west-campus.html is West Campus banking (lime and purple).
+
+GitHub repository: Allclub-code/allclub-atm
+Upload the three files to the repository ROOT on the main branch.
+Use GitHub's pencil icon to replace the CONTENT of existing index.html with the contents of this index.html, or upload a replacement.
+Commit changes. Visit https://allclub-code.github.io/allclub-atm/?v=2 and hard refresh.
+If the homepage still looks blue, open the GitHub index.html file and check whether its first line begins <!doctype html> and its title is All Club Credit Union | Campus Banking.
+Back up data and files first. Do not enter real financial information.
