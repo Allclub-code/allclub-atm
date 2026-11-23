@@ -589,6 +589,16 @@ tbody tr:hover{background:#faf6ff}
 .public-footer{border-top-color:#e5daf3}
 .member-card{border-color:#b8f23b}
 
+
+/* Developer console link — campus portal */
+.dev-access-link{display:flex;align-items:center;gap:11px;border:1px solid #d3e2f0;background:#f6faff;color:#28558b;text-decoration:none;border-radius:11px;padding:10px 12px;margin:11px 0 0;font-weight:750;font-size:12px;min-height:52px}
+.dev-access-link:hover{background:#e8f2ff;border-color:#9fc6ee}
+.dev-access-symbol{display:grid;place-items:center;border-radius:8px;width:32px;height:32px;flex:none;background:#e4efff;color:#1d5aa8;font-size:19px}
+.dev-access-link small{display:block;color:#7c8da2;font-size:10px;font-weight:500}
+
+.dev-access-link{background:#f5edff;border-color:#ddcbf3;color:#5e229f}
+.dev-access-link:hover{background:#ead8ff;border-color:#aa81dd}
+.dev-access-symbol{background:#5b21a1;color:#b8f23b}
 </style>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
@@ -638,6 +648,7 @@ tbody tr:hover{background:#faf6ff}
             <button class="role-btn" onclick="showScreen('screen-store-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M3 5h2l2 11h11l3-8H6M8 20h.01M18 20h.01"/></svg></span><span class="txt"><strong>Merchant Portal</strong><small>Simulated card charges &amp; sales</small></span><span class="role-chevron">›</span></button>
             <button class="role-btn" onclick="showScreen('screen-admin-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 6v5c0 5.2 3 8.6 8 10 5-1.4 8-4.8 8-10V6zM9 12l2 2 4-4"/></svg></span><span class="txt"><strong>Administration</strong><small>Members, controls &amp; reports</small></span><span class="role-chevron">›</span></button>
           </div>
+          <a href="dev.html" class="dev-access-link"><span class="dev-access-symbol">◇</span><span>Master Developer Console<small>Global access · Main Campus + West Campus · username: dev</small></span><span style="margin-left:auto;font-size:18px">›</span></a>
           <div class="access-divider"><span>EXPLORING?</span></div>
           <button hidden style="display:none" class="preview-button" onclick="demoLogin()"><span>◎</span> Launch demo member account <span>→</span></button>
           <div class="access-foot"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5z"/></svg><span>This is a simulated banking environment. Never enter real bank credentials or real financial information.</span></div>
@@ -1541,7 +1552,7 @@ function updateSyncStatus(msg, ok) {
 // Put only what THIS device changed (base -> local) on top of the cloud copy.
 function applyChanges(cloud, base, local) {
   const out = clone(cloud), b = base || {};
-  Object.keys(local).forEach(k => {if(!['members','schedules','campusRates','campusInterestDays'].includes(k) && !same(local[k],b[k])) out[k]=clone(local[k]);});
+  Object.keys(local).forEach(k => {if(!['members','schedules','campusRates','campusInterestDays','auditLog','payments','sales','tellerLog'].includes(k) && !same(local[k],b[k])) out[k]=clone(local[k]);});
   for(const k of ['schedules','campusRates','campusInterestDays']) {
     out[k]=out[k]||{};const bm=b[k]||{},lm=local[k]||{};
     Object.keys(lm).forEach(a=>{if(!same(lm[a],bm[a]))out[k][a]=clone(lm[a]);});
@@ -1551,6 +1562,27 @@ function applyChanges(cloud, base, local) {
   const bm = b.members || {}, lm = local.members || {};
   Object.keys(lm).forEach(a => { if (!same(lm[a], bm[a])) out.members[a] = clone(lm[a]); });
   Object.keys(bm).forEach(a => { if (!(a in lm)) delete out.members[a]; });
+  // Preserve append-only records written by another campus or by master dev.
+  // The base snapshot tells us which records THIS client actually added.
+  const mergedEvents = (name, maxCount, newestFirst) => {
+    const remote = Array.isArray(cloud[name]) ? cloud[name] : [];
+    const before = Array.isArray(b[name]) ? b[name] : [];
+    const mine = Array.isArray(local[name]) ? local[name] : [];
+    const idOf = v => String(v?.id ?? JSON.stringify(v));
+    const existed = new Set(before.map(idOf));
+    const additions = mine.filter(v => !existed.has(idOf(v)));
+    const all = [...remote, ...additions];
+    const unique = new Map();
+    all.forEach(v => unique.set(idOf(v), v));
+    const entries = [...unique.values()].sort((a, z) => newestFirst ?
+       String(z?.date || '').localeCompare(String(a?.date || '')) :
+       String(a?.date || '').localeCompare(String(z?.date || '')));
+    out[name] = newestFirst ? entries.slice(0, maxCount) : entries.slice(-maxCount);
+  };
+  mergedEvents('auditLog', 1500, true);
+  mergedEvents('payments', 500, true);
+  mergedEvents('sales', Number.MAX_SAFE_INTEGER, false);
+  mergedEvents('tellerLog', 500, false);
   return out;
 }
 
@@ -1746,7 +1778,7 @@ function auditEvent(action, details, target, severity) {
   if (!Array.isArray(db.auditLog)) db.auditLog = [];
   db.auditLog.unshift({id:uid(), date:new Date().toISOString(), actor:currentUser?.role || 'system',
     action:String(action||''), details:String(details||''), target:displayAccount(target || ''), severity:severity||'normal',campus:CAMPUS});
-  if (db.auditLog.length > 500) db.auditLog.length = 500;
+  if (db.auditLog.length > 1500) db.auditLog.length = 1500;
 }
 function downloadCsv(name, header, rows) {
   const escape = v => '"' + String(v == null ? '' : v).replace(/"/g,'""') + '"';
@@ -2087,7 +2119,7 @@ function addTx(member, type, account, amount, note) {
     date: new Date().toISOString(),
     type, account, amount: Number(amount), note: note || ''
   });
-  if (member.transactions.length > 200) member.transactions.length = 200;
+  if (member.transactions.length > 500) member.transactions.length = 500;
   auditEvent(type, `${money(amount)} · ${String(account)} · ${String(note||'').slice(0,110)}`, member.accountNumber);
 }
 
@@ -2265,7 +2297,7 @@ function bankerDeposit() {
     amount: amt,
     note
   });
-  if (db.tellerLog.length > 300) db.tellerLog = db.tellerLog.slice(-300);
+  if (db.tellerLog.length > 500) db.tellerLog = db.tellerLog.slice(-500);
 
   saveDB();
   document.getElementById('bk-dep-amount').value = '';
@@ -2302,7 +2334,7 @@ function bankerWithdraw() {
     amount: -amt,
     note
   });
-  if (db.tellerLog.length > 300) db.tellerLog = db.tellerLog.slice(-300);
+  if (db.tellerLog.length > 500) db.tellerLog = db.tellerLog.slice(-500);
 
   saveDB();
   document.getElementById('bk-wd-amount').value = '';
@@ -2359,7 +2391,7 @@ function bankerBulkDeposit() {
     success++;
   });
 
-  if (db.tellerLog.length > 300) db.tellerLog = db.tellerLog.slice(-300);
+  if (db.tellerLog.length > 500) db.tellerLog = db.tellerLog.slice(-500);
   saveDB();
   document.getElementById('bk-bulk-amount').value = '';
   document.getElementById('bk-bulk-note').value = '';
