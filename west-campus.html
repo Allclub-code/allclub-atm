@@ -2316,12 +2316,12 @@ function refreshMemberUI() {
   }).join('') : '<div class="empty-state">No activity yet. Transactions will appear here after your first banking action.</div>';
   renderDetailedTransactions();
 
-  document.getElementById('reward-store').innerHTML = REWARD_ITEMS.map(r =>
+  document.getElementById('reward-store').innerHTML = (db.pointCatalog || REWARD_ITEMS).filter(r=>r.enabled!==false && (r.campus==="all" || !r.campus || r.campus===CAMPUS)).map(r =>
     `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border)">
-      <div><strong>${r.name}</strong><div class="muted">${r.desc} · ${r.cost} pts</div></div>
-      <button style="padding:6px 10px;font-size:0.85rem" onclick="buyReward('${r.id}')">Buy</button>
+      <div><strong>${escapeHtml(r.name)}</strong><div class="muted">${escapeHtml(r.desc)} · ${r.cost} pts${r.stock==null?"":" · "+r.stock+" left"}</div></div>
+      <button style="padding:6px 10px;font-size:0.85rem" ${r.stock===0||m.points<r.cost?"disabled":""} onclick="buyReward('${escapeHtml(r.id)}')">Buy</button>
     </div>`
-  ).join('');
+  ).join('') + '<h3>My redemptions</h3>' + (m.pointOrders||[]).map(o=>`<div>${escapeHtml(o.name)} · ${o.cost} pts · ${escapeHtml(o.status||'pending')}</div>`).join('');
 
   document.getElementById('m-achievements').innerHTML = (m.achievements || []).length
     ? (m.achievements.map(a => `<span class="rank-badge" style="margin:3px">${ACH_LABELS[a] || a}</span>`).join(' '))
