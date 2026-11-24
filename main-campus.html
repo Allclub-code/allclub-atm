@@ -539,10 +539,25 @@ header.app-header .logo::before{display:none;}
 .dev-access-link:hover{background:#e8f2ff;border-color:#9fc6ee}
 .dev-access-symbol{display:grid;place-items:center;border-radius:8px;width:32px;height:32px;flex:none;background:#e4efff;color:#1d5aa8;font-size:19px}
 .dev-access-link small{display:block;color:#7c8da2;font-size:10px;font-weight:500}
+
+/* COACH + MASTER SAFETY CONSOLE */
+.safety-status{margin:12px 0 18px;padding:15px 18px;border-radius:12px;background:#fff4e4;border:1px solid #e7b773;color:#88491f;font-weight:700}
+.safety-status strong{display:block;margin-bottom:4px}.safety-status small{font-size:12px;font-weight:500;display:block}
+.campus-challenge-card{background:linear-gradient(110deg,#102b4e,#1b4d87);color:white;padding:18px 21px;border-radius:15px;border:1px solid #547198;margin:14px 0;box-shadow:0 12px 26px #16365c21}
+.campus-challenge-card.west{background:linear-gradient(115deg,#4b1a83,#7028bd);border-color:#b8f23b}
+.campus-challenge-card .heading{display:flex;align-items:center;justify-content:space-between;gap:12px;font-size:11px;letter-spacing:1px;color:#d7e5f5;font-weight:800}
+.campus-challenge-card h3{font-size:20px;color:#fff;margin:9px 0 4px}.campus-challenge-card p{font-size:12px;color:#e2e7f2;margin-bottom:10px}
+.campus-challenge-card .rail{height:11px;background:#ffffff2a;border-radius:999px;overflow:hidden}.campus-challenge-card .rail span{height:100%;display:block;background:#b8f23b;border-radius:inherit}
+.campus-challenge-card .progress-meta{display:flex;justify-content:space-between;gap:10px;margin-top:8px;font-size:11px;color:#e7efdf}
+
+
+/* V5 member financial lab and card sign-in */
+.v5-new{font-size:9px;letter-spacing:.06em;color:#194600;background:#c8f47f;border-radius:4px;padding:2px 4px;margin-left:5px}.v5-login-scan{margin:14px 0;padding:13px;background:#f3f7ff;border:1px solid #d9e3f3;border-radius:10px}.v5-login-scan p{font-size:11px}.v5-small-label{font-size:10px;letter-spacing:.09em;color:#587499;font-weight:800}.v5-login-scan input{width:100%;margin:9px 0}.v5-print-warning{background:#fff7dc;border:1px solid #f3deb0;color:#795400;border-radius:10px;padding:12px 15px;font-size:12px}.v5-locked{background:#ffedf0;border:1px solid #ffc9d0;color:#9b3346;font-weight:720;padding:12px;border-radius:9px;margin:10px 0}.v5-panel-hero{background:linear-gradient(110deg,#102f57,#235b9f);color:white;border-radius:16px;padding:23px;margin:10px 0 19px;display:flex;justify-content:space-between;gap:16px;align-items:center}.v5-panel-hero.west{background:linear-gradient(115deg,#35115d,#702fba)}.v5-panel-hero span{font-size:9px;letter-spacing:.13em;font-weight:800;opacity:.85}.v5-panel-hero h2{font-size:24px;margin:8px 0 5px;color:white}.v5-panel-hero p{max-width:470px;opacity:.85;font-size:13px}.v5-score{display:flex;flex-direction:column;min-width:135px;text-align:center;padding:12px;background:#ffffff19;border:1px solid #ffffff50;border-radius:13px}.v5-score strong{font-size:34px}.v5-score span{font-size:10px}.v5-cards-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.v5-cards-grid>.card{margin:0!important}.v5-section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.v5-section-title h3{margin:0}.v5-pill{background:#e8f2ff;border-radius:16px;padding:4px 9px;font-size:11px;color:#1a6097;font-weight:750;display:inline-flex}.v5-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v5-fields label{margin-top:4px}.v5-cards-grid input,.v5-cards-grid select{margin-top:4px}.v5-cards-grid button{margin-top:9px}.v5-inline{border-bottom:1px solid #e6edf6;padding:11px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.v5-inline strong{font-size:12px}.v5-inline small{font-size:10px;display:block;color:#7a8da4;margin-top:3px}.v5-sublist{margin-top:12px}.v5-mission{border:1px solid #e2eaf3;border-radius:10px;padding:12px;margin:10px 0}.v5-mission p{margin:7px 0;font-size:12px}.v5-mission-answers{display:flex;gap:8px;align-items:center}.v5-mission-answers select{flex:1}.v5-tiny{font-size:10px;color:#7184a1;margin-top:12px}@media(max-width:780px){.v5-cards-grid{grid-template-columns:1fr}.v5-panel-hero{padding:17px}.v5-panel-hero h2{font-size:20px}.v5-score{min-width:90px}.v5-score strong{font-size:25px}}@media(max-width:450px){.v5-panel-hero{align-items:start;flex-direction:column}.v5-fields{grid-template-columns:1fr}}
 </style>
+<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
+
 </head>
 <body>
 <div class="campus-banner"><strong>ALL CLUB CREDIT UNION</strong><span>Main Campus</span><a href="index.html">Switch Campus ↗</a></div>
@@ -550,6 +565,7 @@ header.app-header .logo::before{display:none;}
 
   <!-- ========== ROLE SELECT ========== -->
   <div id="screen-role" class="screen active">
+    <div id="campus-safety-banner" class="safety-status" hidden></div>
     <div class="public-topbar">
       <div class="public-topbar-inner"><span>ALL CLUB CREDIT UNION</span><span class="public-topbar-note">DEMONSTRATION BANKING PLATFORM &nbsp;·&nbsp; FICTIONAL FUNDS</span></div>
     </div>
@@ -586,11 +602,11 @@ header.app-header .logo::before{display:none;}
             <button class="role-btn" onclick="showScreen('screen-member-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="8" r="3.5"/><path d="M4.5 20c.5-4.3 3.2-6.5 7.5-6.5s7 2.2 7.5 6.5"/></svg></span><span class="txt"><strong>Personal Banking</strong><small>View accounts, transfers &amp; cards</small></span><span class="role-chevron">›</span></button>
             <button class="role-btn" onclick="showScreen('screen-banker-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="m3 9 9-6 9 6M4 10h16M6 12v7m6-7v7m6-7v7M3 21h18"/></svg></span><span class="txt"><strong>Banker Terminal</strong><small>Deposits, withdrawals &amp; members</small></span><span class="role-chevron">›</span></button>
             <button class="role-btn" onclick="showScreen('screen-store-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M3 5h2l2 11h11l3-8H6M8 20h.01M18 20h.01"/></svg></span><span class="txt"><strong>Merchant Portal</strong><small>Simulated card charges &amp; sales</small></span><span class="role-chevron">›</span></button>
-            <button class="role-btn" onclick="showScreen('screen-admin-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 6v5c0 5.2 3 8.6 8 10 5-1.4 8-4.8 8-10V6zM9 12l2 2 4-4"/></svg></span><span class="txt"><strong>Administration</strong><small>Members, controls &amp; reports</small></span><span class="role-chevron">›</span></button>
+            <button class="role-btn" onclick="showScreen('screen-admin-login')"><span class="portal-ico"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 4 6v5c0 5.2 3 8.6 8 10 5-1.4 8-4.8 8-10V6zM9 12l2 2 4-4"/></svg></span><span class="txt"><strong>Coach Portal</strong><small>Coach tools, payroll &amp; member help</small></span><span class="role-chevron">›</span></button>
           </div>
           <a href="dev.html" class="dev-access-link"><span class="dev-access-symbol">◇</span><span>Master Developer Console<small>Global access · Main Campus + West Campus · username: dev</small></span><span style="margin-left:auto;font-size:18px">›</span></a>
           <div class="access-divider"><span>EXPLORING?</span></div>
-          <button class="preview-button" onclick="demoLogin()"><span>◎</span> Launch demo member account <span>→</span></button>
+          <button class="preview-button" onclick="demoLogin()"><span>◎</span> Sign in to a test member account <span>→</span></button>
           <div class="access-foot"><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3M5 11h14v10H5z"/></svg><span>This is a simulated banking environment. Never enter real bank credentials or real financial information.</span></div>
         </div>
         <div class="help-strip"><span>✦</span> Your club. Your accounts. Your digital dollars.</div>
@@ -610,6 +626,7 @@ header.app-header .logo::before{display:none;}
       <input id="m-pin" type="password" maxlength="6" placeholder="••••" autocomplete="off">
       <div id="m-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
       <button style="width:100%" onclick="memberLogin()">Login</button>
+      <div class="v5-login-scan"><div class="v5-small-label">OR SCAN YOUR PHYSICAL MEMBER CARD</div><p class="muted">An active dev-issued card can sign you in without typing your PIN. Anyone holding the card can use it until revoked.</p><input id="v5-member-scan-input" placeholder="Scan or type your card code · AC5-..." autocomplete="off" onkeydown="if(event.key==='Enter')v5CardLoginInput()"><div id="v5-member-scan-error" class="error"></div><div class="btn-row"><button class="secondary" onclick="v5CardLoginInput()">Sign in with card</button><button class="secondary" onclick="openBarcodeScanner('member')">📷 Camera scan</button></div></div>
       <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
     </div>
   </div>
@@ -642,8 +659,11 @@ header.app-header .logo::before{display:none;}
   <!-- ========== ADMIN LOGIN ========== -->
   <div id="screen-admin-login" class="screen">
     <div class="login-wrap">
-      <h1>Admin Login</h1>
-      <label>Admin PIN</label>
+      <h1>Coach Login</h1>
+      <p class="muted">Use your assigned Coach username and PIN. If dev has not created coach accounts yet, use <b>coach</b> and the previous Admin PIN.</p>
+      <label>Coach username</label>
+      <input id="a-user" autocomplete="username" maxlength="32" value="coach" placeholder="coach">
+      <label>Coach PIN</label>
       <input id="a-pin" type="password" maxlength="6" placeholder="••••">
       <div id="a-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
       <button class="purple" style="width:100%" onclick="adminLogin()">Login</button>
@@ -666,12 +686,14 @@ header.app-header .logo::before{display:none;}
       <div class="tab" data-tab="m-card" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="2.5" y="5" width="19" height="14" rx="2.5"/><path d="M3 10h18M7 15h4"/></svg>My Card</div>
       <div class="tab" data-tab="m-goals" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1"/></svg>Goals</div>
       <div class="tab" data-tab="m-notifs" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-2 7-2 9h16c0-2-2-2-2-9M10 21h4"/></svg>Alerts <span id="notif-badge" class="notif-badge hidden">0</span></div>
+      <div class="tab" data-tab="m-v5" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="m4 12 7-7 4 4 5-5M4 20h16M14 4h6v6"/></svg>Club Lab <span class="v5-new">NEW</span></div>
       <div class="tab" data-tab="m-settings" onclick="switchTab('member',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M11 2h2l1 3 2 1 3-1 2 2-2 3 1 2 3 1v2l-3 1-1 2 1 3-2 2-3-2-2 1-1 3h-2l-1-3-2-1-3 1-2-2 2-3-1-2-3-1v-2l3-1 1-2-1-3 2-2 3 2 2-1z"/></svg>Settings</div>
       <div class="sidebar-bottom"><div class="sidebar-help-icon">✦</div><div><strong>All Club Digital</strong><small>Fictional banking environment</small></div></div>
     </div>
 
     <!-- Home -->
-    <div id="m-home" class="tab-panel">
+    <div id="m-home" class="tab-panel"><div id="v5-paused-features" class="v5-locked" hidden></div>
+      <div id="campus-challenge"></div>
       <div class="page-heading"><div><div class="section-eyebrow">PERSONAL BANKING / OVERVIEW</div><h1 id="bank-home-title">Your financial overview</h1><p>Everything important about your digital accounts, all in one place.</p></div><div class="page-date"><span class="pulse-dot"></span><span id="bank-session-date">Current session</span></div></div>
       <div class="bank-notice"><span class="notice-icon">ℹ</span><span>This is a <strong>banking simulation</strong>. Balances and transactions are fictional; no real money is held or transferred.</span></div>
       <div class="hero-account">
@@ -858,7 +880,7 @@ header.app-header .logo::before{display:none;}
     </div>
 
     <!-- Card -->
-    <div id="m-card" class="tab-panel hidden">
+    <div id="m-card" class="tab-panel hidden"><p class="v5-print-warning">This digital card shows the account number for teller lookup only. To scan directly into your account, ask dev for a uniquely issued printable card. Lost printable cards can be revoked individually in Club Lab.</p>
       <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / PERSONAL BANKING</div><h1>Cards & controls</h1><p>Review your member card and adjust its status.</p></div></div>
       <div class="card">
         <h3>Member Card</h3>
@@ -878,7 +900,7 @@ header.app-header .logo::before{display:none;}
             <div id="card-photo-placeholder" style="width:72px;height:72px;border-radius:50%;background:var(--panel2);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:0.7rem;color:var(--muted)">Photo</div>
           </div>
           <div class="barcode-wrap">
-            <div class="muted" style="font-size:0.7rem;margin-bottom:6px">SCAN QR CODE</div>
+            <div class="muted" style="font-size:0.7rem;margin-bottom:6px">ACCOUNT LOOKUP CODE · NOT A LOGIN KEY</div>
             <canvas id="card-qr-canvas" width="180" height="180" style="display:block;margin:0 auto;background:#fff;border-radius:10px;padding:8px"></canvas>
             <svg id="card-barcode" style="width:100%;max-width:260px;height:44px;margin-top:10px"></svg>
             <div class="barcode-acc" id="card-qr">0000</div>
@@ -948,6 +970,7 @@ header.app-header .logo::before{display:none;}
         <button onclick="changeMemberPin()">Update PIN</button>
       </div>
     </div>
+    <div id="m-v5" class="tab-panel hidden"><div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB · FINANCIAL SIMULATION</div><h1>Club Lab</h1><p>Virtual credit, marketplace, bills, and student learning missions.</p></div></div><div id="v5-member-content"></div></div>
   </div>
 
   <!-- ========== BANKER DASHBOARD ========== -->
@@ -967,14 +990,14 @@ header.app-header .logo::before{display:none;}
       <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / WORKSPACE</div><h1>Teller desk</h1><p>Process assisted account deposits and withdrawals.</p></div></div>
       <div class="card">
         <h3>Select Member</h3>
-        <label>Scan / Enter Member Card</label>
+        <label>Scan / Enter Member Card</label><p class="muted">For members with a dev-issued physical card, an active QR/barcode scan is required before checkout. Lost or frozen card codes cannot be charged. Members without an issued card can use the legacy staff lookup.</p>
         <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
           <input id="bk-scan" type="text" placeholder="Type or paste account number from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
           <button class="teal" style="white-space:nowrap" onclick="scanMember('banker')">Lookup</button>
           <button class="secondary" style="white-space:nowrap" onclick="openBarcodeScanner('banker')">📷 Camera Scan</button>
         </div>
         <label>Or choose from list</label>
-        <select id="bk-member-select" onchange="previewBankerMember()"></select>
+        <select id="bk-member-select" onchange="previewBankerMember();v5ClearTerminalCard('banker')"></select>
         <div id="bk-balance-preview" class="muted" style="margin-bottom:12px;min-height:24px"></div>
       </div>
 
@@ -1073,14 +1096,14 @@ header.app-header .logo::before{display:none;}
       <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / WORKSPACE</div><h1>Point of sale</h1><p>Record fictional club card purchases.</p></div></div>
       <div class="card">
         <h3>Charge Member</h3>
-        <label>Scan / Enter Member Card</label>
+        <label>Scan / Enter Member Card</label><p class="muted">For members with a dev-issued physical card, an active QR/barcode scan is required before checkout. Lost or frozen card codes cannot be charged. Members without an issued card can use the legacy staff lookup.</p>
         <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
           <input id="st-scan" type="text" placeholder="Type or paste account number from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
           <button class="blue" style="white-space:nowrap" onclick="scanMember('store')">Lookup</button>
           <button class="secondary" style="white-space:nowrap" onclick="openBarcodeScanner('store')">📷 Camera Scan</button>
         </div>
         <label>Or choose from list</label>
-        <select id="st-member-select" onchange="previewMemberBalance()"></select>
+        <select id="st-member-select" onchange="previewMemberBalance();v5ClearTerminalCard('store')"></select>
         <div id="st-balance-preview" class="muted" style="margin-bottom:10px"></div>
         <label>Amount</label>
         <input id="st-amount" type="number" min="0.01" step="0.01">
@@ -1126,22 +1149,23 @@ header.app-header .logo::before{display:none;}
 
   <!-- ========== ADMIN DASHBOARD ========== -->
   <div id="screen-admin" class="screen">
-    <header class="app-header"><div class="header-brand"><div class="brand-emblem" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><path d="M5 13.5 18 5l13 8.5M8 15h20M10 18v11M18 18v11M26 18v11M6 31h24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="header-brand-text"><div class="logo">All Club <span>Credit Union</span></div><div class="header-sub">ADMINISTRATION · SIMULATION</div></div></div><div class="header-actions"><span class="header-env"><span class="pulse-dot"></span> DEMO ENVIRONMENT</span><span class="role-badge">Administrator</span><button class="secondary sign-out" onclick="logout()">Sign out <span aria-hidden="true">↗</span></button></div></header>
+    <header class="app-header"><div class="header-brand"><div class="brand-emblem" aria-hidden="true"><svg viewBox="0 0 36 36" fill="none"><path d="M5 13.5 18 5l13 8.5M8 15h20M10 18v11M18 18v11M26 18v11M6 31h24" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/></svg></div><div class="header-brand-text"><div class="logo">All Club <span>Credit Union</span></div><div class="header-sub">COACH OPERATIONS · SIMULATION</div></div></div><div class="header-actions"><span class="header-env"><span class="pulse-dot"></span> DEMO ENVIRONMENT</span><span class="role-badge">Coach</span><span id="coach-session-name" class="muted" style="font-size:12px"></span><button class="secondary sign-out" onclick="logout()">Sign out <span aria-hidden="true">↗</span></button></div></header>
     <div class="tabs">
-      <div class="sidebar-heading">BACK OFFICE</div>
+      <div class="sidebar-heading">COACH DESK</div>
       <div class="tab active" data-tab="ad-dash" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>Dashboard</div>
       <div class="tab" data-tab="ad-members" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="9" cy="8" r="3"/><path d="M3 20v-2a6 6 0 0 1 12 0v2M17 6a3 3 0 0 1 0 6M17 15a5 5 0 0 1 4 5"/></svg>Members</div>
       <div class="tab" data-tab="ad-ops" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3 4 6v5c0 5.2 3 8.6 8 10 5-1.4 8-4.8 8-10V6zM9 12l2 2 4-4"/></svg>Control Center</div>
       <div class="tab" data-tab="ad-create" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="10" cy="8" r="3"/><path d="M3 21v-2a7 7 0 0 1 14 0M19 10v8m-4-4h8"/></svg>Create</div>
       <div class="tab" data-tab="ad-payroll" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="4" width="18" height="17" rx="2"/><path d="M7 2v4M17 2v4M3 9h18M8 14h3m-3 4h8"/></svg>Payroll</div>
       <div class="tab" data-tab="ad-reports" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 3h10l4 4v14H5zM15 3v4h4M8 12h8M8 16h8"/></svg>Reports</div>
-      <div class="tab" data-tab="ad-backup" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17a5 5 0 1 1 2-9 6 6 0 0 1 11 4 4 4 0 0 1-1 8H8M12 19V11m-3 3 3-3 3 3"/></svg>Backup</div>
+      <div class="tab" data-tab="ad-backup" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 17a5 5 0 1 1 2-9 6 6 0 0 1 11 4 4 4 0 0 1-1 8H8M12 19V11m-3 3 3-3 3 3"/></svg>Export &amp; Sync</div>
       <div class="tab" data-tab="ad-vault" onclick="switchTab('admin',this)"><svg class="nav-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="15" rx="2"/><circle cx="12" cy="12" r="4"/><path d="M12 10v4M10 12h4"/></svg>Vault</div>
       <div class="sidebar-bottom"><div class="sidebar-help-icon">✦</div><div><strong>All Club Digital</strong><small>Fictional banking environment</small></div></div>
     </div>
 
     <div id="ad-dash" class="tab-panel">
-      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / ADMINISTRATION</div><h1>Bank overview</h1><p>A consolidated view of your club credit union.</p></div></div>
+      <div id="coach-campus-challenge"></div>
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / COACH OPERATIONS</div><h1>Bank overview</h1><p>A view of your campus and its members.</p></div></div>
       <div class="grid3">
         <div class="stat"><div class="num" id="ad-count">0</div><div class="lbl">Members</div></div>
         <div class="stat"><div class="num" id="ad-total-check">$0</div><div class="lbl">Total Checking</div></div>
@@ -1155,7 +1179,7 @@ header.app-header .logo::before{display:none;}
     </div>
 
     <div id="ad-members" class="tab-panel hidden">
-      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / ADMINISTRATION</div><h1>Member directory</h1><p>Manage account holders and edit member profiles.</p></div></div>
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / COACH OPERATIONS</div><h1>Member directory</h1><p>Manage account holders and edit member profiles.</p></div></div>
       <div class="card">
         <h3>Search & Manage Members</h3>
         <input id="ad-search" placeholder="Search name or account..." oninput="renderAdminMembers()">
@@ -1170,8 +1194,8 @@ header.app-header .logo::before{display:none;}
 
 
     <div id="ad-ops" class="tab-panel hidden">
-      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / ADMINISTRATION</div><h1>Operations center</h1><p>Review simulator activity and administer terminal settings.</p></div></div>
-      <div class="card"><div class="section-eyebrow">Mission control</div><h2>Bank Operations Center</h2><p class="muted">Track activity across the club, review administrative edits, and customize staff terminal PINs. The log is informational, not tamper-proof.</p></div>
+      <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / COACH OPERATIONS</div><h1>Operations center</h1><p>Review simulator activity and administer terminal settings.</p></div></div>
+      <div class="card"><div class="section-eyebrow">Mission control</div><h2>Coach Operations Center</h2><p class="muted">Track your campus activity, review member edits, and manage teller and store terminals. The log is informational, not tamper-proof.</p></div>
       <div class="mini-kpis">
         <div class="tile"><div class="caption">Digital funds on record</div><div class="value" id="ops-total">$0</div></div>
         <div class="tile"><div class="caption">Frozen cards</div><div class="value" id="ops-frozen">0</div></div>
@@ -1186,8 +1210,8 @@ header.app-header .logo::before{display:none;}
         </div>
         <div class="card">
           <h3>Staff Terminal Access Codes</h3>
-          <p class="muted" style="margin-bottom:14px">Change demo PINs for the Admin, Banker, or Store terminal. This is not production-grade authentication.</p>
-          <label>Terminal</label><select id="ops-role"><option value="admin">Admin</option><option value="banker">Banker</option><option value="store">Store</option></select>
+          <p class="muted" style="margin-bottom:14px">Change demo PINs for Banker or Store terminals. Coach credentials are managed by dev. This is not production-grade authentication.</p>
+          <label>Terminal</label><select id="ops-role"><option value="banker">Banker</option><option value="store">Store</option></select>
           <label>New 4–6 digit PIN</label><input type="password" id="ops-new-pin" inputmode="numeric" minlength="4" maxlength="6" placeholder="••••••" autocomplete="off">
           <button class="purple" onclick="changeStaffPin()">Update Terminal PIN</button>
           <hr style="margin:22px 0;border:none;border-top:1px solid var(--border)">
@@ -1292,19 +1316,13 @@ header.app-header .logo::before{display:none;}
         <p class="muted" id="sync-status" style="margin-bottom:10px">Status: <strong>Connecting…</strong></p>
         <div class="btn-row">
           <button class="teal" onclick="syncNow()">Sync now</button>
-          <button class="secondary" onclick="forcePushCloud()">Overwrite cloud with this device</button>
+          
         </div>
       </div>
       <div class="card">
-        <h3>Backup & Restore</h3><p class="muted" style="margin-bottom:12px">Warning: backups, restore, and resets apply to both campuses, since they share one database.</p>
+        <h3>Export &amp; Sync</h3><p class="muted" style="margin-bottom:12px">Coaches may export a backup. Only dev can restore, overwrite, or reset the bank.</p>
         <div class="btn-row">
           <button onclick="exportData()">Export Bank Data</button>
-          <label class="btn secondary" style="cursor:pointer">
-            Import Bank Data
-            <input type="file" accept="application/json" style="display:none" onchange="importData(event)">
-          </label>
-          <button class="warn" onclick="emergencyRestore()">Emergency Restore Defaults</button>
-          <button class="danger" onclick="resetBank()">Reset Entire Bank</button>
         </div>
         <p class="muted" style="margin-top:10px" id="backup-msg"></p>
       </div>
@@ -1355,8 +1373,8 @@ header.app-header .logo::before{display:none;}
 
 <script>window.ALLCLUB_CAMPUS="main";
 /* ============================================================
-   All Club Credit Union - Single-file banking app
-   GitHub Pages + Supabase shared simulation, local cache
+   All Club Credit Union V6 - secured campus interface
+   GitHub Pages + server-authorized Supabase simulation
    Banker role handles deposits (members cannot self-deposit)
    ============================================================ */
 const SUPABASE_URL =
@@ -1365,7 +1383,7 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
 "sb_publishable_zzE1deqJoEQ6nz_KgirUgA_Kr8O1lTG";
 
-const sb = window.supabase?.createClient ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY) : null;
+const sb = null;
 const STORAGE_KEY = 'allclub_cu_v2';
 const CAMPUS = window.ALLCLUB_CAMPUS === 'west' ? 'west' : 'main';
 const CAMPUS_NAME = CAMPUS === 'west' ? 'West Campus' : 'Main Campus';
@@ -1379,48 +1397,7 @@ function scheduleKey(date) { return CAMPUS === 'west' ? 'west::' + date : date; 
 
 const MAX_PIN_ATTEMPTS = 5;
 
-const DEFAULT_DATA = {
-  version: 3,
-  storePin: '0000',
-  adminPin: '050409',
-  bankerPin: '0000',
-  interestRate: 0.005,
-  schedules: {},
-  nextAcc: 1002,
-  members: {
-    'ACC1001': {
-      accountNumber: 'ACC1001',
-      name: 'Alex Rivera',
-      campus: 'main',
-      pin: '1234',
-      checking: 1250.50,
-      savings: 3400.00,
-      points: 120,
-      rank: 'Bronze',
-      failedAttempts: 0,
-      locked: false,
-      photo: null,
-      streak: 1,
-      lastDaily: null,
-      createdAt: new Date().toISOString(),
-      transactions: [
-        { id: 1, date: new Date().toISOString(), type: 'Deposit', account: 'checking', amount: 500, note: 'Opening deposit (Banker)' }
-      ],
-      goals: [],
-      achievements: ['first_login'],
-      lotteryTickets: 0,
-      notifications: [
-        { id: 'n1', date: new Date().toISOString(), message: 'Welcome to All Club Credit Union! Your account is ready.', read: false, type: 'info' }
-      ]
-    }
-  },
-  sales: [],
-  tellerLog: [],
-  lotteryPool: 0,
-  lastLottery: null,
-  auditLog: [],
-  payments: []
-};
+const DEFAULT_DATA = {members:{},schedules:{},auditLog:[],payments:[],sales:[],tellerLog:[]};
 
 let db = null;
 let currentUser = null;
@@ -1428,11 +1405,13 @@ let currentUser = null;
 
 function migrateDb(data) {
   if (!data || !data.members) data = structuredClone(DEFAULT_DATA);
-  if (!data.bankerPin) data.bankerPin = '4321';
+
   if (!data.tellerLog) data.tellerLog = [];
   if (data.interestRate == null) data.interestRate = 0.005;
   if (!data.schedules) data.schedules = {};
   if (!Array.isArray(data.auditLog)) data.auditLog = [];
+  if(!data.coachAccounts || typeof data.coachAccounts!=="object")data.coachAccounts={};
+  if(typeof data.coachRosterInitialized!=="boolean")data.coachRosterInitialized=false;
   if (!Array.isArray(data.payments)) data.payments = [];
   Object.values(data.members).forEach(m => {if(m.campus !== 'west')m.campus='main';});
   if(!data.campusRates)data.campusRates={};
@@ -1447,35 +1426,11 @@ function migrateDb(data) {
 }
 
 /* ---------- Persistence ---------- */
-function loadDB() {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) {
-      db = migrateDb(JSON.parse(raw));
-    } else {
-      db = migrateDb(structuredClone(DEFAULT_DATA));
-      saveDBLocal();
-    }
-  } catch (e) {
-    db = migrateDb(structuredClone(DEFAULT_DATA));
-    saveDBLocal();
-  }
-}
+function loadDB() { /* moved to secure server adapter */ }
 
-function saveDBLocal() {
-  try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(db));
-  } catch (e) {
-    console.warn('localStorage save failed', e);
-  }
-}
+function saveDBLocal() { /* moved to secure server adapter */ }
 
-function saveDB(force) {
-  if (!db) return;
-  db.updatedAt = new Date().toISOString();
-  saveDBLocal();
-  pushCloud(force);
-}
+function saveDB(force) { /* moved to secure server adapter */ }
 
 /* ---------- Cloud sync (Supabase: one shared JSON document, live) ---------- */
 const STATE_ID = 'main';
@@ -1526,128 +1481,32 @@ function applyChanges(cloud, base, local) {
   return out;
 }
 
-async function fetchCloud() {
-  const { data, error } = await sb.from('club_state').select('data,version').eq('id', STATE_ID).maybeSingle();
-  if (error) throw error;
-  return data;
-}
+async function fetchCloud() { /* moved to secure server adapter */ }
 
 // snap = state the cloud copy was built from; null = take the cloud copy as-is
-function adopt(cloudDoc, version, snap, refresh) {
-  _base = clone(cloudDoc); _version = version;
-  db = migrateDb(snap ? applyChanges(cloudDoc, snap, db) : clone(cloudDoc));
-  saveDBLocal();
-  localStorage.removeItem('allclub_base');
-  if (refresh) _needsRefresh = true;
-}
+function adopt(cloudDoc, version, snap, refresh) { /* moved to secure server adapter */ }
 
-async function pushCloud(force) {
-  if (!_syncReady) return;
-  if (force) _force = true;
-  if (_pushing) { _dirty = true; return; }
-  _pushing = true;
-  try {
-    do {
-      _dirty = false;
-      const snap = clone(db), old = _base;
-      let ver = _version;
-      let target = _force ? snap : applyChanges(_base, _base, snap);
-      for (let i = 0; ; i++) {
-        const { data, error } = await sb.from('club_state')
-          .update({ data: target, version: ver + 1, updated_at: new Date().toISOString() })
-          .eq('id', STATE_ID).eq('version', ver).select('version');
-        if (error) throw error;
-        if (data && data.length) { adopt(target, ver + 1, snap, !same(target, snap)); _force = false; break; }
-        if (i >= 5) throw new Error('Too many conflicts');
-        const cur = await fetchCloud();           // another device saved first: merge on top of theirs
-        ver = cur.version;
-        target = _force ? snap : applyChanges(cur.data, old, snap);
-      }
-    } while (_dirty);
-    updateSyncStatus('Synced · ' + new Date().toLocaleTimeString(), true);
-  } catch (e) {
-    console.warn('Cloud push failed', e);
-    try { localStorage.setItem('allclub_base', JSON.stringify(_base)); } catch (x) {}
-    updateSyncStatus('Offline — will retry', false);
-    clearTimeout(window._retryT);
-    window._retryT = setTimeout(() => pushCloud(), 8000);
-  } finally { _pushing = false; }
-}
+async function pushCloud(force) { /* moved to secure server adapter */ }
 
-async function pullCloud() {
-  if (!_syncReady || _pushing) return;
-  try {
-    const { data: v } = await sb.from('club_state').select('version').eq('id', STATE_ID).maybeSingle();
-    if (!v || v.version <= _version) return;
-    const cur = await fetchCloud();
-    if (_pushing || !cur) return;
-    adopt(cur.data, cur.version, _base, true);
-    if (!same(db, _base)) pushCloud();
-    updateSyncStatus('Synced · ' + new Date().toLocaleTimeString(), true);
-  } catch (e) { console.warn('Cloud pull failed', e); }
-}
+async function pullCloud() { /* moved to secure server adapter */ }
 
-async function syncNow() {
-  if (!_syncReady) { await initCloud(); return; }
-  await pullCloud(); await pushCloud(); toast('Synced');
-}
-function forcePushCloud() {
-  if (!_syncReady) return toast('Not connected to cloud', true);
-  if (!confirm('Replace the cloud data (and every other device) with this device\'s data?')) return;
-  saveDB(true); toast('Cloud overwritten');
-}
+async function syncNow() { /* moved to secure server adapter */ }
+function forcePushCloud() { toast('Only dev can restore, overwrite, reset or permanently delete bank records.',true); }
 
 // One-time import of the old per-member "members" table, if it exists
-async function importOldMembers() {
-  try {
-    const { data } = await sb.from('members').select('*');
-    (data || []).forEach(r => {
-      const m = db.members[r.accountNumber] || { accountNumber: r.accountNumber, failedAttempts: 0, locked: false, photo: null, streak: 0, lastDaily: null, createdAt: new Date().toISOString(), transactions: [], goals: [], achievements: [], lotteryTickets: 0, notifications: [] };
-      Object.assign(m, { name: r.name, pin: r.pin, checking: Number(r.checking || 0), savings: Number(r.savings || 0), points: Number(r.points || 0), rank: r.rank || m.rank });
-      db.members[r.accountNumber] = m;
-      const n = parseInt(String(r.accountNumber).replace(/\D/g, ''), 10);
-      if (n >= db.nextAcc) db.nextAcc = n + 1;
-    });
-  } catch (e) {}
-}
+async function importOldMembers() { /* moved to secure server adapter */ }
 
-async function initCloud() {
-  try {
-    if (!window.supabase) throw new Error('Supabase library not loaded');
-    updateSyncStatus('Connecting…', false);
-    let row = await fetchCloud();
-    if (!row) {                                   // first device ever: seed the cloud
-      await importOldMembers();
-      const { error } = await sb.from('club_state').insert({ id: STATE_ID, data: clone(db), version: 1 });
-      if (error && !(row = await fetchCloud())) throw error;
-      if (!row) row = { data: clone(db), version: 1 };
-    }
-    let pending = null;                           // edits made offline in a previous session
-    try { pending = JSON.parse(localStorage.getItem('allclub_base') || 'null'); } catch (e) {}
-    adopt(row.data, row.version, pending, true);
-    _syncReady = true;
-    if (!same(db, _base)) pushCloud();
-    sb.channel('club_state_live').on('postgres_changes', { event: '*', schema: 'public', table: 'club_state' }, () => pullCloud()).subscribe();
-    setInterval(() => {
-      pullCloud();
-      const t = ((document.activeElement || {}).tagName || '');
-      if (_needsRefresh && !/INPUT|TEXTAREA|SELECT/.test(t)) { _needsRefresh = false; refreshOpenUI(); }
-    }, 6000);
-    document.addEventListener('visibilitychange', () => { if (!document.hidden) pullCloud(); });
-    window.addEventListener('online', () => { pullCloud(); pushCloud(); });
-    updateSyncStatus('Connected · live sync on', true);
-  } catch (e) {
-    console.warn('Cloud init failed', e);
-    updateSyncStatus('Not connected — ' + (e.message || e) + ' (running locally)', false);
-  }
-}
+async function initCloud() { /* moved to secure server adapter */ }
 
 function refreshOpenUI() {
+  updateSafetyBanner();
+  if (currentUser && (safetyCampus().locked || (currentUser.role === "member" && safetyFor(currentUser.account).locked))) { const why=safetyFor(currentUser.account||"").reason||"A developer lock is active"; logout(); toast("Access paused by dev: "+why,true); return; }
+  if(currentUser?.role==="admin"){const roster=db?.coachAccounts||{},legacy=!db?.coachRosterInitialized&&!Object.keys(roster).length,row=roster[currentUser.coachUser];if((!legacy&&(!row||!row.enabled||!(row.campus===CAMPUS||row.campus==="all")))||(legacy&&currentUser.coachUser!=="coach")){logout();toast("Coach account disabled or changed. Please sign in again.",true);return;}}
   if (!currentUser) {
     if (typeof initLanding === 'function') initLanding();
     return;
   }
-  if (currentUser.role === 'member') refreshMemberUI();
+  if (currentUser.role === 'member') { refreshMemberUI(); renderCampusChallenge(); }
   if (currentUser.role === 'banker') refreshBankerUI();
   if (currentUser.role === 'store') refreshStoreUI();
   if (currentUser.role === 'admin') refreshAdminUI();
@@ -1670,7 +1529,7 @@ function showScreen(id) {
 }
 function switchTab(area, el) {
   const panels = {
-    member: ['m-home','m-transact','m-history','m-payments','m-insights','m-rewards','m-card','m-goals','m-notifs','m-settings'],
+    member: ['m-home','m-transact','m-history','m-payments','m-insights','m-rewards','m-card','m-goals','m-notifs','m-settings','m-v5'],
     banker: ['bk-teller','bk-bulk','bk-members','bk-activity'],
     store: ['st-charge','st-members','st-sales','st-reports'],
     admin: ['ad-dash','ad-members','ad-ops','ad-create','ad-payroll','ad-reports','ad-backup','ad-vault']
@@ -1716,7 +1575,7 @@ function dollars(c) { return c / 100; }
 function auditEvent(action, details, target, severity) {
   if (!db) return;
   if (!Array.isArray(db.auditLog)) db.auditLog = [];
-  db.auditLog.unshift({id:uid(), date:new Date().toISOString(), actor:currentUser?.role || 'system',
+  db.auditLog.unshift({id:uid(), date:new Date().toISOString(), actor:currentUser?.role==='admin'?'coach:'+String(currentUser.coachUser||'coach'):(currentUser?.role || 'system'),
     action:String(action||''), details:String(details||''), target:displayAccount(target || ''), severity:severity||'normal',campus:CAMPUS});
   if (db.auditLog.length > 1500) db.auditLog.length = 1500;
 }
@@ -1890,8 +1749,13 @@ async function openBarcodeScanner(role) {
         _scanDetector = new BarcodeDetector();
       }
       scanLoop();
+    } else if (typeof window.jsQR === 'function') {
+      const frame = document.createElement('canvas'), ctx = frame.getContext('2d',{willReadFrequently:true});
+      _scanDetector = { detect: async source => { if (source.videoWidth < 10 || !ctx) return []; frame.width=source.videoWidth;frame.height=source.videoHeight;ctx.drawImage(source,0,0);const pixels=ctx.getImageData(0,0,frame.width,frame.height);const match=window.jsQR(pixels.data,frame.width,frame.height,{inversionAttempts:'dontInvert'});return match?[{rawValue:match.data}]:[]; } };
+      status.textContent='QR camera scanning active. For a hardware laser barcode scanner, use the text field.';
+      scanLoop();
     } else {
-      status.textContent = 'Camera on — this iPad browser can’t auto-read barcodes. Type the code, or use Safari/Chrome.';
+      status.textContent = 'Camera on, but code detection is unavailable. You can use a USB barcode scanner or type the card code.';
     }
   } catch (err) {
     console.warn(err);
@@ -1907,14 +1771,14 @@ function scanLoop() {
     _scanRAF = requestAnimationFrame(scanLoop);
     return;
   }
-  _scanDetector.detect(video).then(codes => {
+  _scanDetector.detect(video).then(async codes => {
     if (_scanLocked) return;
     if (codes && codes.length) {
       const raw = (codes[0].rawValue || '').trim();
       if (raw) {
         _scanLocked = true;
         status.textContent = 'Found: ' + raw;
-        const ok = scanMember(_scanRole, raw);
+        const ok = await Promise.resolve(scanMember(_scanRole, raw));
         if (ok) {
           closeBarcodeScanner();
         } else {
@@ -1945,107 +1809,15 @@ function closeBarcodeScanner() {
 }
 
 /* ---------- Auth ---------- */
-function memberLogin() {
-  const acc = resolveAccount(document.getElementById('m-acc').value);
-  const pin = document.getElementById('m-pin').value.trim();
-  const msg = document.getElementById('m-login-msg');
-  msg.textContent = '';
+function memberLogin() { /* moved to secure server adapter */ }
 
-  const m = db.members[acc];
-  if (!m) {
-    msg.textContent = 'Account not found.';
-    return;
-  }
-  if(!inCampus(m)) { msg.textContent='This member belongs to '+campusName(campusOf(m))+'. Select that campus to sign in.';return; }
-  if (m.locked) {
-    msg.textContent = 'Account locked. Contact admin.';
-    return;
-  }
-  if (m.pin !== pin) {
-    m.failedAttempts = (m.failedAttempts || 0) + 1;
-    if (m.failedAttempts >= MAX_PIN_ATTEMPTS) {
-      m.locked = true;
-      pushNotification(m, 'Your account was locked due to too many incorrect PIN attempts. Contact admin to unlock.', 'alert');
-      saveDB();
-      msg.textContent = 'Too many attempts. Account locked.';
-      return;
-    }
-    saveDB();
-    msg.textContent = `Incorrect PIN. ${MAX_PIN_ATTEMPTS - m.failedAttempts} tries left.`;
-    return;
-  }
-  m.failedAttempts = 0;
-  saveDB();
-  currentUser = { role: 'member', account: acc };
-  document.getElementById('m-pin').value = '';
-  showScreen('screen-member');
-  document.querySelectorAll('#member-tabs .tab').forEach((t,i) => t.classList.toggle('active', i === 0));
-  ['m-home','m-transact','m-history','m-payments','m-insights','m-rewards','m-card','m-goals','m-notifs','m-settings'].forEach((id,i) => {
-    document.getElementById(id).classList.toggle('hidden', i !== 0);
-  });
-  refreshMemberUI();
-  toast('Welcome, ' + m.name);
-}
+function bankerLogin() { /* moved to secure server adapter */ }
 
-function bankerLogin() {
-  const pin = document.getElementById('b-pin').value.trim();
-  const msg = document.getElementById('b-login-msg');
-  if (pin !== db.bankerPin) {
-    msg.textContent = 'Incorrect banker PIN.';
-    return;
-  }
-  currentUser = { role: 'banker' };
-  document.getElementById('b-pin').value = '';
-  showScreen('screen-banker');
-  document.querySelectorAll('#screen-banker .tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  ['bk-teller','bk-bulk','bk-members','bk-activity'].forEach((id,i) => {
-    document.getElementById(id).classList.toggle('hidden', i!==0);
-  });
-  refreshBankerUI();
-  toast('Banker terminal ready');
-}
+function storeLogin() { /* moved to secure server adapter */ }
 
-function storeLogin() {
-  const pin = document.getElementById('s-pin').value.trim();
-  const msg = document.getElementById('s-login-msg');
-  if (pin !== db.storePin) {
-    msg.textContent = 'Incorrect store PIN.';
-    return;
-  }
-  currentUser = { role: 'store' };
-  document.getElementById('s-pin').value = '';
-  showScreen('screen-store');
-  document.querySelectorAll('#screen-store .tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  ['st-charge','st-members','st-sales','st-reports'].forEach((id,i) => {
-    document.getElementById(id).classList.toggle('hidden', i!==0);
-  });
-  refreshStoreUI();
-  toast('Store terminal ready');
-}
+function adminLogin() { /* moved to secure server adapter */ }
 
-function adminLogin() {
-  const pin = document.getElementById('a-pin').value.trim();
-  const msg = document.getElementById('a-login-msg');
-  if (pin !== db.adminPin) {
-    msg.textContent = 'Incorrect admin PIN.';
-    return;
-  }
-  currentUser = { role: 'admin' };
-  auditEvent('Admin session', 'Admin terminal opened');saveDB();
-  document.getElementById('a-pin').value = '';
-  showScreen('screen-admin');
-  document.querySelectorAll('#screen-admin .tab').forEach((t,i) => t.classList.toggle('active', i===0));
-  ['ad-dash','ad-members','ad-ops','ad-create','ad-payroll','ad-reports','ad-backup','ad-vault'].forEach((id,i) => {
-    document.getElementById(id).classList.toggle('hidden', i!==0);
-  });
-  refreshAdminUI();
-  toast('Admin access granted');
-}
-
-function logout() {
-  currentUser = null;
-  showScreen('screen-role');
-}
+function logout() { /* moved to secure server adapter */ }
 
 /* ---------- Member Banking ---------- */
 function getMember() {
@@ -2100,22 +1872,7 @@ function doTransfer() {
   toast('Transferred ' + money(amt));
 }
 
-function changeMemberPin() {
-  const m = getMember();
-  const oldP = document.getElementById('pin-old').value;
-  const newP = document.getElementById('pin-new').value;
-  const conf = document.getElementById('pin-confirm').value;
-  if (oldP !== m.pin) return toast('Current PIN incorrect', true);
-  if (!/^\d{4,6}$/.test(newP)) return toast('PIN must be 4-6 digits', true);
-  if (newP !== conf) return toast('PINs do not match', true);
-  m.pin = newP;
-  auditEvent('Member changed PIN', 'PIN updated by account holder (value not logged)', m.accountNumber);
-  saveDB();
-  document.getElementById('pin-old').value = '';
-  document.getElementById('pin-new').value = '';
-  document.getElementById('pin-confirm').value = '';
-  toast('PIN updated');
-}
+function changeMemberPin() { /* moved to secure server adapter */ }
 
 function claimDailyReward() {
   const m = getMember();
@@ -2841,7 +2598,7 @@ function renderAdminMembers() {
         <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="printMemberInfo('${m.accountNumber}')">Print</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="secondary" onclick="unlockMember('${m.accountNumber}')">Unlock</button>
         <button style="padding:4px 8px;font-size:0.75rem" class="warn" onclick="adminToggleCard('${m.accountNumber}')">${m.cardFrozen?'Unfreeze':'Freeze'} Card</button>
-        <button style="padding:4px 8px;font-size:0.75rem" class="danger" onclick="deleteMember('${m.accountNumber}')">Delete</button>
+        
       </td>
     </tr>`
   ).join('') || '<tr><td colspan="6" class="muted">No members</td></tr>';
@@ -2942,16 +2699,7 @@ function editBalances() {
   toast('Balances updated for ' + displayAccount(acc));
 }
 
-function deleteMember(acc) {
-  if(!inCampus(db.members[acc]))return toast('Member belongs to a different campus',true);
-  if (!confirm('Delete member ' + acc + '?')) return;
-  const deletedName = db.members[acc]?.name || '';
-  delete db.members[acc];
-  auditEvent('Member deleted', deletedName, acc,'warn');
-  saveDB();
-  refreshAdminUI();
-  toast('Member deleted');
-}
+function deleteMember() { toast('Only dev can restore, overwrite, reset or permanently delete bank records.',true); }
 
 function unlockMember(acc) {
   if(!inCampus(db.members[acc]))return;
@@ -3342,47 +3090,11 @@ function exportData() {
   document.getElementById('backup-msg').textContent = 'Export downloaded.';
 }
 
-function importData(ev) {
-  const file = ev.target.files[0];
-  if (!file) return;
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    try {
-      const data = JSON.parse(e.target.result);
-      if (!data.members) throw new Error('Invalid file');
-      db = migrateDb(data);
-      if (!db.bankerPin) db.bankerPin = '4321';
-      if (!db.tellerLog) db.tellerLog = [];
-      saveDB(true);
-      refreshAdminUI();
-      document.getElementById('backup-msg').textContent = 'Import successful.';
-      toast('Data imported');
-    } catch (err) {
-      toast('Import failed: invalid file', true);
-    }
-  };
-  reader.readAsText(file);
-}
+function importData() { toast('Only dev can restore, overwrite, reset or permanently delete bank records.',true); }
 
-function emergencyRestore() {
-  if (!confirm('Restore defaults for BOTH CAMPUSES? Current data will be overwritten.')) return;
-  db = migrateDb(structuredClone(DEFAULT_DATA));
-  saveDB(true);
-  refreshAdminUI();
-  document.getElementById('backup-msg').textContent = 'Defaults restored.';
-  toast('Defaults restored');
-}
+function emergencyRestore() { toast('Only dev can restore, overwrite, reset or permanently delete bank records.',true); }
 
-function resetBank() {
-  if (!confirm('DELETE ALL DATA for BOTH CAMPUSES and reset the bank? This cannot be undone.')) return;
-  if (!confirm('Are you absolutely sure?')) return;
-  localStorage.removeItem(STORAGE_KEY);
-  db = migrateDb(structuredClone(DEFAULT_DATA));
-  saveDB(true);
-  refreshAdminUI();
-  document.getElementById('backup-msg').textContent = 'Bank has been fully reset.';
-  toast('Bank reset');
-}
+function resetBank() { toast('Only dev can restore, overwrite, reset or permanently delete bank records.',true); }
 
 /* ---------- Fun: landing, demo, sounds ---------- */
 const TAGLINES = [
@@ -3414,23 +3126,7 @@ function playChime(kind) {
   } catch (e) {}
 }
 
-function demoLogin() {
-  if(CAMPUS !== 'main' || !inCampus(db.members['ACC1001']))return toast('Demo member is on Main Campus',true);
-  if (!db.members['ACC1001']) {
-    toast('Demo member missing — reset defaults from Admin', true);
-    return;
-  }
-  currentUser = { role: 'member', account: 'ACC1001' };
-  showScreen('screen-member');
-  document.querySelectorAll('#member-tabs .tab').forEach((t,i) => t.classList.toggle('active', i === 0));
-  ['m-home','m-transact','m-history','m-payments','m-insights','m-rewards','m-card','m-goals','m-notifs','m-settings'].forEach((id,i) => {
-    const el = document.getElementById(id);
-    if (el) el.classList.toggle('hidden', i !== 0);
-  });
-  refreshMemberUI();
-  playChime('reward');
-  toast('Welcome, Alex (demo)');
-}
+function demoLogin() { /* moved to secure server adapter */ }
 
 function initLanding() {
   // Floating coins
@@ -3660,28 +3356,85 @@ function renderOperations(){
     <time>${escapeHtml(a.actor||'system')} · ${a.target?'Account '+escapeHtml(a.target)+' · ':''}${new Date(a.date).toLocaleString()}</time></div></div>`).join(''):
     '<p class="muted">No matching events yet. New actions will appear here.</p>';
 }
-function changeStaffPin(){
-  if(currentUser?.role!=='admin')return toast('Admin only',true);
-  const role=document.getElementById('ops-role').value;
-  const pin=document.getElementById('ops-new-pin').value.trim();
-  if(!/^\d{4,6}$/.test(pin))return toast('PIN must contain 4–6 digits',true);
-  const field={admin:'adminPin',banker:'bankerPin',store:'storePin'}[role];
-  if(!field)return toast('Invalid terminal',true);
-  if(!confirm(`Change the ${role} terminal PIN?`))return;
-  db[field]=pin;auditEvent('Terminal PIN changed',role+' terminal PIN rotated (value not logged)', '', 'warn');
-  saveDB();document.getElementById('ops-new-pin').value='';renderAdminUI();toast(role+' terminal PIN changed');
+function changeStaffPin(){ /* moved to secure server adapter */ }
+
+
+/* Global safety controls, controlled from dev.html, persisted in shared bank state. */
+function safetyFor(memberKey='') {
+  const controls=db?.devControls||{}, camp=controls.campuses?.[CAMPUS];
+  const raw=String(memberKey||'');
+  const m=db?.members?.[raw] || db?.members?.[resolveAccount(raw)] || null;
+  const memberLock=controls.members?.[raw] || controls.members?.[m?.accountNumber];
+  let reason='';let scope='';
+  if(controls.bank?.locked){scope='All Club Credit Union';reason=controls.bank.reason||'Bank-wide maintenance';}
+  else if(camp?.locked){scope=CAMPUS_NAME;reason=camp.reason||'Campus temporarily unavailable';}
+  else if(m?.devLock?.locked||memberLock?.locked){scope='Member account';reason=m?.devLock?.reason||memberLock?.reason||'Developer account restriction';}
+  else if(m?.locked){scope='Member account';reason='Login locked';}
+  return {locked:!!scope,scope,reason};
 }
+function devSafetyFor(memberKey=''){
+ const c=safetyCampus();if(c.locked)return c;
+ const raw=String(memberKey||''),m=db?.members?.[raw]||db?.members?.[resolveAccount(raw)],lock=db?.devControls?.members?.[raw]||db?.devControls?.members?.[m?.accountNumber];
+ if(m?.devLock?.locked||lock?.locked)return{locked:true,scope:'Member account',reason:m?.devLock?.reason||lock?.reason||'Developer safety restriction'};
+ return {locked:false};
+}
+function safetyCampus(){const c=db?.devControls||{};return c.bank?.locked?{locked:true,scope:'All Club Credit Union',reason:c.bank.reason||'Maintenance'}:c.campuses?.[CAMPUS]?.locked?{locked:true,scope:CAMPUS_NAME,reason:c.campuses[CAMPUS].reason||'Campus temporarily paused'}:{locked:false};}
+function safetyBlock(acc='') {const state=acc?devSafetyFor(acc):safetyCampus();if(!state.locked)return false;toast(state.scope+' is locked by dev · '+state.reason,true);return true;}
+function updateSafetyBanner(){
+  const status=safetyCampus();
+  const n=document.getElementById('campus-safety-banner');
+  if(!n)return;
+  n.hidden=!status.locked;
+  n.innerHTML=status.locked?'<strong>🔒 '+escapeHtml(status.scope)+' temporarily locked by dev</strong><small>'+escapeHtml(status.reason)+' · Contact the developer for access.</small>':'';
+}
+function renderCoachChallenge(){
+ const target=document.getElementById('coach-campus-challenge');if(!target)return;const event=db?.campusChallenges?.[CAMPUS];if(!event){target.innerHTML='';return;}
+ const saved=campusMembers().reduce((n,m)=>n+(Number(m.savings)||0),0),pct=Math.min(100,Math.round(100*saved/Math.max(1,Number(event.target)||1)));
+ target.innerHTML='<div class="card"><span class="section-eyebrow">🏆 COACH VIEW · ACTIVE CAMPUS CHALLENGE</span><h3>'+escapeHtml(event.title)+'</h3><p class="muted">'+money(saved)+' / '+money(event.target)+' · '+pct+'% complete. Members see their team progress. Only dev can award milestone prizes.</p></div>';
+}
+function renderCampusChallenge(){
+  const n=document.getElementById('campus-challenge');if(!n)return;
+  const challenge=db?.campusChallenges?.[CAMPUS];
+  if(!challenge?.title){n.innerHTML='';return;}
+  const saved=currentUser?.role==='member'?Number(db.campusSavings||0):campusMembers().reduce((sum,m)=>sum+(Number(m.savings)||0),0);
+  const target=Math.max(1,Number(challenge.target)||1),pct=Math.max(0,Math.min(100,Math.round(saved/target*100)));
+  n.innerHTML='<div class="campus-challenge-card '+CAMPUS+'"><div class="heading"><span>✦ CAMPUS CHALLENGE</span><span>🏆 '+pct+'% COMPLETE</span></div><h3>'+escapeHtml(challenge.title)+'</h3><p>Work together to grow your campus savings. Reach the target to unlock a celebration from dev!</p><div class="rail"><span style="width:'+pct+'%"></span></div><div class="progress-meta"><span>'+money(saved)+' saved</span><span>'+money(target)+' goal</span></div></div>';
+}
+// Enforce visible safety restrictions on navigation and high-value actions across both portals.
+function protectAction(name,getAccount){
+  const original=window[name];
+  if(typeof original!=='function')return;
+  window[name]=function(...args){
+    const acc=typeof getAccount==='function'?getAccount.apply(this,args):(currentUser?.role==='member'?currentUser.account:'');
+    if(currentUser?.role==='member' && safetyBlock(currentUser.account))return;
+    if(safetyBlock(acc))return;
+    return original.apply(this,args);
+  };
+}
+const campusActions=['createMember','setInterestRate','applyInterest','postAnnouncement','saveDaySchedule','payDaySchedule','clearDaySchedule','addSchedulePerson','removeSchedulePerson','changeStaffPin','bankerBulkDeposit','claimDailyReward','doTransfer','doWithdraw','buyReward','buyLotteryTicket','addGoal','contributeGoal','toggleOwnCard','uploadMemberPhoto','markAllNotifsRead','clearAllNotifs'];
+const perMemberActions={
+  bankerDeposit:()=>document.getElementById('bk-member-select')?.value,
+  bankerWithdraw:()=>document.getElementById('bk-member-select')?.value,
+  storeCharge:()=>document.getElementById('st-member-select')?.value,
+  editBalances:()=>document.getElementById('edit-acc')?.value,
+  editMemberName:acc=>acc,editMemberPin:acc=>acc,unlockMember:acc=>acc,adminToggleCard:acc=>acc,
+  deleteMember:acc=>acc,printMemberInfo:acc=>acc,
+  saveMemberProfile:()=>document.getElementById('profile-account')?.value,
+  changeMemberPin:()=>currentUser?.account,
+  sendMemberPayment:()=>document.getElementById('pay-member')?.value
+};
+campusActions.forEach(name=>protectAction(name));
+Object.entries(perMemberActions).forEach(([name,fn])=>protectAction(name,fn));
+// Bulk teller operations are blocked for locked members, even when the campus is open.
+const _bankerBulkDepositBeforeSafety=window.bankerBulkDeposit;
+if(typeof _bankerBulkDepositBeforeSafety==='function')window.bankerBulkDeposit=function(...args){
+  for(const el of document.querySelectorAll('.bk-bulk-check:checked'))if(safetyBlock(el.value))return;
+  return _bankerBulkDepositBeforeSafety.apply(this,args);
+};
 
 /* ---------- Boot ---------- */
-async function startApp() {
-  loadDB();                      // show instantly from the local cache
-  showScreen('screen-role');
-  initLanding();
-  await initCloud();             // then load/sync the shared cloud copy
-  refreshOpenUI();
-}
+async function startApp() { /* moved to secure server adapter */ }
 
-startApp();
 </script>
-</body>
+<script src="./v5-campus.js"></script><script src="./secure-api.js"></script><script src="./secure-campus.js"></script></body>
 </html>
