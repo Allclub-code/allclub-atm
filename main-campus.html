@@ -118,12 +118,6 @@
     width: 72px; height: 72px; border-radius: 50%; object-fit: cover;
     background: var(--panel2); border: 2px solid var(--border);
   }
-  .qr-box {
-    width: 120px; height: 120px; background: #fff; color: #000;
-    display: flex; align-items: center; justify-content: center;
-    font-family: monospace; font-size: 11px; word-break: break-all;
-    padding: 6px; border-radius: 6px; margin: 10px auto;
-  }
   .rank-badge {
     display: inline-block; padding: 3px 8px; border-radius: 6px;
     font-size: 0.75rem; font-weight: 600; background: var(--purple); color: #1a0033;
@@ -554,12 +548,13 @@ header.app-header .logo::before{display:none;}
 /* V5 member financial lab and card sign-in */
 .v5-new{font-size:9px;letter-spacing:.06em;color:#194600;background:#c8f47f;border-radius:4px;padding:2px 4px;margin-left:5px}.v5-login-scan{margin:14px 0;padding:13px;background:#f3f7ff;border:1px solid #d9e3f3;border-radius:10px}.v5-login-scan p{font-size:11px}.v5-small-label{font-size:10px;letter-spacing:.09em;color:#587499;font-weight:800}.v5-login-scan input{width:100%;margin:9px 0}.v5-print-warning{background:#fff7dc;border:1px solid #f3deb0;color:#795400;border-radius:10px;padding:12px 15px;font-size:12px}.v5-locked{background:#ffedf0;border:1px solid #ffc9d0;color:#9b3346;font-weight:720;padding:12px;border-radius:9px;margin:10px 0}.v5-panel-hero{background:linear-gradient(110deg,#102f57,#235b9f);color:white;border-radius:16px;padding:23px;margin:10px 0 19px;display:flex;justify-content:space-between;gap:16px;align-items:center}.v5-panel-hero.west{background:linear-gradient(115deg,#35115d,#702fba)}.v5-panel-hero span{font-size:9px;letter-spacing:.13em;font-weight:800;opacity:.85}.v5-panel-hero h2{font-size:24px;margin:8px 0 5px;color:white}.v5-panel-hero p{max-width:470px;opacity:.85;font-size:13px}.v5-score{display:flex;flex-direction:column;min-width:135px;text-align:center;padding:12px;background:#ffffff19;border:1px solid #ffffff50;border-radius:13px}.v5-score strong{font-size:34px}.v5-score span{font-size:10px}.v5-cards-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}.v5-cards-grid>.card{margin:0!important}.v5-section-title{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:7px}.v5-section-title h3{margin:0}.v5-pill{background:#e8f2ff;border-radius:16px;padding:4px 9px;font-size:11px;color:#1a6097;font-weight:750;display:inline-flex}.v5-fields{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}.v5-fields label{margin-top:4px}.v5-cards-grid input,.v5-cards-grid select{margin-top:4px}.v5-cards-grid button{margin-top:9px}.v5-inline{border-bottom:1px solid #e6edf6;padding:11px 0;display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap}.v5-inline strong{font-size:12px}.v5-inline small{font-size:10px;display:block;color:#7a8da4;margin-top:3px}.v5-sublist{margin-top:12px}.v5-mission{border:1px solid #e2eaf3;border-radius:10px;padding:12px;margin:10px 0}.v5-mission p{margin:7px 0;font-size:12px}.v5-mission-answers{display:flex;gap:8px;align-items:center}.v5-mission-answers select{flex:1}.v5-tiny{font-size:10px;color:#7184a1;margin-top:12px}@media(max-width:780px){.v5-cards-grid{grid-template-columns:1fr}.v5-panel-hero{padding:17px}.v5-panel-hero h2{font-size:20px}.v5-score{min-width:90px}.v5-score strong{font-size:25px}}@media(max-width:450px){.v5-panel-hero{align-items:start;flex-direction:column}.v5-fields{grid-template-columns:1fr}}
 </style>
-<script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/jsbarcode@3.11.6/dist/JsBarcode.all.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.4/build/qrcode.min.js"></script>
 
-</head>
-<body>
+
+
+
+<link rel="stylesheet" href="allclub-brand.css">
+<script src="./allclub-barcode.js"></script></head>
+<body class="club-main">
 <div class="campus-banner"><strong>ALL CLUB CREDIT UNION</strong><span>Main Campus</span><a href="index.html">Switch Campus ↗</a></div>
 <div id="app">
 
@@ -901,9 +896,8 @@ header.app-header .logo::before{display:none;}
           </div>
           <div class="barcode-wrap">
             <div class="muted" style="font-size:0.7rem;margin-bottom:6px">ACCOUNT LOOKUP CODE · NOT A LOGIN KEY</div>
-            <canvas id="card-qr-canvas" width="180" height="180" style="display:block;margin:0 auto;background:#fff;border-radius:10px;padding:8px"></canvas>
-            <svg id="card-barcode" style="width:100%;max-width:260px;height:44px;margin-top:10px"></svg>
-            <div class="barcode-acc" id="card-qr">0000</div>
+            <div id="card-barcode" style="width:100%;max-width:260px;height:44px;margin:10px auto 0"></div>
+            <div class="barcode-acc" id="card-account-label">0000</div>
           </div>
           <div class="muted" style="text-align:center;font-size:0.75rem;margin-top:8px">Present this card at participating stores &amp; the teller window</div>
         </div>
@@ -990,7 +984,7 @@ header.app-header .logo::before{display:none;}
       <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / WORKSPACE</div><h1>Teller desk</h1><p>Process assisted account deposits and withdrawals.</p></div></div>
       <div class="card">
         <h3>Select Member</h3>
-        <label>Scan / Enter Member Card</label><p class="muted">For members with a dev-issued physical card, an active QR/barcode scan is required before checkout. Lost or frozen card codes cannot be charged. Members without an issued card can use the legacy staff lookup.</p>
+        <label>Scan / Enter Member Card</label><p class="muted">For members with a dev-issued physical card, an active barcode scan is required before checkout. Lost or frozen card codes cannot be charged. Members without an issued card can use the legacy staff lookup.</p>
         <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
           <input id="bk-scan" type="text" placeholder="Type or paste account number from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('banker');event.preventDefault();}">
           <button class="teal" style="white-space:nowrap" onclick="scanMember('banker')">Lookup</button>
@@ -1096,7 +1090,7 @@ header.app-header .logo::before{display:none;}
       <div class="page-heading interior-page-heading"><div><div class="section-eyebrow">ALL CLUB / WORKSPACE</div><h1>Point of sale</h1><p>Record fictional club card purchases.</p></div></div>
       <div class="card">
         <h3>Charge Member</h3>
-        <label>Scan / Enter Member Card</label><p class="muted">For members with a dev-issued physical card, an active QR/barcode scan is required before checkout. Lost or frozen card codes cannot be charged. Members without an issued card can use the legacy staff lookup.</p>
+        <label>Scan / Enter Member Card</label><p class="muted">For members with a dev-issued physical card, an active barcode scan is required before checkout. Lost or frozen card codes cannot be charged. Members without an issued card can use the legacy staff lookup.</p>
         <div style="display:flex;gap:8px;margin-bottom:10px;flex-wrap:wrap">
           <input id="st-scan" type="text" placeholder="Type or paste account number from card" style="margin-bottom:0;flex:1;min-width:140px" onkeydown="if(event.key==='Enter'){scanMember('store');event.preventDefault();}">
           <button class="blue" style="white-space:nowrap" onclick="scanMember('store')">Lookup</button>
@@ -1362,7 +1356,7 @@ header.app-header .logo::before{display:none;}
   <div class="scan-frame">
     <video id="scan-video" playsinline muted autoplay></video>
   </div>
-  <p class="hint">Point the camera at the member card QR code</p>
+  <p class="hint">Point the camera at the member card barcode</p>
   <p class="scan-status" id="scan-status">Starting camera…</p>
   <div class="actions">
     <button class="danger" onclick="closeBarcodeScanner()">Close</button>
@@ -1668,46 +1662,8 @@ function scanMember(role, codeFromScanner) {
   return true;
 }
 
-function memberQrPayload(accountNumber, name, rank) {
-  const acc = displayAccount(accountNumber || '0000');
-  // Short, scannable payload for iPad cameras
-  return 'ALLCLUB|' + acc + (name ? '|' + String(name).slice(0, 16) : '') + (rank ? '|' + rank : '');
-}
-
-function renderMemberBarcode(accountNumber, name, rank) {
-  const acc = displayAccount(accountNumber || '0000');
-  const payload = memberQrPayload(acc, name, rank);
-
-  // Primary: QR code (best for iPad camera)
-  const canvas = document.getElementById('card-qr-canvas');
-  if (canvas && typeof QRCode !== 'undefined') {
-    QRCode.toCanvas(canvas, payload, {
-      width: 180,
-      margin: 2,
-      errorCorrectionLevel: 'H',
-      color: { dark: '#000000', light: '#ffffff' }
-    }, function(err) {
-      if (err) console.warn('QR failed', err);
-    });
-  }
-
-  // Secondary: linear Code128 barcode (account only — shorter)
-  const svg = document.getElementById('card-barcode');
-  if (svg && typeof JsBarcode !== 'undefined') {
-    try {
-      JsBarcode(svg, acc, {
-        format: 'CODE128',
-        lineColor: '#000',
-        width: 2,
-        height: 40,
-        displayValue: false,
-        margin: 4,
-        background: '#ffffff'
-      });
-    } catch (e) {
-      console.warn('JsBarcode failed', e);
-    }
-  }
+function renderMemberBarcode(accountNumber) {
+  const el=document.getElementById('card-barcode');if(el){try{el.innerHTML=allclubBarcode(displayAccount(accountNumber||'0000'));el.firstElementChild.style.cssText='display:block;width:100%;height:44px';}catch(e){el.textContent='Account lookup unavailable';}}
 }
 
 /* ---------- Camera barcode scanner (iPad) ---------- */
@@ -1739,28 +1695,16 @@ async function openBarcodeScanner(role) {
     });
     video.srcObject = _scanStream;
     await video.play();
-    status.textContent = 'Point at barcode or QR code…';
+    status.textContent = 'Point at Code 128 barcode…';
 
     if ('BarcodeDetector' in window) {
-      const formats = ['qr_code', 'code_128', 'code_39', 'ean_13', 'ean_8', 'upc_a', 'upc_e'];
-      try {
-        _scanDetector = new BarcodeDetector({ formats });
-      } catch (e) {
-        _scanDetector = new BarcodeDetector();
-      }
-      scanLoop();
-    } else if (typeof window.jsQR === 'function') {
-      const frame = document.createElement('canvas'), ctx = frame.getContext('2d',{willReadFrequently:true});
-      _scanDetector = { detect: async source => { if (source.videoWidth < 10 || !ctx) return []; frame.width=source.videoWidth;frame.height=source.videoHeight;ctx.drawImage(source,0,0);const pixels=ctx.getImageData(0,0,frame.width,frame.height);const match=window.jsQR(pixels.data,frame.width,frame.height,{inversionAttempts:'dontInvert'});return match?[{rawValue:match.data}]:[]; } };
-      status.textContent='QR camera scanning active. For a hardware laser barcode scanner, use the text field.';
-      scanLoop();
-    } else {
-      status.textContent = 'Camera on, but code detection is unavailable. You can use a USB barcode scanner or type the card code.';
-    }
+      const formats=typeof BarcodeDetector.getSupportedFormats==='function'?await BarcodeDetector.getSupportedFormats():['code_128'];
+      if(!formats.includes('code_128'))throw Error('Code 128 camera detection unavailable');
+      _scanDetector=new BarcodeDetector({formats:['code_128']});scanLoop();
+    } else { throw Error('Code 128 camera detection unavailable'); }
   } catch (err) {
     console.warn(err);
-    status.textContent = 'Camera permission denied or unavailable. Type the account number instead.';
-    toast('Camera not available — type the account number', true);
+    closeBarcodeScanner();toast('Camera barcode scanning unavailable. Use a USB/Bluetooth barcode scanner or type the code in the scan field.', true);
   }
 }
 
@@ -1777,13 +1721,13 @@ function scanLoop() {
       const raw = (codes[0].rawValue || '').trim();
       if (raw) {
         _scanLocked = true;
-        status.textContent = 'Found: ' + raw;
+        status.textContent = 'Barcode detected; checking…';
         const ok = await Promise.resolve(scanMember(_scanRole, raw));
         if (ok) {
           closeBarcodeScanner();
         } else {
-          status.textContent = 'Code read but no matching member: ' + raw;
-          setTimeout(() => { _scanLocked = false; status.textContent = 'Point at barcode or QR code…'; }, 1500);
+          status.textContent = 'Barcode was not accepted.';
+          setTimeout(() => { if(!_scanDetector)return;_scanLocked = false; status.textContent = 'Point at Code 128 barcode…';scanLoop(); }, 1500);
         }
       }
     }
@@ -2333,7 +2277,7 @@ function refreshMemberUI() {
   document.getElementById('card-name').textContent = m.name;
   document.getElementById('card-acc').textContent = displayAccount(m.accountNumber);
   document.getElementById('card-rank').textContent = calcRank(m.points || 0);
-  document.getElementById('card-qr').textContent = displayAccount(m.accountNumber);
+  document.getElementById('card-account-label').textContent = displayAccount(m.accountNumber);
   renderMemberBarcode(m.accountNumber, m.name, calcRank(m.points || 0));
   const freezeState = document.getElementById('m-card-control-state');
   const freezeButton = document.getElementById('m-card-freeze-button');
@@ -2469,7 +2413,7 @@ function printStatement() {
   </style></head><body><div class="top"><div><div class="brand">ALL CLUB <span>CREDIT UNION</span></div><div class="tag">${CAMPUS_NAME} · DIGITAL MEMBER SERVICES · SIMULATION</div></div><div style="text-align:right"><strong>Account activity statement</strong><p class="muted">Generated ${escapeHtml(date)}</p></div></div>
   <h1>Account statement</h1><p class="muted">Prepared for ${escapeHtml(m.name)} · Account ${escapeHtml(displayAccount(m.accountNumber))}</p><div class="account-row"><div class="tile"><small>Checking balance</small><strong>${money(m.checking)}</strong></div><div class="tile"><small>Savings balance</small><strong>${money(m.savings)}</strong></div><div class="tile"><small>Combined balance</small><strong>${money(total)}</strong></div></div>
   <h2>Transaction activity</h2><table><thead><tr><th>Date</th><th>Type</th><th>Account</th><th>Amount</th><th>Description</th></tr></thead><tbody>${rows || '<tr><td colspan="5">No transactions recorded.</td></tr>'}</tbody></table>
-  <div class="disclaimer"><strong>Fictional statement.</strong> This document is generated by a banking simulator. It is not issued by a licensed or insured financial institution, does not prove assets or creditworthiness, and must not be presented as real financial documentation.</div></body></html>`);
+  <div class="disclaimer"><strong>Fictional statement.</strong> This document is generated by a banking simulator. It is not issued by a licensed or insured financial institution, does not prove assets or creditworthiness, and must not be presented as real financial documentation.</div><div class="club-support">Need help? Contact Wyatt: <a href="mailto:Franklinflight@outlook.com">Franklinflight@outlook.com</a> · Fictional banking only.</div></body></html>`);
   w.document.close();
   w.focus();
   setTimeout(() => w.print(), 100);

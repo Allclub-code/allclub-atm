@@ -15,7 +15,8 @@ label{display:block;font-size:12px;font-weight:750;color:#526781;margin:12px 0 5
 
 /* V5 developer control suite */
 .v5-mini-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-top:15px}.v5-choose{display:flex;align-items:center;justify-content:space-between;gap:10px;border:1px solid #e2e9f2;background:#f8fafd;border-radius:10px;padding:10px 12px;margin:0;cursor:pointer;min-width:0}.v5-choose input{width:18px;min-height:18px;flex:none;accent-color:#2462b5}.v5-choose span,.v5-choose>div{flex:1;min-width:0;display:flex;flex-direction:column;gap:3px}.v5-choose b{font-size:13px;color:#173d69}.v5-choose small{font-size:11px;color:#6b7a91}.v5-choose:hover{border-color:#86addb;background:#f0f7ff}.sidebar .nav-btn[data-page="cards"]{color:#d7f5a9}.sidebar .nav-btn[data-page="features"]{color:#d4c0ff}.btn.lime{background:#d9f5ae!important;border-color:#afdd72!important;color:#274b09!important}.fieldhint{font-size:11px;color:#8190a2;margin-top:3px}.actions{flex-wrap:wrap}
-</style></head><body>
+</style><link rel="stylesheet" href="allclub-brand.css">
+</head><body class="club-dev">
 <div class="topline"></div>
 <header class="brandbar"><div class="brand"><div class="logo">♜</div><div class="brand-text"><strong>All Club Credit Union</strong><small>DEVELOPER COMMAND CENTER · SIMULATION</small></div></div><div class="brand-actions"><span id="connection" class="status bad">Connecting…</span><a class="btn sm" href="index.html">Campus selector</a><button id="top-sync" class="btn sm" onclick="refreshCloud()" hidden>↻ Refresh</button><button id="top-logout" class="btn sm" onclick="devLogout()" hidden>Sign out</button></div></header>
 <section id="auth-shell"><div class="auth-card"><div class="auth-symbol">◇</div><div class="eyebrow">Global operations · both campuses</div><h1>Developer access.</h1><p class="subtext">One master operations workspace across Main Campus and West Campus.</p><div id="auth-content"><p class="loading">Connecting to the credit union database…</p></div><div class="notice warning">Fictional banking simulation only. This browser-based console is <b>not secure for real accounts, real funds, or private information.</b></div><div class="auth-footer">All Club Credit Union · Internal simulation tools</div></div></section>
@@ -525,4 +526,4 @@ window.addEventListener('DOMContentLoaded',()=>{
  setInterval(()=>{if(!busy&&document.visibilityState==='visible')refreshCloud();},16000);
  window.addEventListener('online',()=>refreshCloud());
 });
-</script><script src="./v5-dev.js"></script><script src="./secure-api.js"></script><script src="./secure-dev.js"></script></body></html>
+</script><script src="./allclub-barcode.js"></script><script src="./v5-dev.js"></script><script src="./secure-api.js"></script><script src="./secure-dev.js"></script><div class="club-support">Need help? Contact Wyatt: <a href="mailto:Franklinflight@outlook.com">Franklinflight@outlook.com</a> · Fictional banking only.</div></body></html>
