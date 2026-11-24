@@ -632,7 +632,7 @@ header.app-header .logo::before{display:none;}
       <h1>Banker Login</h1>
       <p class="sub">Teller / Cashier terminal</p>
       <label>Banker PIN</label>
-      <input id="b-pin" type="password" maxlength="6" placeholder="••••">
+      <input id="b-pin" type="password" maxlength="6" placeholder="••••" autocomplete="off">
       <div id="b-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
       <button class="teal" style="width:100%" onclick="bankerLogin()">Login</button>
       <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
@@ -644,7 +644,7 @@ header.app-header .logo::before{display:none;}
     <div class="login-wrap">
       <h1>Store Login</h1>
       <label>Store PIN</label>
-      <input id="s-pin" type="password" maxlength="6" placeholder="••••">
+      <input id="s-pin" type="password" maxlength="6" placeholder="••••" autocomplete="off">
       <div id="s-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
       <button class="blue" style="width:100%" onclick="storeLogin()">Login</button>
       <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
@@ -657,9 +657,9 @@ header.app-header .logo::before{display:none;}
       <h1>Coach Login</h1>
       <p class="muted">Use your assigned Coach username and PIN. If dev has not created coach accounts yet, use <b>coach</b> and the previous Admin PIN.</p>
       <label>Coach username</label>
-      <input id="a-user" autocomplete="username" maxlength="32" value="coach" placeholder="coach">
+      <input id="a-user" autocomplete="off" maxlength="32" value="coach" placeholder="coach">
       <label>Coach PIN</label>
-      <input id="a-pin" type="password" maxlength="6" placeholder="••••">
+      <input id="a-pin" type="password" maxlength="6" placeholder="••••" autocomplete="off">
       <div id="a-login-msg" class="error" style="margin-bottom:10px;min-height:20px"></div>
       <button class="purple" style="width:100%" onclick="adminLogin()">Login</button>
       <button class="secondary" style="width:100%;margin-top:8px" onclick="showScreen('screen-role')">Back</button>
@@ -956,11 +956,11 @@ header.app-header .logo::before{display:none;}
       <div class="card">
         <h3>Change PIN</h3>
         <label>Current PIN</label>
-        <input id="pin-old" type="password" maxlength="6">
+        <input id="pin-old" type="password" maxlength="6" autocomplete="off">
         <label>New PIN (4-6 digits)</label>
-        <input id="pin-new" type="password" maxlength="6">
+        <input id="pin-new" type="password" maxlength="6" autocomplete="off">
         <label>Confirm New PIN</label>
-        <input id="pin-confirm" type="password" maxlength="6">
+        <input id="pin-confirm" type="password" maxlength="6" autocomplete="off">
         <button onclick="changeMemberPin()">Update PIN</button>
       </div>
     </div>
@@ -1227,7 +1227,7 @@ header.app-header .logo::before{display:none;}
         <label>Starting Savings</label>
         <input id="new-savings" type="number" value="50" min="0" step="0.01">
         <label>Initial PIN (4-6 digits)</label>
-        <input id="new-pin" type="password" placeholder="Choose a PIN" maxlength="6" inputmode="numeric" autocomplete="new-password">
+        <input id="new-pin" type="password" placeholder="Choose a PIN" maxlength="6" inputmode="numeric" autocomplete="off">
         <button onclick="createMember()">Create Member</button>
       </div>
       <div class="card">
