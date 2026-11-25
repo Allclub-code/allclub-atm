@@ -1733,6 +1733,42 @@ let _scanRole = null;
 let _scanDetector = null;
 let _scanLocked = false;
 
+let _scanZXing = null;
+let _scanZXingLoad = null;
+function loadScanZXing(){
+ if(window.ZXing?.BrowserMultiFormatReader)return Promise.resolve(window.ZXing);
+ if(_scanZXingLoad)return _scanZXingLoad;
+ _scanZXingLoad=new Promise((resolve,reject)=>{
+  const script=document.createElement('script');
+  script.src='https://cdn.jsdelivr.net/npm/@zxing/library@0.21.3/umd/index.min.js';
+  script.async=true;script.crossOrigin='anonymous';
+  script.onload=()=>window.ZXing?.BrowserMultiFormatReader?resolve(window.ZXing):reject(Error('Code 128 library not available'));
+  script.onerror=()=>reject(Error('Could not load camera barcode library'));
+  document.head.appendChild(script);
+ }).catch(err=>{_scanZXingLoad=null;throw err});
+ return _scanZXingLoad;
+}
+async function startScanZXing(video,status){
+ const ZXing=await loadScanZXing();
+ const hints=new Map();
+ hints.set(ZXing.DecodeHintType.POSSIBLE_FORMATS,[ZXing.BarcodeFormat.CODE_128]);
+ hints.set(ZXing.DecodeHintType.TRY_HARDER,true);
+ _scanZXing=new ZXing.BrowserMultiFormatReader(hints,350);
+ status.textContent='Ready — hold the full barcode steady in good lighting.';
+ _scanZXing.decodeFromVideoElementContinuously(video,async result=>{
+  if(!result||_scanLocked||!_scanZXing)return;
+  const raw=String(result.getText?.()||result.text||'').trim();
+  if(!/^(?:AC5-[0-9A-F]{24}|(?:ACC)?[0-9]{1,15})$/i.test(raw))return;
+  _scanLocked=true;status.textContent='Barcode detected; checking…';
+  try{const ok=await Promise.resolve(scanMember(_scanRole,raw));
+   if(ok){closeBarcodeScanner();return;}
+   status.textContent='Card not accepted. Try again.';
+  }catch(err){status.textContent='Could not verify card. Try again.';}
+  setTimeout(()=>{if(_scanZXing){_scanLocked=false;status.textContent='Aim at the entire barcode…';}},1400);
+ });
+}
+
+
 async function openBarcodeScanner(role) {
   _scanRole = role;
   _scanLocked = false;
@@ -1753,15 +1789,22 @@ async function openBarcodeScanner(role) {
         height: { ideal: 720 }
       }
     });
+    video.setAttribute('playsinline','');
+    video.setAttribute('webkit-playsinline','');
+    video.muted=true;video.autoplay=true;
     video.srcObject = _scanStream;
     await video.play();
     status.textContent = 'Point at Code 128 barcode…';
 
-    if ('BarcodeDetector' in window) {
-      const formats=typeof BarcodeDetector.getSupportedFormats==='function'?await BarcodeDetector.getSupportedFormats():['code_128'];
-      if(!formats.includes('code_128'))throw Error('Code 128 camera detection unavailable');
-      _scanDetector=new BarcodeDetector({formats:['code_128']});scanLoop();
-    } else { throw Error('Code 128 camera detection unavailable'); }
+    let supportedNative=false;
+    try{
+      if(typeof window.BarcodeDetector==='function'){
+        const formats=typeof BarcodeDetector.getSupportedFormats==='function'?await BarcodeDetector.getSupportedFormats():[];
+        if(formats.includes('code_128')){_scanDetector=new BarcodeDetector({formats:['code_128']});supportedNative=true;}
+      }
+    }catch(err){console.warn('Native Code 128 unavailable; using fallback',err);}
+    if(supportedNative)scanLoop();
+    else await startScanZXing(video,status);
   } catch (err) {
     console.warn(err);
     closeBarcodeScanner();toast('Camera barcode scanning unavailable. Use a USB/Bluetooth barcode scanner or type the code in the scan field.', true);
@@ -1802,6 +1845,8 @@ function closeBarcodeScanner() {
   if (_scanRAF) cancelAnimationFrame(_scanRAF);
   _scanRAF = null;
   _scanDetector = null;
+  try{_scanZXing?.reset?.()}catch(err){console.warn(err)}
+  _scanZXing=null;
   if (_scanStream) {
     _scanStream.getTracks().forEach(t => t.stop());
     _scanStream = null;
