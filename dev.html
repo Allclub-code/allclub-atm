@@ -23,6 +23,7 @@ label{display:block;font-size:12px;font-weight:750;color:#526781;margin:12px 0 5
 <div id="workspace"><div class="shell"><aside class="sidebar"><div class="side-caption">SYSTEM ADMINISTRATION</div>
 <button class="nav-btn active" data-page="overview"><span class="nav-icon">◫</span>Overview</button>
 <button class="nav-btn" data-page="members"><span class="nav-icon">♙</span>All members</button>
+<button class="nav-btn" data-page="devbulk"><span class="nav-icon">＋</span>Bulk Deposits</button>
 <button class="nav-btn" data-page="transfers"><span class="nav-icon">⇄</span>Money operations</button>
 <button class="nav-btn" data-page="transactions"><span class="nav-icon">▤</span>Ledger explorer</button>
 <button class="nav-btn" data-page="audit"><span class="nav-icon">◎</span>Action activity</button>
@@ -104,7 +105,7 @@ let failedLogins=0,lockedUntil=0;
 async function setupDeveloper(ev){ /* moved to secure server adapter */ }
 async function loginDeveloper(ev){ /* moved to secure server adapter */ }
 async function devLogout(){ /* moved to secure server adapter */ }
-function view(page){if(!DEV)return;if(!['overview','members','transfers','transactions','audit','reports','messaging','safety','coaches','challenges','settings','backup','cards','features','credit','bills','commerce','missions'].includes(page))return;PAGE=page;render();}
+function view(page){if(!DEV)return;if(!['overview','members','devbulk','transfers','transactions','audit','reports','messaging','safety','coaches','challenges','settings','backup','cards','features','credit','bills','commerce','missions'].includes(page))return;PAGE=page;render();}
 document.addEventListener('click',e=>{
  const nav=e.target.closest('[data-page]');if(nav){view(nav.dataset.page);return;}
  const edit=e.target.closest('[data-edit]');if(edit){openAccount(edit.dataset.edit);return;}
@@ -113,9 +114,10 @@ document.addEventListener('click',e=>{
 });
 function frame(title,subtitle='',buttons=''){return `<div class="page-head"><div><div class="eyebrow">All Club · global operations · dev</div><h1>${esc(title)}</h1><p>${esc(subtitle)}</p></div><div class="actions">${buttons}</div></div>`;}
 function render(){if(!DEV||!DB)return;document.querySelectorAll('.nav-btn').forEach(n=>n.classList.toggle('active',n.dataset.page===PAGE));
- const fn={overview:renderOverview,members:renderMembers,transfers:renderTransfers,transactions:renderTransactions,audit:renderAudit,reports:renderReports,messaging:renderMessaging,safety:renderSafety,coaches:renderCoaches,challenges:renderChallenges,settings:renderSettings,backup:renderBackup}[PAGE] || renderV5Page[PAGE];
+ const fn={overview:renderOverview,members:renderMembers,transfers:renderTransfers,devbulk:renderDevBulk,transactions:renderTransactions,audit:renderAudit,reports:renderReports,messaging:renderMessaging,safety:renderSafety,coaches:renderCoaches,challenges:renderChallenges,settings:renderSettings,backup:renderBackup}[PAGE] || renderV5Page[PAGE];
  $('page-content').innerHTML=fn();
  if(PAGE==='members')fillMembers();
+ if(PAGE==='devbulk')fillDevBulk();
  if(PAGE==='transactions')fillTransactions();
  if(PAGE==='audit')fillAudit();
 }
@@ -242,6 +244,60 @@ async function bulkMove(){const ids=[...SELECTED],to=$('bulk-destination')?.valu
   n=0;for(const id of ids){const m=d.members[id];if(m&&campus(m)!==to){m.campus=to;message(m,'Your simulated account is now assigned to '+branch(to)+'.','alert');n++;}}
   return{action:'Developer bulk campus transfer',details:n+' account(s) moved to '+branch(to),campus:to,severity:'warn'};
  });SELECTED.clear();render();notify(n+' member(s) moved to '+branch(to));}catch(e){notify(e.message,true);}
+}
+const DEV_BULK_SELECTED=new Set();
+function renderDevBulk(){
+ return frame('Bulk Deposits','Quick fictional deposits to selected members on either campus.')+
+ `<section class="card"><h2>Set up a bulk deposit</h2><p class="muted">Search members, select recipients, then review the total before posting. Locked accounts are excluded.</p><div class="formgrid"><div><label>Campus</label><select id="devbulk-campus" onchange="fillDevBulk()"><option value="all">Both campuses</option><option value="main">Main Campus</option><option value="west">West Campus</option></select></div><div><label>Search name / account</label><input id="devbulk-search" placeholder="Search members…" oninput="fillDevBulk()"></div></div><div class="actions" style="margin:15px 0"><button class="btn" type="button" onclick="toggleDevBulk(true)">Select shown</button><button class="btn" type="button" onclick="toggleDevBulk(false)">Deselect shown</button><span id="devbulk-count" class="inline-status">0 selected</span></div><div class="tablewrap" style="max-height:360px;overflow:auto"><table><thead><tr><th>Select</th><th>Account</th><th>Member</th><th>Campus</th><th>Checking</th></tr></thead><tbody id="devbulk-list"></tbody></table></div></section><section class="card"><h2>Deposit details</h2><div class="formgrid"><div><label>Balance</label><select id="devbulk-account" onchange="devBulkSummary()"><option value="checking">Checking</option><option value="savings">Savings</option></select></div><div><label>Per member ($)</label><input id="devbulk-amount" type="number" min="0.01" max="1000000000" step="0.01" value="5" oninput="devBulkSummary()"></div></div><div class="actions" style="margin-top:9px"><button class="btn sm" onclick="devBulkPreset(1)">$1</button><button class="btn sm" onclick="devBulkPreset(5)">$5</button><button class="btn sm" onclick="devBulkPreset(10)">$10</button><button class="btn sm" onclick="devBulkPreset(25)">$25</button><button class="btn sm" onclick="devBulkPreset(50)">$50</button></div><label>Reason (for audit trail)</label><input id="devbulk-reason" maxlength="120" value="All Club allowance"><div class="pill-note" id="devbulk-total">Select members to see the total.</div><div class="actions"><button class="btn primary" id="devbulk-go" onclick="submitDevBulk()">Review & Deposit</button></div></section>`;
+}
+
+function fillDevBulk(){
+ const list=document.getElementById('devbulk-list');if(!list||!DB)return;
+ const search=(document.getElementById('devbulk-search')?.value||'').trim().toLowerCase(),c=document.getElementById('devbulk-campus')?.value||'all';
+ const rows=records(DB).filter(x=>!x.m.locked&&x.m.devLock?.locked!==true&&!x.m.directoryOnly&&(c==='all'||campus(x.m)===c)&&(!search||[x.key,x.m.name].some(v=>String(v||'').toLowerCase().includes(search)))).sort((a,b)=>a.m.name.localeCompare(b.m.name));
+ const all=new Set(records(DB).map(x=>x.key));for(const id of DEV_BULK_SELECTED)if(!all.has(id))DEV_BULK_SELECTED.delete(id);
+ list.innerHTML=rows.map(({key,m})=>`<tr><td><input type="checkbox" data-id="${esc(key)}" class="devbulk-check" ${DEV_BULK_SELECTED.has(key)?'checked':''} onchange="devBulkPick(this.dataset.id,this.checked)"></td><td>${esc(short(key))}</td><td>${esc(m.name)}</td><td>${esc(campus(m))}</td><td>${money(m.checking)}</td></tr>`).join('')||'<tr><td colspan="5">No matching unlocked members.</td></tr>';
+ devBulkSummary();
+}
+
+function devBulkPick(id,value){value?DEV_BULK_SELECTED.add(id):DEV_BULK_SELECTED.delete(id);devBulkSummary();}
+
+function toggleDevBulk(value){
+ document.querySelectorAll('.devbulk-check').forEach(el=>{if(value)DEV_BULK_SELECTED.add(el.dataset.id);else DEV_BULK_SELECTED.delete(el.dataset.id);el.checked=value;});
+ devBulkSummary();
+}
+
+function devBulkPreset(amount){document.getElementById('devbulk-amount').value=amount;devBulkSummary();}
+
+function devBulkSummary(){
+ const n=DEV_BULK_SELECTED.size,amount=Number(document.getElementById('devbulk-amount')?.value),valid=Number.isFinite(amount)&&amount>0&&Math.abs(Math.round(amount*100)-amount*100)<1e-6;
+ const t=document.getElementById('devbulk-total');if(t)t.textContent=n+' member(s) × '+(valid?money(amount):'invalid amount')+' = '+(valid?money(n*amount):'$0.00')+' total fictional funds.';
+ const count=document.getElementById('devbulk-count');if(count)count.textContent=n+' selected';
+ const go=document.getElementById('devbulk-go');if(go)go.disabled=!n||n>150||!valid;
+}
+
+async function submitDevBulk(){
+ const ids=[...DEV_BULK_SELECTED],amount=Number(document.getElementById('devbulk-amount').value),acct=document.getElementById('devbulk-account').value,reason=document.getElementById('devbulk-reason').value.trim();
+ if(!ids.length||ids.length>150)return notify('Select 1–150 members.',true);
+ if(!amountOK(amount)||!['checking','savings'].includes(acct)||!reason)return notify('Enter a valid amount, account and reason.',true);
+ if(!confirm('Deposit '+money(amount)+' each to '+ids.length+' members? Total '+money(amount*ids.length)+' in fictional funds.\n\nReason: '+reason+'\n\nConfirm?'))return;
+ const btn=document.getElementById('devbulk-go');if(btn)btn.disabled=true;
+ try{
+  await commit(d=>{
+   if(d.devControls?.bank?.locked)throw Error('Bank is locked.');
+   const rec=ids.map(key=>({key,m:d.members[key]}));
+   for(const {key,m} of rec){
+    if(!m||m.locked||m.devLock?.locked||d.devControls?.members?.[key]?.locked||d.devControls?.campuses?.[campus(m)]?.locked)throw Error('One of the selected accounts or campuses is locked.');
+    if(d.v5Flags?.global?.deposits===false||d.v5Flags?.campus?.[campus(m)]?.deposits===false||d.v5Flags?.members?.[key]?.deposits===false)throw Error('Deposits are disabled for one of these members.');
+    if(cents(m[acct])+cents(amount)>100000000000)throw Error('A member would exceed the balance limit.');
+   }
+   d.tellerLog=Array.isArray(d.tellerLog)?d.tellerLog:[];
+   for(const {key,m} of rec){m[acct]=fixed((cents(m[acct])+cents(amount))/100);ledger(d,m,'Deposit',acct,amount,'Dev bulk: '+reason);message(m,'Bulk deposit of '+money(amount)+' to '+acct+': '+reason,'deposit');d.tellerLog.push({id:uid(),date:new Date().toISOString(),campus:campus(m),account:key,memberName:m.name,type:'Bulk Deposit',acctType:acct,amount,note:reason,actor:'dev'});}
+   d.tellerLog=d.tellerLog.slice(-500);
+   return {action:'Developer bulk deposit',details:ids.length+' recipients · '+money(amount)+' each · '+money(amount*ids.length)+' total · '+reason,campus:'all',severity:'warn'};
+  });
+  DEV_BULK_SELECTED.clear();render();notify('Deposits completed for '+ids.length+' members.');
+ }catch(err){notify(err.message,true);}finally{if(document.getElementById('devbulk-go'))devBulkSummary();}
 }
 function renderTransfers(){return frame('Money operations','Developer-authorized fictional ledger actions on either campus.')+
  `<div class="cards2"><section class="card"><div class="sectionbar"><h2>Member-to-member transfer</h2><span class="tag">Cross-campus supported</span></div><p class="muted">Debits one member, credits another, writes both ledger entries and alerts both members.</p>
